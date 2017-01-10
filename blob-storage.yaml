@@ -234,10 +234,93 @@ x-ms-paths:
             $ref: "#/definitions/ContainerEnumerationResults"
         default:
           $ref: "#/responses/Error"
+  "/{container}/{blob}?comp=blocklist":
+    put:
+      tags:
+      - blockblobs
+      operationId: BlockBlobs_PutBlockList
+      description: The Put Block List operation writes a blob by specifying the list of block IDs that make up the blob. In order to be written as part of a blob, a block must have been successfully written to the server in a prior Put Block operation.
+        You can call Put Block List to update a blob by uploading only those blocks that have changed, then committing the new and existing blocks together. You can do this by specifying whether to commit a block from the committed block list or from the uncommitted block list, or to commit the most recently uploaded version of the block, whichever list it may belong to.
+      parameters:
+      - "$ref": "#/parameters/Container"
+      - "$ref": "#/parameters/Blob"
+
+      - $inc: "#/parameters/_QueryComp"
+        enum:
+        - blocklist
+      - "$ref": "#/parameters/Timeout"
+
+      - "$ref": "#/parameters/ApiVersionParameter"  # Version
+      - "$ref": "#/parameters/ContentLength"
+      - "$ref": "#/parameters/ContentMD5"
+      - "$ref": "#/parameters/BlobCacheControl"
+      - "$ref": "#/parameters/BlobContentType"
+      - "$ref": "#/parameters/BlobContentEncoding"
+      - "$ref": "#/parameters/BlobContentLanguage"
+      - "$ref": "#/parameters/BlobContentMD5"
+      - "$ref": "#/parameters/XMsMeta"
+      - "$ref": "#/parameters/LeaseId"
+      - "$ref": "#/parameters/ClientRequestId"
+      - "$ref": "#/parameters/BlobContentDisposition"
+      # insert authentication stuff
+
+      - name: blocks
+        in: body
+        required: true
+        schema:
+          "$ref": "#/definitions/BlockLookupList"
+      responses:
+        '201':
+          description: The block list was recorded.
+          headers:
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/Content-MD5"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/x-ms-request-server-encrypted"
+        default:
+          "$ref": "#/responses/Error"
+    get:
+      tags:
+      - blockblobs
+      operationId: BlockBlobs_GetBlockList
+      description: The Get Block List operation retrieves the list of blocks that have been uploaded as part of a block blob
+      parameters:
+      - "$ref": "#/parameters/Container"
+      - "$ref": "#/parameters/Blob"
+
+      - $inc: "#/parameters/_QueryComp"
+        enum:
+        - blocklist
+      - "$ref": "#/parameters/Snapshot"
+      - "$ref": "#/parameters/BlockListType"
+      - "$ref": "#/parameters/Timeout"
+
+      - "$ref": "#/parameters/ApiVersionParameter"  # Version
+      - "$ref": "#/parameters/LeaseId"
+      - "$ref": "#/parameters/ClientRequestId"
+      # insert authentication stuff
+      responses:
+        '200':
+          description: The page range was written.
+          headers:
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Content-Type"
+            - $inc : "#/headers/x-ms-blob-content-length"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+          schema:
+            "$ref": "#/definitions/BlockList"
+        default:
+          "$ref": "#/responses/Error"
   "/{container}/{blob}?comp=page":
     put:
       tags:
-      - blobs
+      - pageblobs
       operationId: PageBlobs_PutPage
       description: The Put Page operation writes a range of pages to a page blob
       parameters:
@@ -283,7 +366,7 @@ x-ms-paths:
   "/{container}/{blob}?comp=pagelist":
     get:
       tags:
-      - blobs
+      - pageblobs
       operationId: PageBlobs_GetPageRanges
       description: The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot of a page blob
       parameters:
@@ -321,7 +404,7 @@ x-ms-paths:
   "/{container}/{blob}?comp=incrementalcopy":
     put:
       tags:
-      - blobs
+      - pageblobs
       operationId: PageBlobs_IncrementalCopy
       description: The Incremental Copy Blob operation copies a snapshot of the source page blob to a destination page blob. The snapshot is copied such that only the differential changes between the previously copied snapshot are transferred to the destination. The copied snapshots are complete copies of the original snapshot and can be read or copied from as usual. This API is supported since REST version 2016-05-31.
       parameters:
@@ -505,17 +588,77 @@ x-ms-paths:
 
 # 
 definitions:
+  Block:
+    type: object
+    properties:
+      name:
+        description: The base64 encoded block ID
+        type: string
+        xml:
+          name: Name
+      size:
+        description: The block size in bytes
+        type: integer
+        xml:
+          name: Size
+
+  BlockList:
+    type: object
+    properties:
+      CommittedBlocks:
+        type: array
+        items:
+          "$ref": "#/definitions/Block"
+          xml:
+            name: Block
+        xml:
+          wrapped: true
+      UncommittedBlocks:
+        type: array
+        items:
+          "$ref": "#/definitions/Block"
+          xml:
+            name: Block
+        xml:
+          wrapped: true
+
+  BlockLookup:
+    type: object
+    properties:
+      State:
+        $ref: "#/definitions/BlockListType"
+      Id:
+        type: string
+
+  BlockLookupList:
+    type: array
+    x-ms-external: true
+    xml:
+      name: BlockList,
+      wrapped: true
+    items:
+      $ref: "#/definitions/Block"
+      # weird dependent tag name and value
+      
   # Enums ========================================================================
-  
   BlobType:
     type: string
-    default: BlockBlob
     enum:
     - BlockBlob
     - PageBlob
     - AppendBlob
     x-ms-enum:
       name: BlobType
+      modelAsString: false
+
+  BlockListType:
+    type: string
+    enum:
+      - committed
+      - uncomitted
+      - all
+    x-ms-enum:
+      name: BlockListType
       modelAsString: false
   
   BlobPublicAccessType:
@@ -764,13 +907,22 @@ parameters:
     type: string
     x-ms-parameter-location: method
     description: The blob name.
-    
+
+  BlobCacheControl:
+    name: x-ms-blob-cache-control
+    in: header
+    required: false
+    type: string
+    description: Optional. Sets the blob’s cache control. If specified, this property
+      is stored with the blob and returned with a read request.
+
   BlobConditionAppendPos:
     name: x-ms-blob-condition-appendpos
     x-ms-client-name: appendPosition
     in: header
     required: false
     type: integer
+    x-ms-parameter-location: method
     description: Optional conditional header, used only for the Append Block operation. A number indicating the byte offset to compare. Append Block will succeed only if the append position is equal to this number. If it is not, the request will fail with the AppendPositionConditionNotMet error (HTTP status code 412 – Precondition Failed).
 
   BlobConditionMaxSize:
@@ -779,6 +931,7 @@ parameters:
     in: header
     required: false
     type: integer
+    x-ms-parameter-location: method
     description: Optional conditional header. The max length in bytes permitted for the append blob. If the Append Block operation would cause the blob to exceed that limit or if the blob size is already greater than the value specified in this header, the request will fail with MaxBlobSizeConditionNotMet error (HTTP status code 412 – Precondition Failed).
   
   BlobPublicAccess:
@@ -790,11 +943,52 @@ parameters:
     x-ms-parameter-location: method
     description: Specifies whether data in the container may be accessed publicly and the level of access
 
+  BlobContentDisposition:
+    name: x-ms-blob-content-disposition
+    in: header
+    required: false
+    type: string
+    description: Optional. Sets the blob’s Content-Disposition header.
+    
+  BlobContentEncoding:
+    name: x-ms-blob-content-encoding
+    in: header
+    required: false
+    type: string
+    description: Optional. Sets the blob’s content encoding. If specified, this
+      property is stored with the blob and returned with a read request.
+    
+  BlobContentLanguage:
+    name: x-ms-blob-content-language
+    in: header
+    required: false
+    type: string
+    description: Optional. Set the blob’s content language. If specified, this
+      property is stored with the blob and returned with a read request.
+    
+  BlobContentMD5:
+    name: x-ms-blob-content-md5
+    in: header
+    required: false
+    type: string
+    description: Optional. An MD5 hash of the blob content. Note that this hash
+      is not validated, as the hashes for the individual blocks were validated
+      when each was uploaded.
+
+  BlobContentType:
+    name: x-ms-blob-content-type
+    in: header
+    required: false
+    type: string
+    description: Optional. Sets the blob’s content type. If specified, this property
+      is stored with the blob and returned with a read request.
+
   BlobType:
     name: x-ms-blob-type
     x-ms-client-name: blobType
     in: header
     required: false
+    default: BlockBlob
     $inc: '#/definitions/BlobType'
     x-ms-parameter-location: method
     description: 'Specifies the type of blob to create: block blob, page blob, or
@@ -808,6 +1002,16 @@ parameters:
       type: file
     x-ms-parameter-location: method
     description: Initial data for the blob, empty for page and append blobs
+
+  BlockListType:
+    name: blocklisttype
+    x-ms-client-name: listType
+    in: query
+    required: false
+    default: committed
+    $inc: '#/definitions/BlockListType'
+    x-ms-parameter-location: method
+    description: 'Specifies whether to return the list of committed blocks, the list of uncommitted blocks, or both lists together.'
 
   ClientRequestId:
     name: x-ms-client-request-id
@@ -1425,58 +1629,6 @@ x-original-definitions:
               type: string
       NextMarker:
         type: string
-  BlockInformation:
-    type: object
-    xml:
-      name: Block
-    properties:
-      name:
-        type: string
-        xml:
-          name: Name
-      size:
-        type: integer
-        xml:
-          name: Size
-  BlockListInformation:
-    type: object
-    properties:
-      CommittedBlocks:
-        type: array
-        items:
-          $ref: "#/definitions/BlockInformation"
-        xml:
-          name: CommittedBlocks
-      UncommittedBlocks:
-        type: array
-        items:
-          $ref: "#/definitions/BlockInformation"
-        xml:
-          name: UncommittedBlocks
-  Block:
-    type: object
-    properties:
-      State:
-        type: string
-        enum:
-        - Uncommitted
-        - Committed
-        - Latest
-      Id:
-        type: string
-  BlockList:
-    type: object
-    x-ms-external: true
-    xml:
-      name: BlockList
-    properties:
-      Blocks:
-        type: array
-        xml:
-          name: "#/definitions/Block"
-          wrapped: false
-        items:
-          type: string
 
 x-ms-paths-original:
   "/?restype=service&comp=properties":
@@ -2240,192 +2392,6 @@ x-ms-paths-original:
             metadata:
               type: string
               x-ms-header-collection-prefix: x-ms-meta-
-        default:
-          $ref: "#/responses/Error"
-  "/{container}/{blob}?comp=blocklist":
-    get:
-      tags:
-      - blockblobs
-      operationId: BlockBlobs_GetBlockList
-      parameters:
-      - name: comp
-        in: query
-        required: true
-        type: string
-        enum:
-        - blocklist
-      - $ref: "#/parameters/Container"
-      - $ref: "#/parameters/Blob"
-      - name: blocklisttype
-        x-ms-client-name: listType
-        in: query
-        required: false
-        type: string
-        default: committed
-        enum:
-        - committed
-        - uncomitted
-        - all
-      - name: snapshot
-        in: query
-        required: false
-        type: string
-      - $ref: "#/parameters/LeaseId"
-      - $ref: "#/parameters/ApiVersionParameter"
-      - $ref: "#/parameters/ClientRequestId"
-      responses:
-        '200':
-          description: Information on the block list was found.
-          headers:
-            x-ms-blob-content-length:
-              type: integer
-              description: The size of the blob in bytes.
-            x-ms-request-id:
-              type: string
-              description: This header uniquely identifies the request that was made
-                and can be used for troubleshooting the request.
-            x-ms-version:
-              type: string
-              description: Indicates the version of the Blob service used to execute
-                the request. This header is returned for requests made against version
-                2009-09-19 and above.
-          schema:
-            $ref: "#/definitions/BlockListInformation"
-        default:
-          $ref: "#/responses/Error"
-    put:
-      tags:
-      - blockblobs
-      operationId: BlockBlobs_PutBlockList
-      parameters:
-      - name: comp
-        in: query
-        required: true
-        type: string
-        enum:
-        - blocklist
-      - $ref: "#/parameters/Container"
-      - $ref: "#/parameters/Blob"
-      - name: x-ms-blob-cache-control
-        in: header
-        required: false
-        type: string
-        description: Optional. Sets the blob’s cache control. If specified, this property
-          is stored with the blob and returned with a read request.
-      - name: x-ms-blob-content-type
-        in: header
-        required: false
-        type: string
-        description: Optional. Sets the blob’s content type. If specified, this property
-          is stored with the blob and returned with a read request.
-      - name: x-ms-blob-content-encoding
-        in: header
-        required: false
-        type: string
-        description: Optional. Sets the blob’s content encoding. If specified, this
-          property is stored with the blob and returned with a read request.
-      - name: x-ms-blob-content-language
-        in: header
-        required: false
-        type: string
-        description: Optional. Set the blob’s content language. If specified, this
-          property is stored with the blob and returned with a read request.
-      - name: x-ms-blob-content-md5
-        in: header
-        required: false
-        type: string
-        description: Optional. An MD5 hash of the blob content. Note that this hash
-          is not validated, as the hashes for the individual blocks were validated
-          when each was uploaded.
-      - name: x-ms-blob-content-disposition
-        in: header
-        required: false
-        type: string
-        description: Optional. Sets the blob’s Content-Disposition header. Available
-          for versions 2013-08-15 and later.
-      - $ref: "#/parameters/LeaseId"
-      - $ref: "#/parameters/ApiVersionParameter"
-      - $ref: "#/parameters/ClientRequestId"
-      - name: blocks
-        in: body
-        required: true
-        schema:
-          $ref: "#/definitions/BlockList"
-      responses:
-        '201':
-          description: The block list was recorded.
-          headers:
-            x-ms-request-id:
-              type: string
-              description: This header uniquely identifies the request that was made
-                and can be used for troubleshooting the request.
-            x-ms-version:
-              type: string
-              description: Indicates the version of the Blob service used to execute
-                the request. This header is returned for requests made against version
-                2009-09-19 and above.
-        default:
-          $ref: "#/responses/Error"
-  "/{container}/{blob}?comp=page":
-    put:
-      tags:
-      - pageblobs
-      operationId: PageBlobs_PutPage
-      parameters:
-      - name: comp
-        in: query
-        required: true
-        type: string
-        enum:
-        - page
-      - $ref: "#/parameters/Container"
-      - $ref: "#/parameters/Blob"
-      - $ref: "#/parameters/RequiredRange"
-      - name: x-ms-page-write
-        x-ms-client-name: pageWrite
-        in: header
-        required: true
-        type: string
-        description: |-
-          Required. You may specify one of the following options:
-           - Update: Writes the bytes specified by the request body into the specified range. The Range and Content-Length headers must match to perform the update.
-           - Clear: Clears the specified range and releases the space used in storage for that range. To clear a range, set the Content-Length header to zero, and the Range header to a value that indicates the range to clear, up to maximum blob size.
-      - name: x-ms-if-sequence-number-le
-        x-ms-client-name: ifSequenceNumberLessThanOrEqualTo
-        in: header
-        required: false
-        type: integer
-      - name: x-ms-if-sequence-number-lt
-        x-ms-client-name: ifSequenceNumberLessThan
-        in: header
-        required: false
-        type: integer
-      - name: x-ms-if-sequence-number-eq
-        x-ms-client-name: ifSequenceNumberEqualTo
-        in: header
-        required: false
-        type: integer
-      - $ref: "#/parameters/IfModifiedSince"
-      - $ref: "#/parameters/IfUnmodifiedSince"
-      - $ref: "#/parameters/IfMatch"
-      - $ref: "#/parameters/IfNoneMatch"
-      - $ref: "#/parameters/LeaseId"
-      - $ref: "#/parameters/ApiVersionParameter"
-      - $ref: "#/parameters/ClientRequestId"
-      - $ref: "#/parameters/Body"
-      responses:
-        '201':
-          description: The block was created.
-          headers:
-            x-ms-request-id:
-              type: string
-              description: This header uniquely identifies the request that was made
-                and can be used for troubleshooting the request.
-            x-ms-version:
-              type: string
-              description: Indicates the version of the Blob service used to execute
-                the request. This header is returned for requests made against version
-                2009-09-19 and above.
         default:
           $ref: "#/responses/Error"
   "/{container}/{blob}?comp=pagelist":
