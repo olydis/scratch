@@ -242,8 +242,6 @@ x-ms-paths:
 # 
 #
 definitions:
-
-
   # Enums ========================================================================
   BlobType:
     type: string
@@ -264,6 +262,14 @@ definitions:
       - failed
     x-ms-enum:
       name: CopyStatusType
+      modelAsString: false
+  DeleteSnapshots:
+    type: string
+    enum: 
+      - include
+      - only
+    x-ms-enum:
+      name: DeleteSnapshotsOption
       modelAsString: false
   LeaseDuration:
     type: string
@@ -292,14 +298,6 @@ definitions:
     x-ms-enum:
       name: LeaseStatusType
       modelAsString: false
-  DeleteSnapshots:
-    type: string
-    enum: 
-      - include
-      - only
-    x-ms-enum:
-      name: DeleteSnapshotsOption
-      modelAsString: false
 parameters:
   ApiVersionParameter:
     name: x-ms-version
@@ -320,34 +318,6 @@ parameters:
     default: '2015-04-05'
     description: Specifies the version of the operation to use for this request.
 
-  ClientRequestId:
-    name: x-ms-client-request-id
-    x-ms-client-name: requestId
-    in: header
-    required: false
-    type: string
-    x-ms-parameter-location: method
-    description: Provides a client-generated, opaque value with a 1 KB character limit
-      that is recorded in the analytics logs when storage analytics logging is enabled.
-
-  LeaseId:
-    name: x-ms-lease-id
-    x-ms-client-name: leaseId
-    in: header
-    required: false
-    type: string
-    x-ms-parameter-location: method
-    description: If specified, the operation only succeeds if the container’s lease
-      is active and matches this ID.
-
-  Container:
-    name: container
-    in: path
-    required: true
-    type: string
-    x-ms-parameter-location: method
-    description: The container name.
-
   Blob:
     name: blob
     in: path
@@ -365,6 +335,96 @@ parameters:
     x-ms-parameter-location: method
     description: 'Specifies the type of blob to create: block blob, page blob, or
       append blob.'
+
+  ClientRequestId:
+    name: x-ms-client-request-id
+    x-ms-client-name: requestId
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Provides a client-generated, opaque value with a 1 KB character limit
+      that is recorded in the analytics logs when storage analytics logging is enabled.
+
+  Container:
+    name: container
+    in: path
+    required: true
+    type: string
+    x-ms-parameter-location: method
+    description: The container name.
+
+  DeleteSnapshots:
+    name: x-ms-delete-snapshots
+    x-ms-client-name: deleteSnapshots
+    description: 'Required if the blob has associated snapshots. Specify one of
+      the following two options: include: Delete the base blob and all of its
+      snapshots. only: Delete only the blob''s snapshots and not the blob itself'
+    $inc: "#/definitions/DeleteSnapshots"
+    x-ms-parameter-location: method
+    in: header
+    required: false
+
+  GetRangeContentMD5:
+    name: x-ms-range-get-content-md5
+    in: header
+    required: false
+    type: boolean
+    x-ms-parameter-location: method
+    description: When set to true and specified together with the Range, the service returns the MD5 hash for the range, as long as the range is less than or equal to 4 MB in size.
+  
+  Include:
+    name: include
+    in: query
+    required: false
+    type: string
+    enum: 
+      - metadata
+    description: Include this parameter to specify that the container's metadata be returned as part of the response body.
+
+  LeaseId:
+    name: x-ms-lease-id
+    x-ms-client-name: leaseId
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: If specified, the operation only succeeds if the container’s lease
+      is active and matches this ID.
+
+  Marker: 
+    name: marker
+    in: query
+    required: false
+    type: string
+    description:  A string value that identifies the portion of the list of containers to be returned with the next listing operation. The operation returns the NextMarker value within the response body if the listing operation did not return all containers remaining to be listed with the current page. The NextMarker value can be used as the value for the marker parameter in a subsequent call to request the next page of list items. The marker value is opaque to the client.
+    x-ms-parameter-location: method
+
+  MaxResults:
+    name: maxresults
+    in: query
+    required: false
+    type: number
+    format: integer
+    minimum: 0 
+    maximum: 5000
+    description: Specifies the maximum number of containers to return. If the request does not specify maxresults, or specifies a value greater than 5000, the server will return up to 5000 items. Note that if the listing operation crosses a partition boundary, then the service will return a continuation token for retrieving the remainder of the results. For this reason, it is possible that the service will return fewer results than specified by maxresults, or than the default of 5000. 
+
+  Origin:
+    name: Origin
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Specifies the origin from which the request is issued. The presence of this header results in cross-origin resource sharing (CORS) headers on the response.
+
+  Prefix:
+    name: prefix
+    in: query
+    required: false
+    type: string
+    description: Filters the results to return only containers whose name begins with the specified prefix.
+    x-ms-parameter-location: method
 
   Range:
     name: x-ms-range
@@ -397,111 +457,72 @@ parameters:
     description: The timeout parameter is expressed in seconds. 
       For more information, see <a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>
 
-  Origin:
-    name: Origin
-    in: header
-    required: false
-    type: string
-    x-ms-parameter-location: method
-    description: Specifies the origin from which the request is issued. The presence of this header results in cross-origin resource sharing (CORS) headers on the response.
-
-  GetRangeContentMD5:
-    name: x-ms-range-get-content-md5
-    in: header
-    required: false
-    type: boolean
-    x-ms-parameter-location: method
-    description: When set to true and specified together with the Range, the service returns the MD5 hash for the range, as long as the range is less than or equal to 4 MB in size.
-
-  DeleteSnapshots:
-    name: x-ms-delete-snapshots
-    x-ms-client-name: deleteSnapshots
-    description: 'Required if the blob has associated snapshots. Specify one of
-      the following two options: include: Delete the base blob and all of its
-      snapshots. only: Delete only the blob''s snapshots and not the blob itself'
-    $inc: "#/definitions/DeleteSnapshots"
-    x-ms-parameter-location: method
-    in: header
-    required: false
-  
-  Prefix:
-    name: prefix
-    in: query
-    required: false
-    type: string
-    description: Filters the results to return only containers whose name begins with the specified prefix.
-    x-ms-parameter-location: method
-  
-  Marker: 
-    name: marker
-    in: query
-    required: false
-    type: string
-    description:  A string value that identifies the portion of the list of containers to be returned with the next listing operation. The operation returns the NextMarker value within the response body if the listing operation did not return all containers remaining to be listed with the current page. The NextMarker value can be used as the value for the marker parameter in a subsequent call to request the next page of list items. The marker value is opaque to the client.
-    x-ms-parameter-location: method
-
-  MaxResults:
-    name: maxresults
-    in: query
-    required: false
-    type: number
-    format: integer
-    minimum: 0 
-    maximum: 5000
-    description: Specifies the maximum number of containers to return. If the request does not specify maxresults, or specifies a value greater than 5000, the server will return up to 5000 items. Note that if the listing operation crosses a partition boundary, then the service will return a continuation token for retrieving the remainder of the results. For this reason, it is possible that the service will return fewer results than specified by maxresults, or than the default of 5000. 
-
-  Include:
-    name: include
-    in: query
-    required: false
-    type: string
-    enum: 
-      - metadata
-    description: Include this parameter to specify that the container's metadata be returned as part of the response body.
-
 responses:
   Error:
     description: Error.
     schema:
       "$ref": "#/definitions/BlobError"
 headers:
-  Last-Modified:
+  Access-Control-Allow-Credentials: 
+    type: boolean
+    description: Returned if the request includes an Origin header and CORS is enabled with a matching rule that doesn’t allow all origins. This header will be set to true.
+  Access-Control-Allow-Origin: 
     type: string
-    description: Returns the date and time the container was last modified. 
-      Any operation that modifies the blob, including an update of the blob's 
-      metadata or properties, changes the last-modified time of the blob.
-  x-ms-meta: # ie, supports x-ms-meta-*:value
+    description: Returned if the request includes an Origin header and CORS is enabled with a matching rule. This header returns the value of the origin request header in case of a match
+  Access-Control-Expose-Headers: 
     type: string
-    x-ms-client-name: Metadata
-    x-ms-header-collection-prefix: x-ms-meta-
-  Content-Length: 
-    type: integer
-    description: The number of bytes present in the response body.
-  Content-Type: 
+    description: Returned if the request includes an Origin header and CORS is enabled with a matching rule. Returns the list of response headers that are to be exposed to the client or issuer of the request
+  Accept-Ranges: 
     type: string
-    description: The content type specified for the blob. The default content type is 'application/octet-stream'
-  Content-Range: 
-    type: string
-    description: Indicates the range of bytes returned in the event that the client requested a subset of the blob by setting the 'Range' request header.
-  ETag: 
-    type: string
-    description: The ETag contains a value that you can use to perform operations conditionally.
-      If the request version is 2011-08-18 or newer, the ETag value will be in quotes.
-  Content-MD5: 
-    type: string
-    description: If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity.
-  Content-Encoding: 
-    type: string
-    description: This header returns the value that was specified for the Content-Encoding request header
-  Content-Language: 
-    type: string
-    description: This header returns the value that was specified for the Content-Language request header. 
+    description: Indicates that the service supports requests for partial blob content.
   Cache-Control: 
     type: string
     description: This header is returned if it was previously specified for the blob.
   Content-Disposition: 
     type: string
     description: This header returns the value that was specified for the 'x-ms-blob-content-disposition' header. The Content-Disposition response header field conveys additional information about how to process the response payload, and also can be used to attach additional metadata. For example, if set to attachment, it indicates that the user-agent should not display the response, but instead show a Save As dialog with a filename other than the blob name specified.
+  Content-Encoding: 
+    type: string
+    description: This header returns the value that was specified for the Content-Encoding request header
+  Content-Language: 
+    type: string
+    description: This header returns the value that was specified for the Content-Language request header. 
+  Content-Length: 
+    type: integer
+    description: The number of bytes present in the response body.
+  Content-MD5: 
+    type: string
+    description: If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity.
+  Content-Range: 
+    type: string
+    description: Indicates the range of bytes returned in the event that the client requested a subset of the blob by setting the 'Range' request header.
+  Content-Type: 
+    type: string
+    description: The content type specified for the blob. The default content type is 'application/octet-stream'
+  Date: 
+    type: string
+    format: date-time
+    description: UTC date/time value generated by the service that indicates the time at which the response was initiated
+  ETag: 
+    type: string
+    description: The ETag contains a value that you can use to perform operations conditionally.
+      If the request version is 2011-08-18 or newer, the ETag value will be in quotes.
+  Last-Modified:
+    type: string
+    description: Returns the date and time the container was last modified. 
+      Any operation that modifies the blob, including an update of the blob's 
+      metadata or properties, changes the last-modified time of the blob.
+  Vary: 
+    type: string
+    description: Returned with the value of the Origin header when CORS rules are specified
+  x-ms-blob-committed-block-count: 
+    x-ms-client-name: BlobCommittedBlockCount
+    type: string
+    description: The number of committed blocks present in the blob. This header is returned only for append blobs.
+  x-ms-blob-content-md5: 
+    x-ms-client-name: BlobContentMD5
+    type: string
+    description: If the blob has a MD5 hash, and if request contains range header (Range or x-ms-range), this response header is returned with the value of the whole blob’s MD5 value. This value may or may not be equal to the value returned in Content-MD5 header, with the latter calculated from the requested range
   x-ms-blob-sequence-number: 
     x-ms-client-name: BlobSequenceNumber
     type: string
@@ -515,10 +536,6 @@ headers:
     type: string
     format: date-time
     description:  Conclusion time of the last attempted Copy Blob operation where this blob was the destination blob. This value can specify the time of a completed, aborted, or failed copy attempt. This header does not appear if a copy is pending, if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.
-  x-ms-copy-status-description: 
-    x-ms-client-name: CopyStatusDescription
-    type: string
-    description: Only appears when x-ms-copy-status is failed or pending. Describes the cause of the last fatal or non-fatal copy operation failure. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List
   x-ms-copy-id: 
     x-ms-client-name: CopyId
     type: string
@@ -535,6 +552,14 @@ headers:
     x-ms-client-name: CopyStatus
     description: State of the copy operation identified by x-ms-copy-id. 
     $inc: "#/definitions/CopyStatus"
+  x-ms-copy-status-description: 
+    x-ms-client-name: CopyStatusDescription
+    type: string
+    description: Only appears when x-ms-copy-status is failed or pending. Describes the cause of the last fatal or non-fatal copy operation failure. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List
+  x-ms-incremental-copy:
+    x-ms-client-name: IsIncrementalCopy
+    type: boolean
+    description:  Included if the blob is incremental copy blob.
   x-ms-lease-duration: 
     x-ms-client-name: LeaseDuration
     $inc: "#/definitions/LeaseDuration"
@@ -547,53 +572,25 @@ headers:
     x-ms-client-name: LeaseStatus
     $inc: "#/definitions/LeaseStatus"
     description: The current lease status of the blob.
+  x-ms-meta: # ie, supports x-ms-meta-*:value
+    type: string
+    x-ms-client-name: Metadata
+    x-ms-header-collection-prefix: x-ms-meta-
   x-ms-request-id:
     x-ms-client-name: RequestId
     type: string
     description: This header uniquely identifies the request that was made
       and can be used for troubleshooting the request.  
+  x-ms-server-encrypted: 
+    x-ms-client-name: IsServerEncrypted
+    type: boolean
+    description: The value of this header is set to true if the blob data and application metadata are completely encrypted using the specified algorithm. Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the blob/application metadata are encrypted).
   x-ms-version:
     x-ms-client-name: Version
     type: string
     description: Indicates the version of the Blob service used to execute
       the request. This header is returned for requests made against version
       2009-09-19 and above. 
-  Accept-Ranges: 
-    type: string
-    description: Indicates that the service supports requests for partial blob content.
-  Date: 
-    type: string
-    format: date-time
-    description: UTC date/time value generated by the service that indicates the time at which the response was initiated
-  Access-Control-Allow-Origin: 
-    type: string
-    description: Returned if the request includes an Origin header and CORS is enabled with a matching rule. This header returns the value of the origin request header in case of a match
-  Access-Control-Expose-Headers: 
-    type: string
-    description: Returned if the request includes an Origin header and CORS is enabled with a matching rule. Returns the list of response headers that are to be exposed to the client or issuer of the request
-  Vary: 
-    type: string
-    description: Returned with the value of the Origin header when CORS rules are specified
-  Access-Control-Allow-Credentials: 
-    type: boolean
-    description: Returned if the request includes an Origin header and CORS is enabled with a matching rule that doesn’t allow all origins. This header will be set to true.
-  x-ms-blob-committed-block-count: 
-    x-ms-client-name: BlobCommittedBlockCount
-    type: string
-    description: The number of committed blocks present in the blob. This header is returned only for append blobs.
-  x-ms-server-encrypted: 
-    x-ms-client-name: IsServerEncrypted
-    type: boolean
-    description: The value of this header is set to true if the blob data and application metadata are completely encrypted using the specified algorithm. Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the blob/application metadata are encrypted).
-  x-ms-blob-content-md5: 
-    x-ms-client-name: BlobContentMD5
-    type: string
-    description: If the blob has a MD5 hash, and if request contains range header (Range or x-ms-range), this response header is returned with the value of the whole blob’s MD5 value. This value may or may not be equal to the value returned in Content-MD5 header, with the latter calculated from the requested range
-  x-ms-incremental-copy:
-    x-ms-client-name: IsIncrementalCopy
-    type: boolean
-    description:  Included if the blob is incremental copy blob.
-  
 
 x-original-definitions:
   BlobError:
