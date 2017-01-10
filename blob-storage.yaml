@@ -241,11 +241,96 @@ x-ms-paths:
             "$ref": "#/definitions/ContainerEnumerationResults"
         default:
           "$ref": "#/responses/Default"
+  "/{container}/{blob}?comp=page":
+    put:
+      tags:
+      - blobs
+      operationId: PageBlobs_PutPage
+      description: The Put Page operation writes a range of pages to a page blob
+      parameters:
+      - "$ref": "#/parameters/Container"
+      - "$ref": "#/parameters/Blob"
+
+      - $inc: "#/parameters/_QueryComp"
+        enum:
+        - page
+      - "$ref": "#/parameters/Timeout"
+
+      - "$ref": "#/parameters/ApiVersionParameter"  # Version
+      - "$ref": "#/parameters/Range"
+      - "$ref": "#/parameters/ContentLength"
+      - "$ref": "#/parameters/ContentMD5"
+      - "$ref": "#/parameters/PageWrite"
+      - "$ref": "#/parameters/LeaseId"
+      - "$ref": "#/parameters/IfSequenceNumberLessThanOrEqualTo"
+      - "$ref": "#/parameters/IfSequenceNumberLessThan"
+      - "$ref": "#/parameters/IfSequenceNumberEqualTo"
+      - "$ref": "#/parameters/IfModifiedSince"
+      - "$ref": "#/parameters/IfUnmodifiedSince"
+      - "$ref": "#/parameters/IfMatch"
+      - "$ref": "#/parameters/IfNoneMatch"
+      - "$ref": "#/parameters/ClientRequestId"
+
+      - "$ref": "#/parameters/Body"
+      # insert authentication stuff
+      responses:
+        '201':
+          description: The page range was written.
+          headers:
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/Content-MD5"
+            - $inc : "#/headers/x-ms-blob-content-length"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/x-ms-request-server-encrypted"
+        default:
+          "$ref": "#/responses/Error"
+  "/{container}/{blob}?comp=pagelist":
+    get:
+      tags:
+      - blobs
+      operationId: PageBlobs_GetPageRanges
+      description: The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot of a page blob
+      parameters:
+      - "$ref": "#/parameters/Container"
+      - "$ref": "#/parameters/Blob"
+
+      - $inc: "#/parameters/_QueryComp"
+        enum:
+        - pagelist
+      - "$ref": "#/parameters/Snapshot"
+      - "$ref": "#/parameters/Timeout"
+      - "$ref": "#/parameters/PrevSnapshot"
+
+      - "$ref": "#/parameters/ApiVersionParameter"  # Version
+      - "$ref": "#/parameters/Range"
+      - "$ref": "#/parameters/LeaseId"
+      - "$ref": "#/parameters/ClientRequestId"
+      # insert authentication stuff
+      responses:
+        '200':
+          description: Information on the page blob was found.
+          headers:
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/x-ms-blob-content-length"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+          schema:
+            type: string
+            # TODO: https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-page-ranges
+            # has sequence toggling between PageRange and ClearRange
+        default:
+          "$ref": "#/responses/Error"
   "/{container}/{blob}?comp=incrementalcopy":
     put:
       tags:
       - blobs
-      operationId: Blobs_IncrementalCopy
+      operationId: PageBlobs_IncrementalCopy
+      description: The Incremental Copy Blob operation copies a snapshot of the source page blob to a destination page blob. The snapshot is copied such that only the differential changes between the previously copied snapshot are transferred to the destination. The copied snapshots are complete copies of the original snapshot and can be read or copied from as usual. This API is supported since REST version 2016-05-31.
       parameters:
       - "$ref": "#/parameters/Container"
       - "$ref": "#/parameters/Blob"
@@ -282,6 +367,8 @@ x-ms-paths:
       tags:
       - blobs
       operationId: Blobs_AppendBlock
+      description: The Append Block operation commits a new block of data to the end of an existing append blob.
+        The Append Block operation is permitted only if the blob was created with x-ms-blob-type set to AppendBlob. Append Block is supported only on version 2015-02-21 version or later.
       parameters:
       - "$ref": "#/parameters/Container"
       - "$ref": "#/parameters/Blob"
@@ -386,6 +473,14 @@ definitions:
     x-ms-enum:
       name: LeaseStatusType
       modelAsString: false
+  PageWrite:
+    type: string
+    enum:
+      - update
+      - clear
+    x-ms-enum:
+      name: PageWrite
+      modelAsString: false
 parameters:
   _QueryComp:
     name: comp
@@ -464,6 +559,25 @@ parameters:
     x-ms-parameter-location: method
     description: The container name.
 
+  ContentLength:
+    name: Content-Length
+    x-ms-client-name: contentLength
+    in: header
+    required: true
+    type: integer
+    x-ms-parameter-location: method
+    description: Specifies the number of bytes being transmitted in the request body. When the x-ms-page-write header is set to clear, the value of this header must be set to zero.
+
+  ContentMD5:
+    name: Content-MD5
+    x-ms-client-name: contentMD5
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: An MD5 hash of the page content. This hash is used to verify the integrity of the page during transport. When this header is specified, the storage service compares the hash of the content that has arrived with the header value that was sent. If the two hashes do not match, the operation will fail with error code 400 (Bad Request). 
+      The Content-MD5 header is not permitted when the x-ms-page-write header is set to clear. If it is included with the request, the Blob service returns status code 400 (Bad Request).
+
   CopySource:
     name: x-ms-copy-source
     x-ms-client-name: copySource
@@ -492,6 +606,69 @@ parameters:
     x-ms-parameter-location: method
     description: When set to true and specified together with the Range, the service returns the MD5 hash for the range, as long as the range is less than or equal to 4 MB in size.
   
+  IfMatch:
+    name: If-Match
+    x-ms-client-name: ifMatches
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Specify an ETag value for this conditional header to snapshot the
+      blob only if its ETag value matches the value specified.
+
+  IfModifiedSince:
+    name: If-Modified-Since
+    x-ms-client-name: ifModifiedSince
+    in: header
+    required: false
+    type: string
+    format: date-time
+    x-ms-parameter-location: method
+    description: Specify this conditional header to snapshot the blob only if it has
+      not been modified since the specified date/time.
+
+  IfNoneMatch:
+    name: If-None-Match
+    x-ms-client-name: ifNoneMatch
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Specify an ETag value for this conditional header to snapshot the
+      blob only if its ETag value does not match the value specified.
+
+  IfUnmodifiedSince:
+    name: If-Unmodified-Since
+    x-ms-client-name: ifUnmodifiedSince
+    in: header
+    required: false
+    type: string
+    format: date-time
+    x-ms-parameter-location: method
+    description: Specify this conditional header to snapshot the blob only if it has
+      been modified since the specified date/time.
+
+  IfSequenceNumberEqualTo:
+    name: x-ms-if-sequence-number-eq
+    x-ms-client-name: ifSequenceNumberEqualTo
+    in: header
+    required: false
+    type: integer
+
+  IfSequenceNumberLessThan:
+    name: x-ms-if-sequence-number-lt
+    x-ms-client-name: ifSequenceNumberLessThan
+    in: header
+    required: false
+    type: integer
+
+  IfSequenceNumberLessThanOrEqualTo:
+    name: x-ms-if-sequence-number-le
+    x-ms-client-name: ifSequenceNumberLessThanOrEqualTo
+    in: header
+    required: false
+    type: integer
+
   Include:
     name: include
     in: query
@@ -537,6 +714,17 @@ parameters:
     x-ms-parameter-location: method
     description: Specifies the origin from which the request is issued. The presence of this header results in cross-origin resource sharing (CORS) headers on the response.
 
+  PageWrite:
+    name: x-ms-page-write
+    x-ms-client-name: pageWrite
+    in: header
+    required: true
+    $inc: "#/definitions/PageWrite"
+    description: |-
+      Required. You may specify one of the following options:
+        - Update: Writes the bytes specified by the request body into the specified range. The Range and Content-Length headers must match to perform the update.
+        - Clear: Clears the specified range and releases the space used in storage for that range. To clear a range, set the Content-Length header to zero, and the Range header to a value that indicates the range to clear, up to maximum blob size.
+
   Prefix:
     name: prefix
     in: query
@@ -544,6 +732,15 @@ parameters:
     type: string
     description: Filters the results to return only containers whose name begins with the specified prefix.
     x-ms-parameter-location: method
+
+  PrevSnapshot:
+    name: prevsnapshot
+    in: query
+    required: false
+    type: string
+    format: date-time
+    x-ms-parameter-location: method
+    description:  Optional in version 2015-07-08 and newer. The prevsnapshot parameter is a DateTime value that specifies that the response will contain only pages that were changed between target blob and previous snapshot. Changed pages include both updated and cleared pages. The target blob may be a snapshot, as long as the snapshot specified by prevsnapshot is the older of the two. Note that incremental snapshots are currently supported only for blobs created on or after January 1, 2016.
 
   Range:
     name: x-ms-range
@@ -654,6 +851,10 @@ headers:
     x-ms-client-name: BlobCommittedBlockCount
     type: string
     description: The number of committed blocks present in the blob. This header is returned only for append blobs.
+  x-ms-blob-content-length:
+    x-ms-client-name: BlobContentLength
+    type: integer
+    description: The size of the blob in bytes.
   x-ms-blob-content-md5: 
     x-ms-client-name: BlobContentMD5
     type: string
@@ -716,6 +917,10 @@ headers:
     type: string
     description: This header uniquely identifies the request that was made
       and can be used for troubleshooting the request.  
+  x-ms-request-server-encrypted:
+    x-ms-client-name: IsServerEncrypted
+    type: boolean
+    description: The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise.
   x-ms-server-encrypted: 
     x-ms-client-name: IsServerEncrypted
     type: boolean
@@ -1934,68 +2139,6 @@ x-ms-paths-original:
                 2009-09-19 and above.
         default:
           "$ref": "#/responses/Default"
-  "/{container}/{blob}?comp=page":
-    put:
-      tags:
-      - pageblobs
-      operationId: PageBlobs_PutPage
-      parameters:
-      - name: comp
-        in: query
-        required: true
-        type: string
-        enum:
-        - page
-      - "$ref": "#/parameters/Container"
-      - "$ref": "#/parameters/Blob"
-      - "$ref": "#/parameters/RequiredRange"
-      - name: x-ms-page-write
-        x-ms-client-name: pageWrite
-        in: header
-        required: true
-        type: string
-        description: |-
-          Required. You may specify one of the following options:
-           - Update: Writes the bytes specified by the request body into the specified range. The Range and Content-Length headers must match to perform the update.
-           - Clear: Clears the specified range and releases the space used in storage for that range. To clear a range, set the Content-Length header to zero, and the Range header to a value that indicates the range to clear, up to maximum blob size.
-      - name: x-ms-if-sequence-number-le
-        x-ms-client-name: ifSequenceNumberLessThanOrEqualTo
-        in: header
-        required: false
-        type: integer
-      - name: x-ms-if-sequence-number-lt
-        x-ms-client-name: ifSequenceNumberLessThan
-        in: header
-        required: false
-        type: integer
-      - name: x-ms-if-sequence-number-eq
-        x-ms-client-name: ifSequenceNumberEqualTo
-        in: header
-        required: false
-        type: integer
-      - "$ref": "#/parameters/IfModifiedSince"
-      - "$ref": "#/parameters/IfUnmodifiedSince"
-      - "$ref": "#/parameters/IfMatch"
-      - "$ref": "#/parameters/IfNoneMatch"
-      - "$ref": "#/parameters/LeaseId"
-      - "$ref": "#/parameters/ApiVersionParameter"
-      - "$ref": "#/parameters/ClientRequestId"
-      - "$ref": "#/parameters/Body"
-      responses:
-        '201':
-          description: The block was created.
-          headers:
-            x-ms-request-id:
-              type: string
-              description: This header uniquely identifies the request that was made
-                and can be used for troubleshooting the request.
-            x-ms-version:
-              type: string
-              description: Indicates the version of the Blob service used to execute
-                the request. This header is returned for requests made against version
-                2009-09-19 and above.
-        default:
-          "$ref": "#/responses/Default"
   "/{container}/{blob}?comp=pagelist":
     get:
       tags:
@@ -2270,44 +2413,6 @@ x-original-parameters:
     type: string
     x-ms-parameter-location: method
     description: Specifies the content type of the blob.
-  IfModifiedSince:
-    name: If-Modified-Since
-    x-ms-client-name: ifModifiedSince
-    in: header
-    required: false
-    type: string
-    format: date-time
-    x-ms-parameter-location: method
-    description: Specify this conditional header to snapshot the blob only if it has
-      not been modified since the specified date/time.
-  IfUnmodifiedSince:
-    name: If-Unmodified-Since
-    x-ms-client-name: ifUnmodifiedSince
-    in: header
-    required: false
-    type: string
-    format: date-time
-    x-ms-parameter-location: method
-    description: Specify this conditional header to snapshot the blob only if it has
-      been modified since the specified date/time.
-  IfMatch:
-    name: If-Match
-    x-ms-client-name: ifMatches
-    in: header
-    required: false
-    type: string
-    x-ms-parameter-location: method
-    description: Specify an ETag value for this conditional header to snapshot the
-      blob only if its ETag value matches the value specified.
-  IfNoneMatch:
-    name: If-None-Match
-    x-ms-client-name: ifNoneMatch
-    in: header
-    required: false
-    type: string
-    x-ms-parameter-location: method
-    description: Specify an ETag value for this conditional header to snapshot the
-      blob only if its ETag value does not match the value specified.
 
 
 
