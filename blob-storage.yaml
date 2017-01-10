@@ -234,6 +234,46 @@ x-ms-paths:
             $ref: "#/definitions/ContainerEnumerationResults"
         default:
           $ref: "#/responses/Error"
+  "/{container}/{blob}?comp=block":
+    put:
+      tags:
+      - blockblobs
+      operationId: BlockBlobs_PutBlock
+      description: The Put Block operation creates a new block to be committed as part of a blob
+      parameters:
+      - "$ref": "#/parameters/Container"
+      - "$ref": "#/parameters/Blob"
+
+      - $inc: "#/parameters/_QueryComp"
+        enum:
+        - block
+      - "$ref": "#/parameters/BlockId"
+      - "$ref": "#/parameters/Timeout"
+
+      - "$ref": "#/parameters/ApiVersionParameter"  # Version
+      - "$ref": "#/parameters/ContentLength"
+      - "$ref": "#/parameters/ContentMD5"
+      - "$ref": "#/parameters/LeaseId"
+      - "$ref": "#/parameters/ClientRequestId"
+      # insert authentication stuff
+
+      - name: blocks
+        in: body
+        required: true
+        schema:
+          "$ref": "#/definitions/Body"
+
+      responses:
+        '201':
+          description: The block was created.
+          headers:
+            - $inc : "#/headers/Content-MD5"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/x-ms-request-server-encrypted"
+        default:
+          $ref: "#/responses/Error"
   "/{container}/{blob}?comp=blocklist":
     put:
       tags:
@@ -956,6 +996,15 @@ parameters:
       type: file
     x-ms-parameter-location: method
     description: Initial data for the blob, empty for page and append blobs
+
+  BlockId:
+    name: blockid
+    x-ms-client-name: blockId
+    in: query
+    required: true
+    x-ms-parameter-location: method
+    description: A valid Base64 string value that identifies the block. Prior to encoding, the string must be less than or equal to 64 bytes in size.
+      For a given blob, the length of the value specified for the blockid parameter must be the same size for each block.
 
   BlockListType:
     name: blocklisttype
@@ -2144,44 +2193,6 @@ x-ms-paths-original:
       responses:
         '201':
           description: The blob was created.
-          headers:
-            x-ms-request-id:
-              type: string
-              description: This header uniquely identifies the request that was made
-                and can be used for troubleshooting the request.
-            x-ms-version:
-              type: string
-              description: Indicates the version of the Blob service used to execute
-                the request. This header is returned for requests made against version
-                2009-09-19 and above.
-        default:
-          $ref: "#/responses/Error"
-  "/{container}/{blob}?comp=block":
-    put:
-      tags:
-      - blockblobs
-      operationId: BlockBlobs_PutBlock
-      parameters:
-      - name: comp
-        in: query
-        required: true
-        type: string
-        enum:
-        - block
-      - $ref: "#/parameters/Container"
-      - $ref: "#/parameters/Blob"
-      - name: blockid
-        x-ms-client-name: id
-        in: query
-        required: true
-        type: string
-      - $ref: "#/parameters/LeaseId"
-      - $ref: "#/parameters/ApiVersionParameter"
-      - $ref: "#/parameters/ClientRequestId"
-      - $ref: "#/parameters/Body"
-      responses:
-        '201':
-          description: The block was created.
           headers:
             x-ms-request-id:
               type: string
