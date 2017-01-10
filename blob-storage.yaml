@@ -33,44 +33,6 @@ produces:
 - application/octet-stream
 - text/plain
 paths:
-  "/{container}/{blob}?comp=appendblock":
-    put:
-      tags:
-      - blobs
-      operationId: Blobs_AppendBlock
-      parameters:
-      - $ref: "#/parameters/Container"
-      - $ref: "#/parameters/Blob"
-
-      - $inc: "#/parameters/_QueryComp"
-        enum:
-        - appendblock
-      - $ref: "#/parameters/Timeout"
-
-      - $ref: "#/parameters/ApiVersionParameter"  # Version
-      - $ref: "#/parameters/Content-Length"
-      - $ref: "#/parameters/Content-MD5"
-      - $ref: "#/parameters/LeaseId"
-      - $ref: "#/parameters/ClientRequestId"
-      - $ref: "#/parameters/BlobConditionMaxSize"
-      - $ref: "#/parameters/BlobConditionAppendPos"
-
-      - $ref: "#/parameters/Body"
-      # insert authentication stuff
-      responses:
-        '201':
-          description: The block was created.
-          headers:
-            - $inc : "#/headers/ETag"
-            - $inc : "#/headers/Last-Modified"
-            - $inc : "#/headers/Content-MD5"
-            - $inc : "#/headers/x-ms-request-id"
-            - $inc : "#/headers/x-ms-version"
-            - $inc : "#/headers/Date"
-            - $inc : "#/headers/x-ms-blob-append-offset"
-            - $inc : "#/headers/x-ms-blob-committed-block-count"
-        default:
-          $ref: "#/responses/Error"
   "/{container}/{blob}":
     get:
       tags:
