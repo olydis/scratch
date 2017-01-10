@@ -272,6 +272,167 @@ x-ms-paths:
             $ref: "#/definitions/ContainerEnumerationResults"
         default:
           $ref: "#/responses/Error"
+  "/{container}/{blob}?comp=page":
+    put:
+      tags:
+      - blobs
+      operationId: PageBlobs_PutPage
+      description: The Put Page operation writes a range of pages to a page blob
+      parameters:
+      - "$ref": "#/parameters/Container"
+      - "$ref": "#/parameters/Blob"
+
+      - $inc: "#/parameters/_QueryComp"
+        enum:
+        - page
+      - "$ref": "#/parameters/Timeout"
+
+      - "$ref": "#/parameters/ApiVersionParameter"  # Version
+      - "$ref": "#/parameters/Range"
+      - "$ref": "#/parameters/ContentLength"
+      - "$ref": "#/parameters/ContentMD5"
+      - "$ref": "#/parameters/PageWrite"
+      - "$ref": "#/parameters/LeaseId"
+      - "$ref": "#/parameters/IfSequenceNumberLessThanOrEqualTo"
+      - "$ref": "#/parameters/IfSequenceNumberLessThan"
+      - "$ref": "#/parameters/IfSequenceNumberEqualTo"
+      - "$ref": "#/parameters/IfModifiedSince"
+      - "$ref": "#/parameters/IfUnmodifiedSince"
+      - "$ref": "#/parameters/IfMatch"
+      - "$ref": "#/parameters/IfNoneMatch"
+      - "$ref": "#/parameters/ClientRequestId"
+
+      - "$ref": "#/parameters/Body"
+      # insert authentication stuff
+      responses:
+        '201':
+          description: The page range was written.
+          headers:
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/Content-MD5"
+            - $inc : "#/headers/x-ms-blob-content-length"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/x-ms-request-server-encrypted"
+        default:
+          "$ref": "#/responses/Error"
+  "/{container}/{blob}?comp=pagelist":
+    get:
+      tags:
+      - blobs
+      operationId: PageBlobs_GetPageRanges
+      description: The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot of a page blob
+      parameters:
+      - "$ref": "#/parameters/Container"
+      - "$ref": "#/parameters/Blob"
+
+      - $inc: "#/parameters/_QueryComp"
+        enum:
+        - pagelist
+      - "$ref": "#/parameters/Snapshot"
+      - "$ref": "#/parameters/Timeout"
+      - "$ref": "#/parameters/PrevSnapshot"
+
+      - "$ref": "#/parameters/ApiVersionParameter"  # Version
+      - "$ref": "#/parameters/Range"
+      - "$ref": "#/parameters/LeaseId"
+      - "$ref": "#/parameters/ClientRequestId"
+      # insert authentication stuff
+      responses:
+        '200':
+          description: Information on the page blob was found.
+          headers:
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/x-ms-blob-content-length"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+          schema:
+            type: string
+            # TODO: https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-page-ranges
+            # has sequence toggling between PageRange and ClearRange
+        default:
+          "$ref": "#/responses/Error"
+  "/{container}/{blob}?comp=incrementalcopy":
+    put:
+      tags:
+      - blobs
+      operationId: PageBlobs_IncrementalCopy
+      description: The Incremental Copy Blob operation copies a snapshot of the source page blob to a destination page blob. The snapshot is copied such that only the differential changes between the previously copied snapshot are transferred to the destination. The copied snapshots are complete copies of the original snapshot and can be read or copied from as usual. This API is supported since REST version 2016-05-31.
+      parameters:
+      - "$ref": "#/parameters/Container"
+      - "$ref": "#/parameters/Blob"
+
+      - $inc: "#/parameters/_QueryComp"
+        enum:
+        - incrementalcopy
+      - "$ref": "#/parameters/Timeout"
+
+      - "$ref": "#/parameters/ApiVersionParameter"  # Version
+      - "$ref": "#/parameters/XMsMeta"
+      - "$ref": "#/parameters/IfModifiedSince"
+      - "$ref": "#/parameters/IfUnmodifiedSince"
+      - "$ref": "#/parameters/IfMatch"
+      - "$ref": "#/parameters/IfNoneMatch"
+      - "$ref": "#/parameters/CopySource"
+      - "$ref": "#/parameters/ClientRequestId"
+      # insert authentication stuff
+      responses:
+        '202':
+          description: The blob was copied.
+          headers:
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/x-ms-copy-id"
+            - $inc : "#/headers/x-ms-copy-status"
+        default:
+          "$ref": "#/responses/Error"
+  "/{container}/{blob}?comp=appendblock":
+    put:
+      tags:
+      - blobs
+      operationId: Blobs_AppendBlock
+      description: The Append Block operation commits a new block of data to the end of an existing append blob.
+        The Append Block operation is permitted only if the blob was created with x-ms-blob-type set to AppendBlob. Append Block is supported only on version 2015-02-21 version or later.
+      parameters:
+      - "$ref": "#/parameters/Container"
+      - "$ref": "#/parameters/Blob"
+
+      - $inc: "#/parameters/_QueryComp"
+        enum:
+        - appendblock
+      - "$ref": "#/parameters/Timeout"
+
+      - "$ref": "#/parameters/ApiVersionParameter"  # Version
+      - "$ref": "#/parameters/Content-Length"
+      - "$ref": "#/parameters/Content-MD5"
+      - "$ref": "#/parameters/LeaseId"
+      - "$ref": "#/parameters/ClientRequestId"
+      - "$ref": "#/parameters/BlobConditionMaxSize"
+      - "$ref": "#/parameters/BlobConditionAppendPos"
+
+      - "$ref": "#/parameters/Body"
+      # insert authentication stuff
+      responses:
+        '201':
+          description: The block was created.
+          headers:
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/Content-MD5"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/x-ms-blob-append-offset"
+            - $inc : "#/headers/x-ms-blob-committed-block-count"
+        default:
+          "$ref": "#/responses/Error"
 
   "/?restype=service&comp=properties":
     put:
@@ -498,10 +659,17 @@ definitions:
       DefaultServiceVersion:
         description: The default version to use for requests to the Blob service if an incoming request’s version is not specified. Possible values include version 2008-10-27 and all more recent versions
         type: string
-      
 
+  PageWrite:
+    type: string
+    enum:
+      - update
+      - clear
+    x-ms-enum:
+      name: PageWrite
+      modelAsString: false
+      
 parameters:
-  
   # Meta-Parameters (via x-ms-paths) ========================================================================
   _QueryComp:
     name: comp
@@ -596,6 +764,34 @@ parameters:
     x-ms-parameter-location: method
     description: The container name.
 
+  ContentLength:
+    name: Content-Length
+    x-ms-client-name: contentLength
+    in: header
+    required: true
+    type: integer
+    x-ms-parameter-location: method
+    description: Specifies the number of bytes being transmitted in the request body. When the x-ms-page-write header is set to clear, the value of this header must be set to zero.
+
+  ContentMD5:
+    name: Content-MD5
+    x-ms-client-name: contentMD5
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: An MD5 hash of the page content. This hash is used to verify the integrity of the page during transport. When this header is specified, the storage service compares the hash of the content that has arrived with the header value that was sent. If the two hashes do not match, the operation will fail with error code 400 (Bad Request). 
+      The Content-MD5 header is not permitted when the x-ms-page-write header is set to clear. If it is included with the request, the Blob service returns status code 400 (Bad Request).
+
+  CopySource:
+    name: x-ms-copy-source
+    x-ms-client-name: copySource
+    in: header
+    required: true
+    type: string
+    x-ms-parameter-location: method
+    description: Specifies the name of the source page blob snapshot. This value is a URL of up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it would appear in a request URI. The source blob must either be public or must be authenticated via a shared access signature.
+
   DeleteSnapshots:
     name: x-ms-delete-snapshots
     x-ms-client-name: deleteSnapshots
@@ -615,6 +811,69 @@ parameters:
     x-ms-parameter-location: method
     description: When set to true and specified together with the Range, the service returns the MD5 hash for the range, as long as the range is less than or equal to 4 MB in size.
   
+  IfMatch:
+    name: If-Match
+    x-ms-client-name: ifMatches
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Specify an ETag value for this conditional header to snapshot the
+      blob only if its ETag value matches the value specified.
+
+  IfModifiedSince:
+    name: If-Modified-Since
+    x-ms-client-name: ifModifiedSince
+    in: header
+    required: false
+    type: string
+    format: date-time
+    x-ms-parameter-location: method
+    description: Specify this conditional header to snapshot the blob only if it has
+      not been modified since the specified date/time.
+
+  IfNoneMatch:
+    name: If-None-Match
+    x-ms-client-name: ifNoneMatch
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Specify an ETag value for this conditional header to snapshot the
+      blob only if its ETag value does not match the value specified.
+
+  IfUnmodifiedSince:
+    name: If-Unmodified-Since
+    x-ms-client-name: ifUnmodifiedSince
+    in: header
+    required: false
+    type: string
+    format: date-time
+    x-ms-parameter-location: method
+    description: Specify this conditional header to snapshot the blob only if it has
+      been modified since the specified date/time.
+
+  IfSequenceNumberEqualTo:
+    name: x-ms-if-sequence-number-eq
+    x-ms-client-name: ifSequenceNumberEqualTo
+    in: header
+    required: false
+    type: integer
+
+  IfSequenceNumberLessThan:
+    name: x-ms-if-sequence-number-lt
+    x-ms-client-name: ifSequenceNumberLessThan
+    in: header
+    required: false
+    type: integer
+
+  IfSequenceNumberLessThanOrEqualTo:
+    name: x-ms-if-sequence-number-le
+    x-ms-client-name: ifSequenceNumberLessThanOrEqualTo
+    in: header
+    required: false
+    type: integer
+
   Include:
     name: include
     in: query
@@ -660,6 +919,17 @@ parameters:
     x-ms-parameter-location: method
     description: Specifies the origin from which the request is issued. The presence of this header results in cross-origin resource sharing (CORS) headers on the response.
 
+  PageWrite:
+    name: x-ms-page-write
+    x-ms-client-name: pageWrite
+    in: header
+    required: true
+    $inc: "#/definitions/PageWrite"
+    description: |-
+      Required. You may specify one of the following options:
+        - Update: Writes the bytes specified by the request body into the specified range. The Range and Content-Length headers must match to perform the update.
+        - Clear: Clears the specified range and releases the space used in storage for that range. To clear a range, set the Content-Length header to zero, and the Range header to a value that indicates the range to clear, up to maximum blob size.
+
   Prefix:
     name: prefix
     in: query
@@ -667,6 +937,15 @@ parameters:
     type: string
     description: Filters the results to return only containers whose name begins with the specified prefix.
     x-ms-parameter-location: method
+
+  PrevSnapshot:
+    name: prevsnapshot
+    in: query
+    required: false
+    type: string
+    format: date-time
+    x-ms-parameter-location: method
+    description:  Optional in version 2015-07-08 and newer. The prevsnapshot parameter is a DateTime value that specifies that the response will contain only pages that were changed between target blob and previous snapshot. Changed pages include both updated and cleared pages. The target blob may be a snapshot, as long as the snapshot specified by prevsnapshot is the older of the two. Note that incremental snapshots are currently supported only for blobs created on or after January 1, 2016.
 
   Range:
     name: x-ms-range
@@ -707,6 +986,18 @@ parameters:
     x-ms-parameter-location: method
     description: The timeout parameter is expressed in seconds. 
       For more information, see <a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>
+
+  XMsMeta:
+    name: x-ms-meta
+    in: query
+    required: false
+    type: number
+    format: integer
+    minimum: 0
+    x-ms-parameter-location: method
+    description: Optional. Specifies a user-defined name-value pair associated with the blob. If no name-value pairs are specified, the operation will copy the metadata from the source blob or file to the destination blob. If one or more name-value pairs are specified, the destination blob is created with the specified metadata, and metadata is not copied from the source blob or file. 
+      Note that beginning with version 2009-09-19, metadata names must adhere to the naming rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more information.
+    x-ms-header-collection-prefix: x-ms-meta-
 
 responses:
   Error:
@@ -774,6 +1065,10 @@ headers:
     x-ms-client-name: BlobCommittedBlockCount
     type: string
     description: The number of committed blocks present in the blob. This header is returned only for append blobs.
+  x-ms-blob-content-length:
+    x-ms-client-name: BlobContentLength
+    type: integer
+    description: The size of the blob in bytes.
   x-ms-blob-content-md5: 
     x-ms-client-name: BlobContentMD5
     type: string
@@ -794,7 +1089,7 @@ headers:
   x-ms-copy-id: 
     x-ms-client-name: CopyId
     type: string
-    description: String identifier for the last attempted Copy Blob operation where this blob was the destination blob. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.
+    description: String identifier for this copy operation. Use with Get Blob Properties to check the status of this copy operation, or pass to Abort Copy Blob to abort a pending copy.
   x-ms-copy-progress: 
     x-ms-client-name: CopyProgress
     type: string
@@ -836,6 +1131,10 @@ headers:
     type: string
     description: This header uniquely identifies the request that was made
       and can be used for troubleshooting the request.  
+  x-ms-request-server-encrypted:
+    x-ms-client-name: IsServerEncrypted
+    type: boolean
+    description: The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise.
   x-ms-server-encrypted: 
     x-ms-client-name: IsServerEncrypted
     type: boolean
@@ -1170,7 +1469,7 @@ x-ms-paths-original:
           schema:
             $ref: "#/definitions/ServiceProperties"
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/?restype=service&comp=stats":
     get:
       tags:
@@ -1207,7 +1506,7 @@ x-ms-paths-original:
           schema:
             $ref: "#/definitions/ServiceStats"
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   
   "/{container}?restype=container":
     get:
@@ -1260,7 +1559,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
     head:
       tags:
       - containers
@@ -1349,7 +1648,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
     delete:
       tags:
       - containers
@@ -1379,7 +1678,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}?restype=container&comp=list":
     get:
       tags:
@@ -1460,7 +1759,7 @@ x-ms-paths-original:
           schema:
             $ref: "#/definitions/BlobEnumerationResults"
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}?restype=container&comp=metadata":
     put:
       tags:
@@ -1502,7 +1801,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
     get:
       tags:
       - containers
@@ -1541,7 +1840,7 @@ x-ms-paths-original:
               type: string
               x-ms-header-collection-prefix: x-ms-meta-
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}?restype=container&comp=lease":
     put:
       tags:
@@ -1588,7 +1887,7 @@ x-ms-paths-original:
                 This header is returned only for a successful request to break the
                 lease. If the break is immediate, 0 is returned.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}/{blob}?fakeparameter=block":
     put:
       tags:
@@ -1628,7 +1927,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}/{blob}?fakeparameter=page":
     put:
       tags:
@@ -1666,7 +1965,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}/{blob}?fakeparameter=append":
     put:
       tags:
@@ -1704,7 +2003,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}/{blob}?comp=block":
     put:
       tags:
@@ -1742,7 +2041,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}/{blob}?comp=properties":
     put:
       tags:
@@ -1785,7 +2084,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
     get:
       tags:
       - blobs
@@ -1813,7 +2112,7 @@ x-ms-paths-original:
           description: Success.
           headers: {}
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}/{blob}?comp=metadata":
     put:
       tags:
@@ -1856,7 +2155,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
     get:
       tags:
       - blobs
@@ -1896,7 +2195,7 @@ x-ms-paths-original:
               type: string
               x-ms-header-collection-prefix: x-ms-meta-
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}/{blob}?comp=blocklist":
     get:
       tags:
@@ -1947,7 +2246,7 @@ x-ms-paths-original:
           schema:
             $ref: "#/definitions/BlockListInformation"
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
     put:
       tags:
       - blockblobs
@@ -2020,7 +2319,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}/{blob}?comp=page":
     put:
       tags:
@@ -2082,7 +2381,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}/{blob}?comp=pagelist":
     get:
       tags:
@@ -2121,7 +2420,7 @@ x-ms-paths-original:
           schema:
             type: string
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}/{blob}?comp=appendblock":
     put:
       tags:
@@ -2181,7 +2480,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}/{blob}?comp=lease":
     put:
       tags:
@@ -2217,7 +2516,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   "/{container}/{blob}?comp=snapshot":
     put:
       tags:
@@ -2253,7 +2552,7 @@ x-ms-paths-original:
                 the request. This header is returned for requests made against version
                 2009-09-19 and above.
         default:
-          $ref: "#/responses/Default"
+          $ref: "#/responses/Error"
   # "/?restype=service&comp=properties":
   #   get:
   #     tags:
@@ -2290,7 +2589,7 @@ x-ms-paths-original:
   #         schema:
   #           $ref: "#/definitions/ServiceProperties"
   #       default:
-  #         $ref: "#/responses/Default"
+  #         $ref: "#/responses/Error"
 
 
 x-original-parameters:
@@ -2348,14 +2647,7 @@ x-original-parameters:
       value of the blob's full size. Given that pages must be aligned with 512-byte
       boundaries, the start offset must be a modulus of 512 and the end offset must
       be a modulus of 512 – 1. Examples of valid byte ranges are 0-511, 512-1023 etc.
-  CopySource:
-    name: x-ms-copy-source
-    x-ms-client-name: copySource
-    in: header
-    required: false
-    type: string
-    x-ms-parameter-location: method
-    description: Specifies the name of the source blob or file.
+
   ContentType:
     name: Content-Type
     x-ms-client-name: contentType
@@ -2364,46 +2656,4 @@ x-original-parameters:
     type: string
     x-ms-parameter-location: method
     description: Specifies the content type of the blob.
-  IfModifiedSince:
-    name: If-Modified-Since
-    x-ms-client-name: ifModifiedSince
-    in: header
-    required: false
-    type: string
-    format: date-time
-    x-ms-parameter-location: method
-    description: Specify this conditional header to snapshot the blob only if it has
-      not been modified since the specified date/time.
-  IfUnmodifiedSince:
-    name: If-Unmodified-Since
-    x-ms-client-name: ifUnmodifiedSince
-    in: header
-    required: false
-    type: string
-    format: date-time
-    x-ms-parameter-location: method
-    description: Specify this conditional header to snapshot the blob only if it has
-      been modified since the specified date/time.
-  IfMatch:
-    name: If-Match
-    x-ms-client-name: ifMatches
-    in: header
-    required: false
-    type: string
-    x-ms-parameter-location: method
-    description: Specify an ETag value for this conditional header to snapshot the
-      blob only if its ETag value matches the value specified.
-  IfNoneMatch:
-    name: If-None-Match
-    x-ms-client-name: ifNoneMatch
-    in: header
-    required: false
-    type: string
-    x-ms-parameter-location: method
-    description: Specify an ETag value for this conditional header to snapshot the
-      blob only if its ETag value does not match the value specified.
-
-
-
-
 
