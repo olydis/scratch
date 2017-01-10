@@ -425,7 +425,7 @@ x-ms-paths:
 
     get:
       tags:
-      - service
+        - service
       operationId: Service_GetProperties
       description: gets the properties of a storage account’s Blob service, including properties for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
       parameters:
@@ -448,7 +448,33 @@ x-ms-paths:
             $ref: "#/definitions/StorageServiceProperties"
         default:
           $ref: "#/responses/Error"
-  
+
+  "/?restype=service&comp=properties":
+    get:
+      tags: 
+        - service
+      operationId: Service_GetStats
+      description: Retrieves statistics related to replication for the Blob service. It is only available on the secondary location endpoint when read-access geo-redundant replication is enabled for the storage account. 
+      parameters:
+        - $inc: "#/parameters/_ResType"
+          enum:
+            - service
+        - $inc: "#/parameters/_QueryComp"
+          enum:
+            - stats
+        - $ref: '#/parameters/Timeout'
+        - $ref: "#/parameters/ApiVersionParameter"
+        - $ref: "#/parameters/ClientRequestId"
+      responses:
+        200:
+          description: Success.
+          headers:
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : '#/headers/Date'
+          schema:
+            $ref: '#/definitions/StorageServiceStats'
+
 # 
 definitions:
   # Enums ========================================================================
@@ -482,6 +508,16 @@ definitions:
       - only
     x-ms-enum:
       name: DeleteSnapshotsOption
+      modelAsString: false
+  
+  GeoReplicationStatus:
+    type: string
+    enum:
+      - live
+      - bootstrap
+      - unavailable
+    x-ms-enum:
+      name: GeoReplicationStatus
       modelAsString: false
 
   LeaseDuration:
@@ -543,6 +579,17 @@ definitions:
         format: integer
         minimum: 0 
 
+  GeoReplication:
+    type: object
+    properties:
+      Status:
+        description: The status of the secondary location
+        $inc: '#/definitions/GeoReplication'
+      LastSyncTime:
+        description: A GMT date/time value, to the second. All primary writes preceding this value are guaranteed to be available for read operations at the secondary. Primary writes after this point in time may or may not be available for reads.
+        type: string
+        format: date-time
+
   Logging:
     description: Azure Analytics Logging settings.
     type: object      
@@ -600,7 +647,7 @@ definitions:
         maximim: 365
 
   StorageServiceProperties:
-    description:
+    description: Storage Service Properties.
     type: object
     properties:
       Logging:
@@ -621,6 +668,14 @@ definitions:
       DefaultServiceVersion:
         description: The default version to use for requests to the Blob service if an incoming request’s version is not specified. Possible values include version 2008-10-27 and all more recent versions
         type: string
+
+  StorageServiceStats:
+    description: Stats for the storage service.
+      type: object
+      properties:
+        GeoReplication:
+          description: Geo-Replication information for the Secondary Storage Service
+          $ref: "#/definitions/GeoReplication"
 
   PageWrite:
     type: string
@@ -1155,24 +1210,7 @@ x-original-definitions:
         $ref: "#/definitions/RetentionPolicy"
         xml:
           name: RetentionPolicy
-  ServiceProperties:
-    type: object
-    properties:
-      
-  ServiceStats:
-    type: object
-    properties:
-      StorageServiceStats:
-        type: object
-        properties:
-          GeoReplication:
-            type: object
-            properties:
-              Status:
-                type: string
-              LastSyncTime:
-                type: string
-                format: date-time
+
   LeaseStatus:
     type: string
     enum:
