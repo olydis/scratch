@@ -215,7 +215,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-lease-status'
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
-            - $inc: '#/headers/x-ms-Date'
+            - $inc: '#/headers/Date'
             - $inc: '#/headers/x-ms-blob-public-access'
         default:
           $ref: '#/responses/Error'
@@ -454,7 +454,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
-            - $inc: '#/headers/Access-Control-Flow-Origin'
+            - $inc: '#/headers/Access-Control-Allow-Origin'
             - $inc: '#/headers/Access-Control-Expose-Headers'
             - $inc: '#/headers/Access-Control-Allow-Credentials'
         '201':
@@ -467,7 +467,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
-            - $inc: '#/headers/Access-Control-Flow-Origin'
+            - $inc: '#/headers/Access-Control-Allow-Origin'
             - $inc: '#/headers/Access-Control-Expose-Headers'
             - $inc: '#/headers/Access-Control-Allow-Credentials'
         '202':
@@ -480,7 +480,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
-            - $inc: '#/headers/Access-Control-Flow-Origin'
+            - $inc: '#/headers/Access-Control-Allow-Origin'
             - $inc: '#/headers/Access-Control-Expose-Headers'
             - $inc: '#/headers/Access-Control-Allow-Credentials'
         default:
@@ -832,7 +832,7 @@ x-ms-paths:
           headers:
             - $inc: '#/headers/ETag'
             - $inc: '#/headers/Last-Modified'
-            - $inc: '#/headers/x-ms-blobs-sequence-number'
+            - $inc: '#/headers/x-ms-blob-sequence-number'
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
@@ -942,7 +942,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
-            - $inc: '#/headers/Access-Control-Flow-Origin'
+            - $inc: '#/headers/Access-Control-Allow-Origin'
             - $inc: '#/headers/Access-Control-Expose-Headers'
             - $inc: '#/headers/Access-Control-Allow-Credentials'
         '201':
@@ -955,7 +955,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
-            - $inc: '#/headers/Access-Control-Flow-Origin'
+            - $inc: '#/headers/Access-Control-Allow-Origin'
             - $inc: '#/headers/Access-Control-Expose-Headers'
             - $inc: '#/headers/Access-Control-Allow-Credentials'
         '202':
@@ -968,7 +968,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
-            - $inc: '#/headers/Access-Control-Flow-Origin'
+            - $inc: '#/headers/Access-Control-Allow-Origin'
             - $inc: '#/headers/Access-Control-Expose-Headers'
             - $inc: '#/headers/Access-Control-Allow-Credentials'
         default:
@@ -1547,7 +1547,7 @@ definitions:
     properties:
       Status:
         description: The status of the secondary location
-        $inc: '#/definitions/GeoReplication'
+        $inc: '#/definitions/GeoReplicationStatus'
       LastSyncTime:
         description: A GMT date/time value, to the second. All primary writes preceding this value are guaranteed to be available for read operations at the secondary. Primary writes after this point in time may or may not be available for reads.
         type: string
@@ -2259,6 +2259,10 @@ headers:
       this response header is returned with the value of the whole blob’s MD5 value. This value may or 
       may not be equal to the value returned in Content-MD5 header, with the latter calculated from the 
       requested range
+  x-ms-blob-public-access:
+    x-ms-client-name: BlobPublicAccess
+    $inc: '#/definitions/BlobPublicAccessType'
+    description: Indicated whether data in the container may be accessed publicly and the level of access
   x-ms-blob-sequence-number: 
     x-ms-client-name: BlobSequenceNumber
     type: string
@@ -2317,6 +2321,10 @@ headers:
     x-ms-client-name: LeaseDuration
     $inc: '#/definitions/LeaseDuration'
     description: When a blob is leased, specifies whether the lease is of infinite or fixed duration.
+  x-ms-lease-id:
+    x-ms-client-name: LeaseId
+    type: string
+    description: Uniquely identifies a container's lease
   x-ms-lease-state: 
     x-ms-client-name: LeaseState
     $inc: '#/definitions/LeaseState'
@@ -2325,6 +2333,10 @@ headers:
     x-ms-client-name: LeaseStatus
     $inc: '#/definitions/LeaseStatus'
     description: The current lease status of the blob.
+  x-ms-lease-time:
+    x-ms-client-name: LeaseTime
+    type: integer
+    description: Approximate time remaining in the lease period, in seconds.
   x-ms-meta: # ie, supports x-ms-meta-*:value
     type: string
     x-ms-client-name: Metadata
@@ -2339,6 +2351,11 @@ headers:
     type: boolean
     description: The value of this header is set to true if the contents of the request 
       are successfully encrypted using the specified algorithm, and false otherwise.
+  x-ms-snapshot:
+    x-ms-client-name: Snapshot
+    type: string
+    format: date-time
+    description: Uniquely identifies the snapshot and indicates the snapshot version. It may be used in subsequent requests to access the snapshot
   x-ms-server-encrypted: 
     x-ms-client-name: IsServerEncrypted
     type: boolean
