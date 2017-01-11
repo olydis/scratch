@@ -144,6 +144,7 @@ x-ms-paths:
             $ref: '#/definitions/ContainerEnumerationResults'
         default:
           $ref: '#/responses/Error'
+
   #
   # Container Methods  
   #
@@ -1372,13 +1373,13 @@ definitions:
       name: BlockListType
       modelAsString: false
   
-  BlobPublicAccessType:
+  PublicAccessType:
     type: string
     enum:
       - container
       - blob
     x-ms-enum:
-      name: BlobPublicAccessType
+      name: PublicAccessType
       modelAsString: false
 
   CopyStatus:
@@ -1462,6 +1463,93 @@ definitions:
         description: the permissions for the acl policy
         type: string
 
+  Blob:
+    type: object
+    properties:
+      Name:
+        type: string
+      Snapshot:
+        type: string
+        format: date-time
+      Properties:
+        $ref: '#/definitions/BlobProperties'
+      Metadata:
+        type: object
+
+  BlobProperties:
+    type: object
+    properties:
+      Last-Modified:
+        type: string
+        format: date-time
+      Etag:
+        type: string
+      Content-Length:
+        type: integer
+        description: Size in bytes
+      Content-Type:
+        type: string
+      Content-Encoding:
+        type: string
+      Content-Language:
+        type: string
+      Content-MD5:
+        type: string
+      Cache-Control:
+        type: string
+      x-ms-blob-sequence-number:
+        type: string
+      BlobType:
+        type: string
+      LeaseStatus:
+        $ref: '#/definitions/LeaseStatus'
+      LeaseState:
+        $ref: '#/definitions/LeaseState'
+      LeaseDuration:
+        $ref: '#/definitions/LeaseDuration'
+      CopyId:
+        type: string
+      CopyStatus:
+        $ref: '#/definitions/CopyStatus'
+      CopySource:
+        type: string
+      CopyProgress:
+        type: string
+      CopyCompletionTime:
+        type: string
+        format: date-time
+      CopyStatusDescription:
+        type: string
+      ServerEncrypted:
+        type: boolean
+      IncrementalCopy:
+        type: boolean
+
+  BlobEnumerationResults:
+    xml:
+      name: EnumerationResults
+    type: object
+    properties:
+      Prefix:
+        type: string
+      Marker:
+        type: string
+      MaxResults:
+        type: integer
+      Delimiter:
+        type: string
+      Blobs:
+        xml:
+          wrapped: true
+        type: array # weird thingy with BlogPrefix
+        items:
+          xml:
+            name: Blob
+          type:
+            $ref: '#/definitions/Blob'
+      NextMarker:
+        type: string
+
   Block:
     type: object
     properties:
@@ -1513,6 +1601,56 @@ definitions:
     items:
       $ref: '#/definitions/Block'
       # weird dependent tag name and value
+
+  Container:
+    type: object
+    properties:
+      Name:
+        type: string
+      Properties:
+        $ref: '#/definitions/ContainerProperties'
+      Metadata:
+        type: object
+
+  ContainerProperties:
+    type: object
+    properties:
+      Last-Modified:
+        type: string
+        format: date-time
+      Etag:
+        type: string
+      LeaseStatus:
+        $ref: '#/definitions/LeaseStatus'
+      LeaseState:
+        $ref: '#/definitions/LeaseState'
+      LeaseDuration:
+        $ref: '#/definitions/LeaseDuration'
+      PublicAccess:
+        $ref: '#/definitions/PublicAccessType'
+
+  ContainerEnumerationResults:
+    xml:
+      name: EnumerationResults
+    type: object
+    properties:
+      Prefix:
+        type: string
+      Marker:
+        type: string
+      MaxResults:
+        type: integer
+      Containers:
+        xml:
+          wrapped: true
+        type: array # weird thingy with BlogPrefix
+        items:
+          xml:
+            name: Container
+          type:
+            $ref: '#/definitions/Container'
+      NextMarker:
+        type: string
 
   CorsRule:
     description: CORS is an HTTP feature that enables a web application running under one domain to access resources in another domain. Web browsers implement a security restriction known as same-origin policy that prevents a web page from calling APIs in a different domain; CORS provides a secure way to allow one domain (the origin domain) to call APIs in another domain
@@ -1741,7 +1879,7 @@ parameters:
     x-ms-client-name: access
     in: header
     required: false
-    $inc: '#/definitions/BlobPublicAccessType'
+    $inc: '#/definitions/PublicAccessType'
     x-ms-parameter-location: method
     description: Specifies whether data in the container may be accessed publicly and the level of access
 
@@ -2261,7 +2399,7 @@ headers:
       requested range
   x-ms-blob-public-access:
     x-ms-client-name: BlobPublicAccess
-    $inc: '#/definitions/BlobPublicAccessType'
+    $inc: '#/definitions/PublicAccessType'
     description: Indicated whether data in the container may be accessed publicly and the level of access
   x-ms-blob-sequence-number: 
     x-ms-client-name: BlobSequenceNumber
