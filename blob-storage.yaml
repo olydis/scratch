@@ -488,7 +488,7 @@ paths:
     put:
       tags:
       - blobs
-      operationId: Blobs_Snapshot
+      operationId: Blobs_TakeSnapshot
       description: The Snapshot Blob operation creates a read-only snapshot of a blob
       parameters:
         - $ref: "#/parameters/Container"
@@ -1488,6 +1488,15 @@ parameters:
     x-ms-parameter-location: method
     description: 'Specifies whether to return the list of committed blocks, the list of uncommitted blocks, or both lists together.'
 
+  ContentType:
+    name: Content-Type
+    x-ms-client-name: contentType
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Specifies the content type of a blob.
+  
   CopyActionAbort:
     name: x-ms-copy-action
     x-ms-client-name: copyActionAbortConstant
@@ -2753,160 +2762,6 @@ x-ms-paths-original:
                 2009-09-19 and above.
         default:
           $ref: "#/responses/Error"
-  "/{container}/{blob}?comp=properties":
-    put:
-      tags:
-      - blobs
-      operationId: Blobs_SetProperties
-      parameters:
-      - name: restype
-        in: query
-        required: true
-        type: string
-        enum:
-        - container
-      - name: comp
-        in: query
-        required: true
-        type: string
-        enum:
-        - metadata
-      - $ref: "#/parameters/Container"
-      - $ref: "#/parameters/Blob"
-      - name: metadata
-        in: header
-        required: false
-        type: string
-        x-ms-header-collection-prefix: x-ms-meta-
-      - $ref: "#/parameters/LeaseId"
-      - $ref: "#/parameters/ApiVersionParameter"
-      - $ref: "#/parameters/ClientRequestId"
-      responses:
-        '201':
-          description: Success.
-          headers:
-            x-ms-request-id:
-              type: string
-              description: This header uniquely identifies the request that was made
-                and can be used for troubleshooting the request.
-            x-ms-version:
-              type: string
-              description: Indicates the version of the Blob service used to execute
-                the request. This header is returned for requests made against version
-                2009-09-19 and above.
-        default:
-          $ref: "#/responses/Error"
-    get:
-      tags:
-      - blobs
-      operationId: Blobs_GetProperties
-      parameters:
-      - name: restype
-        in: query
-        required: true
-        type: string
-        enum:
-        - container
-      - name: comp
-        in: query
-        required: true
-        type: string
-        enum:
-        - metadata
-      - $ref: "#/parameters/Container"
-      - $ref: "#/parameters/Blob"
-      - $ref: "#/parameters/LeaseId"
-      - $ref: "#/parameters/ApiVersionParameter"
-      - $ref: "#/parameters/ClientRequestId"
-      responses:
-        '201':
-          description: Success.
-          headers: {}
-        default:
-          $ref: "#/responses/Error"
-  "/{container}/{blob}?comp=metadata":
-    put:
-      tags:
-      - blobs
-      operationId: Blobs_SetMetadata
-      parameters:
-      - name: restype
-        in: query
-        required: true
-        type: string
-        enum:
-        - container
-      - name: comp
-        in: query
-        required: true
-        type: string
-        enum:
-        - metadata
-      - $ref: "#/parameters/Container"
-      - $ref: "#/parameters/Blob"
-      - name: metadata
-        in: header
-        required: true
-        type: string
-        x-ms-header-collection-prefix: x-ms-meta-
-      - $ref: "#/parameters/LeaseId"
-      - $ref: "#/parameters/ApiVersionParameter"
-      - $ref: "#/parameters/ClientRequestId"
-      responses:
-        '201':
-          description: Success.
-          headers:
-            x-ms-request-id:
-              type: string
-              description: This header uniquely identifies the request that was made
-                and can be used for troubleshooting the request.
-            x-ms-version:
-              type: string
-              description: Indicates the version of the Blob service used to execute
-                the request. This header is returned for requests made against version
-                2009-09-19 and above.
-        default:
-          $ref: "#/responses/Error"
-    get:
-      tags:
-      - blobs
-      operationId: Blobs_GetMetadata
-      parameters:
-      - name: restype
-        in: query
-        required: true
-        type: string
-        enum:
-        - container
-      - name: comp
-        in: query
-        required: true
-        type: string
-        enum:
-        - metadata
-      - $ref: "#/parameters/Container"
-      - $ref: "#/parameters/Blob"
-      - $ref: "#/parameters/LeaseId"
-      - $ref: "#/parameters/ApiVersionParameter"
-      - $ref: "#/parameters/ClientRequestId"
-      responses:
-        '201':
-          description: Success.
-          headers:
-            x-ms-request-id:
-              type: string
-              description: This header uniquely identifies the request that was made
-                and can be used for troubleshooting the request.
-            x-ms-version:
-              type: string
-              description: Indicates the version of the Blob service used to execute
-                the request. This header is returned for requests made against version
-                2009-09-19 and above.
-            metadata:
-              type: string
-              x-ms-header-collection-prefix: x-ms-meta-
-        default:
-          $ref: "#/responses/Error"
   "/{container}/{blob}?comp=pagelist":
     get:
       tags:
@@ -3042,42 +2897,6 @@ x-ms-paths-original:
                 2009-09-19 and above.
         default:
           $ref: "#/responses/Error"
-  "/{container}/{blob}?comp=snapshot":
-    put:
-      tags:
-      - blobs
-      operationId: Blobs_TakeSnapshot
-      parameters:
-      - name: comp
-        in: query
-        required: true
-        type: string
-        enum:
-        - snapshot
-      - $ref: "#/parameters/Container"
-      - $ref: "#/parameters/Blob"
-      - $ref: "#/parameters/IfModifiedSince"
-      - $ref: "#/parameters/IfUnmodifiedSince"
-      - $ref: "#/parameters/IfMatch"
-      - $ref: "#/parameters/IfNoneMatch"
-      - $ref: "#/parameters/LeaseId"
-      - $ref: "#/parameters/ApiVersionParameter"
-      - $ref: "#/parameters/ClientRequestId"
-      responses:
-        '201':
-          description: The blob snapshot was created.
-          headers:
-            x-ms-request-id:
-              type: string
-              description: This header uniquely identifies the request that was made
-                and can be used for troubleshooting the request.
-            x-ms-version:
-              type: string
-              description: Indicates the version of the Blob service used to execute
-                the request. This header is returned for requests made against version
-                2009-09-19 and above.
-        default:
-          $ref: "#/responses/Error"
   # "/?restype=service&comp=properties":
   #   get:
   #     tags:
@@ -3160,12 +2979,4 @@ x-original-parameters:
       boundaries, the start offset must be a modulus of 512 and the end offset must
       be a modulus of 512 – 1. Examples of valid byte ranges are 0-511, 512-1023 etc.
 
-  ContentType:
-    name: Content-Type
-    x-ms-client-name: contentType
-    in: header
-    required: false
-    type: string
-    x-ms-parameter-location: method
-    description: Specifies the content type of the blob.
 
