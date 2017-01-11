@@ -38,16 +38,18 @@ paths:
       tags:
       - blobs
       operationId: Blobs_Get
+      description: The Get Blob operation reads or downloads a blob from the system, including its metadata and properties. You can also call Get Blob to read a snapshot.
       parameters:
       - $ref: "#/parameters/Container"
       - $ref: "#/parameters/Blob"
       - $ref: "#/parameters/Snapshot"
       - $ref: "#/parameters/Timeout"
+
+      - $ref: "#/parameters/ApiVersionParameter"  # Version
       - $ref: "#/parameters/Range"
       - $ref: "#/parameters/LeaseId"
       - $ref: "#/parameters/GetRangeContentMD5"
       - $ref: "#/parameters/Origin"
-      - $ref: "#/parameters/ApiVersionParameter"  # Version
       - $ref: "#/parameters/ClientRequestId"
       # insert authentication stuff
       responses:
@@ -133,18 +135,17 @@ paths:
       tags:
       - blobs
       operationId: Blobs_GetProperties
+      description: The Get Blob Properties operation returns all user-defined metadata, standard HTTP properties, and system properties for the blob. It does not return the content of the blob.
       parameters:
         - $ref: "#/parameters/Container"
         - $ref: "#/parameters/Blob"
         - $ref: "#/parameters/Snapshot"
         - $ref: "#/parameters/Timeout"
-        - $ref: "#/parameters/LeaseId"
+
         - $ref: "#/parameters/ApiVersionParameter"  # Version
+        - $ref: "#/parameters/LeaseId"
         - $ref: "#/parameters/ClientRequestId"
-      # Authentication Header Parameters:
-      #   see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/authentication-for-the-azure-storage-services
-      # - $ref : "#/parameters/Authorization" --  Specifies the authentication scheme, account name, and signature. 
-      # - $ref : "#/parameters/Date" Specifies the Coordinated Universal Time (UTC) for the request
+        # Authentication Parameters.
       responses:
         '200':
           description: Returns the properties of the blob.
@@ -180,22 +181,368 @@ paths:
     delete:
       tags:
       - blobs
-      operationId: Blobs_Remove
+      operationId: Blobs_Delete
+      description: The Delete Blob operation marks the specified blob or snapshot for deletion. The blob is later deleted during garbage collection.
+        Note that in order to delete a blob, you must delete all of its snapshots. You can delete both at the same time with the Delete Blob operation.
       parameters:
         - $ref: "#/parameters/Container"
         - $ref: "#/parameters/Blob"
         - $ref: "#/parameters/Snapshot"
         - $ref: "#/parameters/Timeout"
+        
+        - $ref: "#/parameters/ApiVersionParameter"
         - $ref: "#/parameters/LeaseId"
         - $ref: "#/parameters/DeleteSnapshots"
-        - $ref: "#/parameters/ApiVersionParameter"
         - $ref: "#/parameters/ClientRequestId"
-      # Authentication Header Parameters:
-      #   see https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/authentication-for-the-azure-storage-services
-      # - $ref : "#/parameters/Authorization" --  Specifies the authentication scheme, account name, and signature. 
-      # - $ref : "#/parameters/Date" Specifies the Coordinated Universal Time (UTC) for the request
+        # Authentication Parameters.
       responses:
         '202':
+          description: The delete request was accepted and the blob will be deleted.
+          headers:
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+        default:
+          $ref: "#/responses/Error"
+    put:
+      tags:
+      - blobs
+      operationId: Blobs_Put
+      description: The Put Blob operation creates a new block, page, or append blob, or updates the content of an existing block blob.
+        Updating an existing block blob overwrites any existing metadata on the blob. Partial updates are not supported with Put Blob; the content of the existing blob is overwritten with the content of the new blob. To perform a partial update of the content of a block blob, use the Put Block List operation.
+      parameters:
+        # Authentication Parameters.
+        - $ref: "#/parameters/Container"
+        - $ref: "#/parameters/Blob"
+        - $ref: "#/parameters/Timeout"
+        
+        - $ref: "#/parameters/ApiVersionParameter"
+        - $ref: "#/parameters/ContentLength"
+        - $ref: "#/parameters/ContentType"
+        - $ref: "#/parameters/ContentEncoding"
+        - $ref: "#/parameters/ContentLanguage"
+        - $ref: "#/parameters/ContentMD5"
+        - $ref: "#/parameters/CacheControl"
+        - $ref: "#/parameters/BlobContentType"
+        - $ref: "#/parameters/BlobContentEncoding"
+        - $ref: "#/parameters/BlobContentLanguage"
+        - $ref: "#/parameters/BlobContentMD5"
+        - $ref: "#/parameters/BlobCacheControl"
+        - $ref: "#/parameters/BlobType"
+        - $ref: "#/parameters/Metadata"
+        - $ref: "#/parameters/LeaseId"
+        - $ref: "#/parameters/BlobContentDisposition"
+        - $ref: "#/parameters/Origin"
+        - $ref: "#/parameters/ClientRequestId"
+        # page blobs only
+        - $ref: "#/parameters/BlobContentLength"
+        - $ref: "#/parameters/BlobSequenceNumber"
+
+        # block blob only
+        - $ref: "#/parameters/Body"
+      responses:
+        '202':
+          description: The delete request was accepted and the blob will be deleted.
+          headers:
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/Content-MD5"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/Access-Control-Allow-Origin"
+            - $inc : "#/headers/Access-Control-Expose-Headers"
+            - $inc : "#/headers/Access-Control-Allow-Credentials"
+            - $inc : "#/headers/x-ms-request-server-encrypted"
+        default:
+          $ref: "#/responses/Error"
+  "/{container}/{blob}?comp=properties":
+    head:
+      tags:
+      - blobs
+      operationId: Blobs_GetProperties
+      description: The Get Blob Properties operation returns all user-defined metadata, standard HTTP properties, and system properties for the blob. It does not return the content of the blob
+      parameters:
+        - $ref: "#/parameters/Container"
+        - $ref: "#/parameters/Blob"
+        
+        - $inc: "#/parameters/_QueryComp"
+          enum:
+          - properties
+        - $ref: "#/parameters/Snapshot"
+        - $ref: "#/parameters/Timeout"
+        
+        - $ref: "#/parameters/ApiVersionParameter"
+        - $ref: "#/parameters/LeaseId"
+        - $ref: "#/parameters/ClientRequestId"
+        # Authentication Parameters.
+      responses:
+        '200':
+          description: The properties were retrieved successfully.
+          headers:
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/x-ms-meta"
+            - $inc : "#/headers/x-ms-blob-type"
+            - $inc : "#/headers/x-ms-copy-completion-time"
+            - $inc : "#/headers/x-ms-copy-status-description"
+            - $inc : "#/headers/x-ms-copy-id"
+            - $inc : "#/headers/x-ms-copy-progress"
+            - $inc : "#/headers/x-ms-copy-source"
+            - $inc : "#/headers/x-ms-copy-status"
+            - $inc : "#/headers/x-ms-incremental-copy"
+            - $inc : "#/headers/x-ms-copy-destination-snapshot"
+            - $inc : "#/headers/x-ms-lease-duration"
+            - $inc : "#/headers/x-ms-lease-state"
+            - $inc : "#/headers/x-ms-lease-status"
+            - $inc : "#/headers/Content-Length"
+            - $inc : "#/headers/Content-Type"
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Content-MD5"
+            - $inc : "#/headers/Content-Encoding"
+            - $inc : "#/headers/Content-Language"
+            - $inc : "#/headers/Content-Disposition"
+            - $inc : "#/headers/Cache-Control"
+            - $inc : "#/headers/x-ms-blob-sequence-number"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/Accept-Ranges"
+            - $inc : "#/headers/x-ms-blob-committed-block-count"
+            - $inc : "#/headers/x-ms-server-encrypted"
+        default:
+          $ref: "#/responses/Error"
+    put:
+      tags:
+      - blobs
+      operationId: Blobs_SetProperties
+      description: The Set Blob Properties operation sets system properties on the blob
+      parameters:
+        # Authentication Parameters.
+        - $ref: "#/parameters/Container"
+        - $ref: "#/parameters/Blob"
+        
+        - $inc: "#/parameters/_QueryComp"
+          enum:
+          - properties
+        - $ref: "#/parameters/Timeout"
+        
+        - $ref: "#/parameters/ApiVersionParameter"
+        - $ref: "#/parameters/BlobCacheControl"
+        - $ref: "#/parameters/BlobContentType"
+        - $ref: "#/parameters/BlobContentMD5"
+        - $ref: "#/parameters/BlobContentEncoding"
+        - $ref: "#/parameters/BlobContentLanguage"
+        - $ref: "#/parameters/LeaseId"
+        - $ref: "#/parameters/ClientRequestId"
+        - $ref: "#/parameters/BlobContentDisposition"
+        - $ref: "#/parameters/Origin"
+        # page blobs only (TODO: split out into separate function?)
+        - $ref: "#/parameters/BlobContentLength"
+        - $ref: "#/parameters/SequenceNumberAction"
+        - $ref: "#/parameters/BlobSequenceNumber"
+      responses:
+        '200':
+          description: The properties were set successfully.
+          headers:
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/x-ms-blobs-sequence-number"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/Access-Control-Allow-Origin"
+            - $inc : "#/headers/Access-Control-Expose-Headers"
+            - $inc : "#/headers/Access-Control-Allow-Credentials"
+        default:
+          $ref: "#/responses/Error"
+  "/{container}/{blob}?comp=metadata":
+    head:
+      tags:
+      - blobs
+      operationId: Blobs_GetMetadata
+      description: The Get Blob Metadata operation returns all user-defined metadata for the specified blob or snapshot
+      parameters:
+        - $ref: "#/parameters/Container"
+        - $ref: "#/parameters/Blob"
+        
+        - $inc: "#/parameters/_QueryComp"
+          enum:
+          - metadata
+        - $ref: "#/parameters/Snapshot"
+        - $ref: "#/parameters/Timeout"
+        
+        - $ref: "#/parameters/ApiVersionParameter"
+        - $ref: "#/parameters/LeaseId"
+        - $ref: "#/parameters/ClientRequestId"
+        # Authentication Parameters.
+      responses:
+        '200':
+          description: The metadata was retrieved successfully.
+          headers:
+            - $inc : "#/headers/x-ms-meta"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+        default:
+          $ref: "#/responses/Error"
+    put:
+      tags:
+      - blobs
+      operationId: Blobs_SetMetadata
+      description: The Set Blob Metadata operation sets user-defined metadata for the specified blob as one or more name-value pairs
+      parameters:
+        - $ref: "#/parameters/Container"
+        - $ref: "#/parameters/Blob"
+        
+        - $inc: "#/parameters/_QueryComp"
+          enum:
+          - metadata
+        - $ref: "#/parameters/Timeout"
+        
+        - $ref: "#/parameters/ApiVersionParameter"
+        - $ref: "#/parameters/Metadata"
+        - $ref: "#/parameters/LeaseId"
+        - $ref: "#/parameters/ClientRequestId"
+        # Authentication Parameters.
+      responses:
+        '200':
+          description: The metadata was set successfully.
+          headers:
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/x-ms-request-server-encrypted"
+        default:
+          $ref: "#/responses/Error"
+  "/{container}/{blob}?comp=lease":
+    put:
+      tags:
+      - blobs
+      operationId: Blobs_Lease # TODO: split into per lease action operations? (enables more precise modeling)
+      description: The Lease Blob operation establishes and manages a lock on a blob for write and delete operations
+      parameters:
+        - $ref: "#/parameters/Container"
+        - $ref: "#/parameters/Blob"
+        
+        - $inc: "#/parameters/_QueryComp"
+          enum:
+          - lease
+        - $ref: "#/parameters/Timeout"
+        
+        - $ref: "#/parameters/ApiVersionParameter"
+        - $ref: "#/parameters/LeaseId"
+        - $ref: "#/parameters/LeaseAction"
+        - $ref: "#/parameters/LeaseBreakPeriod"
+        - $ref: "#/parameters/LeaseDuration"
+        - $ref: "#/parameters/ProposedLeaseId"
+        - $ref: "#/parameters/Origin"
+        - $ref: "#/parameters/ClientRequestId"
+        # Authentication Parameters.
+      responses:
+        '200':
+          description: The Renew/Change/Release operation completed successfully.
+          headers:
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/x-ms-lease-id"
+            - $inc : "#/headers/x-ms-lease-time"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/Access-Control-Flow-Origin"
+            - $inc : "#/headers/Access-Control-Expose-Headers"
+            - $inc : "#/headers/Access-Control-Allow-Credentials"
+        '201':
+          description: The Acquire operation completed successfully.
+          headers:
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/x-ms-lease-id"
+            - $inc : "#/headers/x-ms-lease-time"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/Access-Control-Flow-Origin"
+            - $inc : "#/headers/Access-Control-Expose-Headers"
+            - $inc : "#/headers/Access-Control-Allow-Credentials"
+        '202':
+          description: The Release operation completed successfully.
+          headers:
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/x-ms-lease-id"
+            - $inc : "#/headers/x-ms-lease-time"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/Access-Control-Flow-Origin"
+            - $inc : "#/headers/Access-Control-Expose-Headers"
+            - $inc : "#/headers/Access-Control-Allow-Credentials"
+        default:
+          $ref: "#/responses/Error"
+  "/{container}/{blob}?comp=snapshot":
+    put:
+      tags:
+      - blobs
+      operationId: Blobs_Snapshot
+      description: The Snapshot Blob operation creates a read-only snapshot of a blob
+      parameters:
+        - $ref: "#/parameters/Container"
+        - $ref: "#/parameters/Blob"
+        
+        - $inc: "#/parameters/_QueryComp"
+          enum:
+          - snapshot
+        - $ref: "#/parameters/Timeout"
+        
+        - $ref: "#/parameters/ApiVersionParameter"
+        - $ref: "#/parameters/Metadata"
+        - $ref: "#/parameters/IfModifiedSince"
+        - $ref: "#/parameters/IfUnmodifiedSince"
+        - $ref: "#/parameters/IfMatch"
+        - $ref: "#/parameters/IfNoneMatch"
+        - $ref: "#/parameters/LeaseId"
+        - $ref: "#/parameters/ClientRequestId"
+        # Authentication Parameters.
+      responses:
+        '201':
+          description: The snaptshot was taken successfully.
+          headers:
+            - $inc : "#/headers/x-ms-snapshot"
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+        default:
+          $ref: "#/responses/Error"
+  "/{container}/{blob}?comp=copy":
+    put:
+      tags:
+      - blobs
+      operationId: Blobs_AbortCopy
+      description: The Abort Copy Blob operation aborts a pending Copy Blob operation, and leaves a destination blob with zero length and full metadata.
+      parameters:
+        - $ref: "#/parameters/Container"
+        - $ref: "#/parameters/Blob"
+        
+        - $inc: "#/parameters/_QueryComp"
+          enum:
+          - copy
+        - $ref: "#/parameters/CopyId"
+        - $ref: "#/parameters/Timeout"
+        
+        - $ref: "#/parameters/ApiVersionParameter"
+        - $ref: "#/parameters/LeaseId"
+        - $ref: "#/parameters/CopyActionAbort"
+        - $ref: "#/parameters/ClientRequestId"
+        # Authentication Parameters.
+      responses:
+        '204':
           description: The delete request was accepted and the blob will be deleted.
           headers:
             - $inc : "#/headers/x-ms-request-id"
@@ -232,6 +579,85 @@ x-ms-paths:
             - $inc : "#/headers/x-ms-version"
           schema:
             $ref: "#/definitions/ContainerEnumerationResults"
+        default:
+          $ref: "#/responses/Error"
+  "/{container}/{blob}":
+    put:
+      tags:
+      - blobs
+      operationId: Blobs_Copy
+      description: The Copy Blob operation copies a blob to a destination within the storage account.
+      parameters:
+        - $ref: "#/parameters/Container"
+        - $ref: "#/parameters/Blob"
+        - $ref: "#/parameters/Timeout"
+        
+        - $ref: "#/parameters/ApiVersionParameter"
+        - $ref: "#/parameters/Metadata"
+        - $ref: "#/parameters/SourceIfModifiedSince"
+        - $ref: "#/parameters/SourceIfUnmodifiedSince"
+        - $ref: "#/parameters/SourceIfMatch"
+        - $ref: "#/parameters/SourceIfNoneMatch"
+        - $ref: "#/parameters/IfModifiedSince"
+        - $ref: "#/parameters/IfUnmodifiedSince"
+        - $ref: "#/parameters/IfMatch"
+        - $ref: "#/parameters/IfNoneMatch"
+        - $ref: "#/parameters/CopySource"
+        - $ref: "#/parameters/LeaseId"
+        - $ref: "#/parameters/SourceLeaseId"
+        - $ref: "#/parameters/ClientRequestId"
+        # Authentication Parameters.
+      responses:
+        '202':
+          description: The delete request was accepted and the blob will be deleted.
+          headers:
+            - $inc : "#/headers/ETag"
+            - $inc : "#/headers/Last-Modified"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/x-ms-copy-id"
+            - $inc : "#/headers/x-ms-copy-status"
+        default:
+          $ref: "#/responses/Error"
+  "/{container}/{blob}":
+    delete:
+      tags:
+      - blobs
+      operationId: BlockBlobs_PutBlock
+      description: The Put Block operation creates a new block to be committed as part of a blob
+      parameters:
+      - "$ref": "#/parameters/Container"
+      - "$ref": "#/parameters/Blob"
+
+      - $inc: "#/parameters/_QueryComp"
+        enum:
+        - block
+      - "$ref": "#/parameters/BlockId"
+      - "$ref": "#/parameters/Timeout"
+
+      - "$ref": "#/parameters/ApiVersionParameter"  # Version
+      - "$ref": "#/parameters/ContentLength"
+      - "$ref": "#/parameters/ContentMD5"
+      - "$ref": "#/parameters/LeaseId"
+      - "$ref": "#/parameters/ClientRequestId"
+      # insert authentication stuff
+
+      - name: blocks
+        in: body
+        required: true
+        schema:
+          "$ref": "#/definitions/Body"
+
+      responses:
+        '201':
+          description: The block was created.
+          headers:
+            - $inc : "#/headers/Content-MD5"
+            - $inc : "#/headers/x-ms-request-id"
+            - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
+            - $inc : "#/headers/x-ms-request-server-encrypted"
         default:
           $ref: "#/responses/Error"
   "/{container}/{blob}?comp=block":
@@ -1062,6 +1488,25 @@ parameters:
     x-ms-parameter-location: method
     description: 'Specifies whether to return the list of committed blocks, the list of uncommitted blocks, or both lists together.'
 
+  CopyActionAbort:
+    name: x-ms-copy-action
+    x-ms-client-name: copyActionAbortConstant
+    in: header
+    required: true
+    type: string
+    enum:
+      - abort
+    x-ms-parameter-location: method
+
+  CopyId:
+    name: copyid
+    x-ms-client-name: copyId
+    in: query
+    required: true
+    type: string
+    x-ms-parameter-location: method
+    description: The copy identifier provided in the x-ms-copy-id header of the original Copy Blob operation.
+
   ClientRequestId:
     name: x-ms-client-request-id
     x-ms-client-name: requestId
@@ -1134,8 +1579,7 @@ parameters:
     required: false
     type: string
     x-ms-parameter-location: method
-    description: Specify an ETag value for this conditional header to snapshot the
-      blob only if its ETag value matches the value specified.
+    description: Specify an ETag value to operate only on blobs with a matching value.
 
   IfModifiedSince:
     name: If-Modified-Since
@@ -1145,8 +1589,7 @@ parameters:
     type: string
     format: date-time
     x-ms-parameter-location: method
-    description: Specify this conditional header to snapshot the blob only if it has
-      not been modified since the specified date/time.
+    description: Specify this header value to operate only on a blob if it has been modified since the specified date/time.
 
   IfNoneMatch:
     name: If-None-Match
@@ -1155,8 +1598,7 @@ parameters:
     required: false
     type: string
     x-ms-parameter-location: method
-    description: Specify an ETag value for this conditional header to snapshot the
-      blob only if its ETag value does not match the value specified.
+    description: Specify an ETag value to operate only on blobs without a matching value.
 
   IfUnmodifiedSince:
     name: If-Unmodified-Since
@@ -1166,8 +1608,7 @@ parameters:
     type: string
     format: date-time
     x-ms-parameter-location: method
-    description: Specify this conditional header to snapshot the blob only if it has
-      been modified since the specified date/time.
+    description: Specify this header value to operate only on a blob if it has not been modified since the specified date/time.
 
   IfSequenceNumberEqualTo:
     name: x-ms-if-sequence-number-eq
@@ -1198,6 +1639,20 @@ parameters:
     enum: 
       - metadata
     description: Include this parameter to specify that the container's metadata be returned as part of the response body.
+
+  LeaseAction:
+    name: x-ms-lease-action
+    x-ms-client-name: action
+    in: header
+    required: true
+    type: string
+    enum:
+    - acquire
+    - renew
+    - change
+    - release
+    - break
+    description: Describes what lease action to take.
 
   LeaseId:
     name: x-ms-lease-id
@@ -1294,6 +1749,53 @@ parameters:
     description:  The snapshot parameter is an opaque DateTime value that, when present, 
       specifies the blob snapshot to retrieve. For more information on working with blob
       snapshots, see <a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating a Snapshot of a Blob.</a>
+
+  SourceIfMatch:
+    name: x-ms-source-if-match
+    x-ms-client-name: sourceIfMatches
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Specify an ETag value to operate only on blobs with a matching value.
+
+  SourceIfModifiedSince:
+    name: x-ms-source-if-modified-since
+    x-ms-client-name: sourceIfModifiedSince
+    in: header
+    required: false
+    type: string
+    format: date-time
+    x-ms-parameter-location: method
+    description: Specify this header value to operate only on a blob if it has been modified since the specified date/time.
+
+  SourceIfNoneMatch:
+    name: x-ms-source-if-none-match
+    x-ms-client-name: sourceIfNoneMatch
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Specify an ETag value to operate only on blobs without a matching value.
+
+  SourceIfUnmodifiedSince:
+    name: x-ms-source-if-unmodified-since
+    x-ms-client-name: sourceIfUnmodifiedSince
+    in: header
+    required: false
+    type: string
+    format: date-time
+    x-ms-parameter-location: method
+    description: Specify this header value to operate only on a blob if it has not been modified since the specified date/time.
+
+  SourceLeaseId:
+    name: x-ms-source-lease-id
+    x-ms-client-name: sourceLeaseId
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Specify this header to perform the operation only if the lease ID given matches the active lease ID of the source blob.
 
   StorageServiceProperties:
     name: StorageServiceProperties
@@ -2616,19 +3118,6 @@ x-ms-paths-original:
 
 
 x-original-parameters:
-  LeaseAction:
-    name: x-ms-lease-action
-    x-ms-client-name: action
-    in: header
-    required: true
-    type: string
-    enum:
-    - acquire
-    - renew
-    - change
-    - release
-    - break
-    description: Describes what lease action to take.
   LeaseBreakPeriod:
     name: x-ms-lease-break-period
     x-ms-client-name: breakPeriod
