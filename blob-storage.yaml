@@ -90,7 +90,7 @@ x-ms-paths:
         default:
           $ref: '#/responses/Error'
 
-  "/?restype=service&comp=stats":
+  '/?restype=service&comp=stats':
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-blob-service-stats
       tags: 
         - service
@@ -116,7 +116,7 @@ x-ms-paths:
           schema:
             $ref: '#/definitions/StorageServiceStats'
 
-  "/?comp=list":
+  '/?comp=list':
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/list-containers2
       tags:
       - service
@@ -147,7 +147,7 @@ x-ms-paths:
   #
   # Container Methods  
   #
-  "/{container}?restype=container":
+  '/{container}?restype=container':
     put:  # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/create-container
       tags: 
         - container
@@ -250,7 +250,7 @@ x-ms-paths:
         default:
           $ref: '#/responses/Error'
 
-  '/{container}/restype=container&comp=metadata'
+  '/{container}/restype=container&comp=metadata':
     head: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-container-metadata
       tags: 
         - container
@@ -330,7 +330,7 @@ x-ms-paths:
         default:
           $ref: '#/responses/Error'
         
-  '/{container}/restype=container&comp=acl'
+  '/{container}/restype=container&comp=acl':
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-container-acl
       tags:
         - container
@@ -412,7 +412,7 @@ x-ms-paths:
         default:
           $ref: '#/responses/Error'
 
-  '/{container}/comp=lease&restype=container'
+  '/{container}/comp=lease&restype=container':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-container
       tags:
       - container
@@ -485,7 +485,7 @@ x-ms-paths:
             - $inc: '#/headers/Access-Control-Allow-Credentials'
         default:
           $ref: '#/responses/Error'
-  '/{container}/restype=container&comp=list'  
+  '/{container}/restype=container&comp=list':
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/list-blobs 
       tags:
       - containers
@@ -754,7 +754,7 @@ x-ms-paths:
         default:
           $ref: '#/responses/Error'
 
-  
+  '/{container}/{blob}?fakeparam':
      put:
       tags:
       - blobs
@@ -1013,7 +1013,7 @@ x-ms-paths:
 
   '/{container}/{blob}?comp=copy':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/copy-blob
-  '/{container}/{blob}?comp=copy&copyid={CopyId}'
+  '/{container}/{blob}?comp=copy&copyid={CopyId}':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/abort-copy-blob
       tags:
       - blobs
@@ -1088,7 +1088,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-server-encrypted'
         default:
           $ref: '#/responses/Error'
-  "/{container}/{blob}?comp=blocklist":
+  '/{container}/{blob}?comp=blocklist':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/put-block-list
       tags:
       - blockblobs
@@ -1175,7 +1175,7 @@ x-ms-paths:
   #
   # Page Blob Methods
   # 
-  "/{container}/{blob}?comp=page":
+  '/{container}/{blob}?comp=page':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/put-page 
       tags:
       - pageblobs
@@ -1221,7 +1221,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-server-encrypted'
         default:
           $ref: '#/responses/Error'
-  "/{container}/{blob}?comp=pagelist":
+  '/{container}/{blob}?comp=pagelist':
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-page-ranges
       tags:
       - pageblobs
@@ -1259,7 +1259,7 @@ x-ms-paths:
             # has sequence toggling between PageRange and ClearRange
         default:
           $ref: '#/responses/Error'
-  "/{container}/{blob}?comp=incrementalcopy":
+  '/{container}/{blob}?comp=incrementalcopy':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/incremental-copy-blob 
       tags:
       - pageblobs
@@ -1299,7 +1299,7 @@ x-ms-paths:
   # 
   # Append Blob Methods
   #
-  "/{container}/{blob}?comp=appendblock":
+  '/{container}/{blob}?comp=appendblock':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/append-block
       tags:
       - blobs
@@ -1640,25 +1640,24 @@ definitions:
         description: A summary of request statistics grouped by API in hourly aggregates for blobs
         $ref: '#/definitions/Metrics'
       MinuteMetrics:
-         description: a summary of request statistics grouped by API in minute aggregates for blobs
+        description: a summary of request statistics grouped by API in minute aggregates for blobs
         $ref: '#/definitions/Metrics'
       Cors:
         description: The set of CORS rules.
         type: array
-        items: {
+        items:
           $ref: '#/definitions/CorsRule'
-        }
       DefaultServiceVersion:
         description: The default version to use for requests to the Blob service if an incoming request’s version is not specified. Possible values include version 2008-10-27 and all more recent versions
         type: string
 
   StorageServiceStats:
     description: Stats for the storage service.
-      type: object
-      properties:
-        GeoReplication:
-          description: Geo-Replication information for the Secondary Storage Service
-          $ref: '#/definitions/GeoReplication'
+    type: object
+    properties:
+      GeoReplication:
+        description: Geo-Replication information for the Secondary Storage Service
+        $ref: '#/definitions/GeoReplication'
 
   PageWrite:
     type: string
@@ -1796,15 +1795,6 @@ parameters:
     x-ms-parameter-location: method
     description: 'Specifies the type of blob to create: block blob, page blob, or
       append blob.'
-  
-  Body:
-    name: body
-    in: body
-    required: true
-    schema:
-      type: file
-    x-ms-parameter-location: method
-    description: Initial data for the blob, empty for page and append blobs
 
   BlockId:
     name: blockid
@@ -1824,6 +1814,16 @@ parameters:
     $inc: '#/definitions/BlockListType'
     x-ms-parameter-location: method
     description: 'Specifies whether to return the list of committed blocks, the list of uncommitted blocks, or both lists together.'
+
+  Body:
+    name: body
+    in: body
+    required: true
+    schema:
+      type: file
+    x-ms-parameter-location: method
+    description: Initial data
+
   ContainerAcl:
     name: containerAcl
     in: body
@@ -1839,7 +1839,7 @@ parameters:
     required: false
     type: string
     x-ms-parameter-location: method
-    description: Specifies the content type of a blob.
+    description: Specifies the content type of the resource
   
   CopyActionAbort:
     name: x-ms-copy-action
