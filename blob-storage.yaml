@@ -430,6 +430,8 @@ x-ms-paths:
           enum:
             - container
         - $ref: "#/parameters/Timeout"
+
+        # header parameters
         - $ref: "#/parameters/LeaseId"
         - $ref: "#/parameters/LeaseAction"
         - $ref: "#/parameters/LeaseBreakPeriod"
@@ -484,7 +486,7 @@ x-ms-paths:
         default:
           $ref: "#/responses/Error"
   "/{container}/restype=container&comp=list"  
-    get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/list-blob
+    get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/list-blobs 
       tags:
       - containers
       operationId: Container_ListBlobs
@@ -496,16 +498,18 @@ x-ms-paths:
         # query parameters
         - $inc: "#/parameters/_QueryComp"
           enum:
-          - lease
+            - list
         - $inc: "#/parameters/_ResType"
           enum:
-            - container        
-        
+            - container
         - $ref : '#/parameters/Prefix'
+        - $ref : '#/parameters/Delimiter'
         - $ref : '#/parameters/Marker'
         - $ref : '#/parameters/MaxResults'
         - $ref : '#/parameters/Include'
         - $ref : '#/parameters/Timeout'
+
+        # client parameters
         - $ref : "#/parameters/ApiVersionParameter"  # Version
         - $ref : "#/parameters/ClientRequestId"
         # Authentication Parameters.
@@ -513,10 +517,12 @@ x-ms-paths:
         '200':
           description: Success.
           headers:
+            - $inc : "#/headers/Content-Type"
             - $inc : "#/headers/x-ms-request-id"
             - $inc : "#/headers/x-ms-version"
+            - $inc : "#/headers/Date"
           schema:
-            $ref: "#/definitions/ContainerEnumerationResults"
+            $ref: "#/definitions/BlobEnumerationResults"
         default:
           $ref: "#/responses/Error"
   #
@@ -1344,59 +1350,7 @@ x-ms-paths:
 #
 # Model Definitions
 #
-definitions:
-  Block:
-    type: object
-    properties:
-      name:
-        description: The base64 encoded block ID
-        type: string
-        xml:
-          name: Name
-      size:
-        description: The block size in bytes
-        type: integer
-        xml:
-          name: Size
-
-  BlockList:
-    type: object
-    properties:
-      CommittedBlocks:
-        type: array
-        items:
-          "$ref": "#/definitions/Block"
-          xml:
-            name: Block
-        xml:
-          wrapped: true
-      UncommittedBlocks:
-        type: array
-        items:
-          "$ref": "#/definitions/Block"
-          xml:
-            name: Block
-        xml:
-          wrapped: true
-
-  BlockLookup:
-    type: object
-    properties:
-      State:
-        $ref: "#/definitions/BlockListType"
-      Id:
-        type: string
-
-  BlockLookupList:
-    type: array
-    x-ms-external: true
-    xml:
-      name: BlockList,
-      wrapped: true
-    items:
-      $ref: "#/definitions/Block"
-      # weird dependent tag name and value
-      
+definitions:      
   # Enums ========================================================================
   BlobType:
     type: string
@@ -1507,6 +1461,58 @@ definitions:
       Permission:
         description: the permissions for the acl policy
         type: string
+
+  Block:
+    type: object
+    properties:
+      name:
+        description: The base64 encoded block ID
+        type: string
+        xml:
+          name: Name
+      size:
+        description: The block size in bytes
+        type: integer
+        xml:
+          name: Size
+
+  BlockList:
+    type: object
+    properties:
+      CommittedBlocks:
+        type: array
+        items:
+          "$ref": "#/definitions/Block"
+          xml:
+            name: Block
+        xml:
+          wrapped: true
+      UncommittedBlocks:
+        type: array
+        items:
+          "$ref": "#/definitions/Block"
+          xml:
+            name: Block
+        xml:
+          wrapped: true
+
+  BlockLookup:
+    type: object
+    properties:
+      State:
+        $ref: "#/definitions/BlockListType"
+      Id:
+        type: string
+
+  BlockLookupList:
+    type: array
+    x-ms-external: true
+    xml:
+      name: BlockList,
+      wrapped: true
+    items:
+      $ref: "#/definitions/Block"
+      # weird dependent tag name and value
 
   CorsRule:
     description: CORS is an HTTP feature that enables a web application running under one domain to access resources in another domain. Web browsers implement a security restriction known as same-origin policy that prevents a web page from calling APIs in a different domain; CORS provides a secure way to allow one domain (the origin domain) to call APIs in another domain
