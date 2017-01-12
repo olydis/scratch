@@ -54,12 +54,6 @@ x-ms-paths:
       operationId: Service_SetProperties
       description: Sets properties for a storage account’s Blob service endpoint, including properties for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules
       parameters:
-        - $inc: '#/parameters/_ResType'
-          enum:
-            - service
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-            - properties
         - $ref: '#/parameters/StorageServiceProperties'
         - $ref: '#/parameters/Timeout'
       responses:
@@ -76,12 +70,6 @@ x-ms-paths:
       operationId: Service_GetProperties
       description: gets the properties of a storage account’s Blob service, including properties for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
       parameters:
-        - $inc: '#/parameters/_ResType'
-          enum:
-            - service
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-            - properties
         - $ref: '#/parameters/Timeout'
       responses:
         '200':
@@ -100,12 +88,6 @@ x-ms-paths:
       operationId: Service_GetStats
       description: Retrieves statistics related to replication for the Blob service. It is only available on the secondary location endpoint when read-access geo-redundant replication is enabled for the storage account. 
       parameters:
-        - $inc: '#/parameters/_ResType'
-          enum:
-            - service
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-            - stats
         - $ref: '#/parameters/Timeout'
       responses:
         200:
@@ -125,9 +107,6 @@ x-ms-paths:
       operationId: Service_ListContainers
       description: The List Containers operation returns a list of the containers under the specified account
       parameters:
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-          - list
         - $ref: '#/parameters/Prefix'
         - $ref: '#/parameters/Marker'
         - $ref: '#/parameters/MaxResults'
@@ -156,10 +135,6 @@ x-ms-paths:
         # path parameters
         - $ref: '#/parameters/Container'
 
-        # query parameters
-        - $inc: '#/parameters/_ResType'
-          enum:
-            - container
         - $ref: '#/parameters/Timeout'
         
         # header parameters
@@ -186,9 +161,6 @@ x-ms-paths:
         - $ref: '#/parameters/Container'
 
         # query parameters
-        - $inc: '#/parameters/_ResType'
-          enum:
-            - container
         - $ref: '#/parameters/Timeout'
 
         # header parameters
@@ -219,9 +191,6 @@ x-ms-paths:
         - $ref: '#/parameters/Container'
 
         # query parameters
-        - $inc: '#/parameters/_ResType'
-          enum:
-            - container
         - $ref: '#/parameters/Timeout'
 
         # header parameters
@@ -233,7 +202,7 @@ x-ms-paths:
           description: Accepted
       $inc: '#/stuff/common-operation'
 
-  '/{container}/restype=container&comp=metadata':
+  '/{container}?restype=container&comp=metadata':
     head: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-container-metadata
       tags: 
         - container
@@ -244,12 +213,6 @@ x-ms-paths:
         - $ref: '#/parameters/Container'
 
         # query parameters
-        - $inc: '#/parameters/_ResType'
-          enum:
-            - container
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-            - metadata
         - $ref: '#/parameters/Timeout'
         
         # header parameters
@@ -276,12 +239,6 @@ x-ms-paths:
         - $ref: '#/parameters/Container'
 
         # query parameters
-        - $inc: '#/parameters/_ResType'
-          enum:
-            - container
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-            - metadata
         - $ref: '#/parameters/Timeout'
 
         # header parameters
@@ -301,7 +258,7 @@ x-ms-paths:
             - $inc: '#/headers/Access-Control-Allow-Credentials'
       $inc: '#/stuff/common-operation'
         
-  '/{container}/restype=container&comp=acl':
+  '/{container}?restype=container&comp=acl':
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-container-acl
       tags:
         - container
@@ -312,12 +269,6 @@ x-ms-paths:
         - $ref: '#/parameters/Container'
 
         # query parameters
-        - $inc: '#/parameters/_ResType'
-          enum:
-            - container
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-            - acl
         - $ref: '#/parameters/Timeout'
 
         # header parameters
@@ -349,12 +300,6 @@ x-ms-paths:
         - $ref: '#/parameters/ContainerAcl'
 
         # query parameters
-        - $inc: '#/parameters/_ResType'
-          enum:
-            - container
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-            - acl
         - $ref: '#/parameters/Timeout'
 
         # header parameters
@@ -371,7 +316,7 @@ x-ms-paths:
             - $inc: '#/headers/Date'
       $inc: '#/stuff/common-operation'
 
-  '/{container}/comp=lease&restype=container':
+  '/{container}?comp=lease&restype=container':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-container
       tags:
       - container
@@ -382,12 +327,6 @@ x-ms-paths:
         - $ref: '#/parameters/Container'
         
         # query parameters
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-          - lease
-        - $inc: '#/parameters/_ResType'
-          enum:
-            - container
         - $ref: '#/parameters/Timeout'
 
         # header parameters
@@ -438,7 +377,7 @@ x-ms-paths:
             - $inc: '#/headers/Access-Control-Expose-Headers'
             - $inc: '#/headers/Access-Control-Allow-Credentials'
       $inc: '#/stuff/common-operation'
-  '/{container}/restype=container&comp=list':
+  '/{container}?restype=container&comp=list':
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/list-blobs 
       tags:
       - containers
@@ -449,12 +388,6 @@ x-ms-paths:
         - $ref: '#/parameters/Container'
         
         # query parameters
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-            - list
-        - $inc: '#/parameters/_ResType'
-          enum:
-            - container
         - $ref: '#/parameters/Prefix'
         - $ref: '#/parameters/Delimiter'
         - $ref: '#/parameters/Marker'
@@ -699,9 +632,6 @@ x-ms-paths:
         - $ref: '#/parameters/Container'
         - $ref: '#/parameters/Blob'
         
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-          - properties
         - $ref: '#/parameters/Timeout'
         
         - $ref: '#/parameters/BlobCacheControl'
@@ -741,9 +671,6 @@ x-ms-paths:
         - $ref: '#/parameters/Container'
         - $ref: '#/parameters/Blob'
         
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-          - metadata
         - $ref: '#/parameters/Snapshot'
         - $ref: '#/parameters/Timeout'
         
@@ -769,9 +696,6 @@ x-ms-paths:
         - $ref: '#/parameters/Container'
         - $ref: '#/parameters/Blob'
         
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-          - metadata
         - $ref: '#/parameters/Timeout'
         
         - $ref: '#/parameters/Metadata'
@@ -798,9 +722,6 @@ x-ms-paths:
         - $ref: '#/parameters/Container'
         - $ref: '#/parameters/Blob'
         
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-          - lease
         - $ref: '#/parameters/Timeout'
         
         - $ref: '#/parameters/LeaseId'
@@ -861,9 +782,6 @@ x-ms-paths:
         - $ref: '#/parameters/Container'
         - $ref: '#/parameters/Blob'
         
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-          - snapshot
         - $ref: '#/parameters/Timeout'
         
         - $ref: '#/parameters/Metadata'
@@ -884,7 +802,7 @@ x-ms-paths:
             - $inc: '#/headers/Date'
       $inc: '#/stuff/common-operation'
 
-  '/{container}/{blob}?comp=copy': # note: comp=copy is fake, just for disamb. with '/{container}/{blob}'
+  '/{container}/{blob}#comp=copy': # note: comp=copy is fake, just for disamb. with '/{container}/{blob}'
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/copy-blob
       tags:
       - blobs
@@ -919,16 +837,13 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-copy-id'
             - $inc: '#/headers/x-ms-copy-status'
       $inc: '#/stuff/common-operation'
-  '/{container}/{blob}?comp=copy&copyid={CopyId}':
+  '/{container}/{blob}?comp=copy#copyid={CopyId}': # don't hardcode copyid... that is an actual parameter
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/abort-copy-blob
       tags:
       - blobs
       operationId: Blobs_AbortCopy
       description: The Abort Copy Blob operation aborts a pending Copy Blob operation, and leaves a destination blob with zero length and full metadata.
       parameters:
-        - $inc: '#/parameters/_QueryComp'
-          enum:
-          - copy
         - $ref: '#/parameters/Container'
         - $ref: '#/parameters/Blob'
         
@@ -959,9 +874,6 @@ x-ms-paths:
       - $ref: '#/parameters/Container'
       - $ref: '#/parameters/Blob'
 
-      - $inc: '#/parameters/_QueryComp'
-        enum:
-        - block
       - $ref: '#/parameters/BlockId'
       - $ref: '#/parameters/Timeout'
 
@@ -997,9 +909,6 @@ x-ms-paths:
       - $ref: '#/parameters/Container'
       - $ref: '#/parameters/Blob'
 
-      - $inc: '#/parameters/_QueryComp'
-        enum:
-        - blocklist
       - $ref: '#/parameters/Timeout'
 
       - $ref: '#/parameters/ContentLength'
@@ -1039,9 +948,6 @@ x-ms-paths:
       - $ref: '#/parameters/Container'
       - $ref: '#/parameters/Blob'
 
-      - $inc: '#/parameters/_QueryComp'
-        enum:
-        - blocklist
       - $ref: '#/parameters/Snapshot'
       - $ref: '#/parameters/BlockListType'
       - $ref: '#/parameters/Timeout'
@@ -1075,9 +981,6 @@ x-ms-paths:
       - $ref: '#/parameters/Container'
       - $ref: '#/parameters/Blob'
 
-      - $inc: '#/parameters/_QueryComp'
-        enum:
-        - page
       - $ref: '#/parameters/Timeout'
 
       - $ref: '#/parameters/Range'
@@ -1117,9 +1020,6 @@ x-ms-paths:
       - $ref: '#/parameters/Container'
       - $ref: '#/parameters/Blob'
 
-      - $inc: '#/parameters/_QueryComp'
-        enum:
-        - pagelist
       - $ref: '#/parameters/Snapshot'
       - $ref: '#/parameters/Timeout'
       - $ref: '#/parameters/PrevSnapshot'
@@ -1151,9 +1051,6 @@ x-ms-paths:
       - $ref: '#/parameters/Container'
       - $ref: '#/parameters/Blob'
 
-      - $inc: '#/parameters/_QueryComp'
-        enum:
-        - incrementalcopy
       - $ref: '#/parameters/Timeout'
 
       - $ref: '#/parameters/Metadata'
@@ -1188,9 +1085,6 @@ x-ms-paths:
       - $ref: '#/parameters/Container'
       - $ref: '#/parameters/Blob'
 
-      - $inc: '#/parameters/_QueryComp'
-        enum:
-        - appendblock
       - $ref: '#/parameters/Timeout'
 
       - $ref: '#/parameters/Content-Length'
@@ -1680,19 +1574,6 @@ definitions:
       modelAsString: false
       
 parameters:
-  # Meta-Parameters (via x-ms-paths) ========================================================================
-  _QueryComp:
-    name: comp
-    in: query
-    required: true
-    type: string
-
-  _ResType:
-    name: restype
-    in: query
-    required: true
-    type: string
-
   # Parameters  ========================================================================
   ApiVersionParameter:
     name: x-ms-version
