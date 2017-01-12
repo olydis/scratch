@@ -33,6 +33,16 @@ produces:
 - application/octet-stream
 - text/plain
 
+stuff:
+  common-operation:
+    parameters:
+      - $ref: '#/parameters/ApiVersionParameter'  # Version
+      - $ref: '#/parameters/ClientRequestId'
+      # Authentication Parameters.
+    responses:
+      default:
+        $ref: '#/responses/Error'
+
 x-ms-paths:
   #
   # service methods
@@ -52,17 +62,13 @@ x-ms-paths:
             - properties
         - $ref: '#/parameters/StorageServiceProperties'
         - $ref: '#/parameters/Timeout'
-        - $ref: '#/parameters/ApiVersionParameter'  # Version
-        - $ref: '#/parameters/ClientRequestId'
-        # Authentication Parameters.
       responses:
         202:
           description: Success (Accepted)
           headers:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-blob-service-properties
       tags:
@@ -77,8 +83,6 @@ x-ms-paths:
           enum:
             - properties
         - $ref: '#/parameters/Timeout'
-        - $ref: '#/parameters/ApiVersionParameter'
-        - $ref: '#/parameters/ClientRequestId'
       responses:
         '200':
           description: Success.
@@ -87,8 +91,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-version'
           schema:
             $ref: '#/definitions/StorageServiceProperties'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
   '/?restype=service&comp=stats':
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-blob-service-stats
@@ -104,8 +107,6 @@ x-ms-paths:
           enum:
             - stats
         - $ref: '#/parameters/Timeout'
-        - $ref: '#/parameters/ApiVersionParameter'
-        - $ref: '#/parameters/ClientRequestId'
       responses:
         200:
           description: Success.
@@ -115,6 +116,7 @@ x-ms-paths:
             - $inc: '#/headers/Date'
           schema:
             $ref: '#/definitions/StorageServiceStats'
+      $inc: '#/stuff/common-operation'
 
   '/?comp=list':
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/list-containers2
@@ -131,9 +133,6 @@ x-ms-paths:
         - $ref: '#/parameters/MaxResults'
         - $ref: '#/parameters/Include'
         - $ref: '#/parameters/Timeout'
-        - $ref: '#/parameters/ApiVersionParameter'  # Version
-        - $ref: '#/parameters/ClientRequestId'
-        # Authentication Parameters.
       responses:
         '200':
           description: Success.
@@ -142,8 +141,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-version'
           schema:
             $ref: '#/definitions/ContainerEnumerationResults'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
   #
   # Container Methods  
@@ -167,10 +165,6 @@ x-ms-paths:
         # header parameters
         - $ref: '#/parameters/Metadata'
         - $ref: '#/parameters/BlobPublicAccess'
-        
-        # client parameters
-        - $ref: '#/parameters/ApiVersionParameter'
-        - $ref: '#/parameters/ClientRequestId'
       responses:
         201: 
           description: Success, Container created.
@@ -180,8 +174,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
     
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-container-properties
       tags: 
@@ -200,10 +193,6 @@ x-ms-paths:
 
         # header parameters
         - $ref: '#/parameters/LeaseId'
-
-        # client parameters
-        - $ref: '#/parameters/ApiVersionParameter'
-        - $ref: '#/parameters/ClientRequestId'
       responses:
         200: 
           description: Success
@@ -218,8 +207,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
             - $inc: '#/headers/x-ms-blob-public-access'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
     delete: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/delete-container
       tags: 
@@ -240,16 +228,10 @@ x-ms-paths:
         - $ref: '#/parameters/LeaseId'
         - $ref: '#/parameters/If-Modified-Since'
         - $ref: '#/parameters/If-Unmodified-Since'
-
-        # client parameters
-        - $ref: '#/parameters/ApiVersionParameter'
-        - $ref: '#/parameters/ClientRequestId'
       responses:
         202: 
           description: Accepted
-
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
   '/{container}/restype=container&comp=metadata':
     head: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-container-metadata
@@ -272,10 +254,6 @@ x-ms-paths:
         
         # header parameters
         - $ref: '#/parameters/LeaseId'
-
-        # client parameters
-        - $ref: '#/parameters/ApiVersionParameter'
-        - $ref: '#/parameters/ClientRequestId'
       responses:
         200: 
           description: Success.
@@ -286,9 +264,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
-
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/set-container-metadata
       tags: 
@@ -311,10 +287,6 @@ x-ms-paths:
         # header parameters
         - $ref: '#/parameters/LeaseId'
         - $ref: '#/parameters/Metadata'
-
-        # client parameters
-        - $ref: '#/parameters/ApiVersionParameter'
-        - $ref: '#/parameters/ClientRequestId'
       responses:
         200:
           description: Success
@@ -327,9 +299,7 @@ x-ms-paths:
             - $inc: '#/headers/Access-Control-Allow-Origin'
             - $inc: '#/headers/Access-Control-Expose-Headers'
             - $inc: '#/headers/Access-Control-Allow-Credentials'
-          
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
         
   '/{container}/restype=container&comp=acl':
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-container-acl
@@ -352,11 +322,6 @@ x-ms-paths:
 
         # header parameters
         - $ref: '#/parameters/LeaseId'
-
-        # client parameters
-        - $ref: '#/parameters/ApiVersionParameter'
-        - $ref: '#/parameters/ClientRequestId'
-
       responses:
         200:
           description: Success
@@ -369,8 +334,7 @@ x-ms-paths:
             - $inc: '#/headers/Date'
           schema:
             $ref: '#/definitions/SignedIdentifiers'
-      default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/set-container-acl
       tags:
@@ -396,10 +360,6 @@ x-ms-paths:
         # header parameters
         - $ref: '#/parameters/LeaseId'
         - $ref: '#/parameters/BlobPublicAccess'
-
-        # client parameters
-        - $ref: '#/parameters/ApiVersionParameter'
-        - $ref: '#/parameters/ClientRequestId'
       responses:
         200:
           description: Success.
@@ -409,9 +369,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
-
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
   '/{container}/comp=lease&restype=container':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-container
@@ -439,11 +397,6 @@ x-ms-paths:
         - $ref: '#/parameters/LeaseDuration'
         - $ref: '#/parameters/ProposedLeaseId'
         - $ref: '#/parameters/Origin'
-
-        # client parameters
-        - $ref: '#/parameters/ApiVersionParameter'
-        - $ref: '#/parameters/ClientRequestId'
-        # Authentication Parameters.
       responses:
         '200':
           description: The Renew/Change/Release operation completed successfully.
@@ -484,8 +437,7 @@ x-ms-paths:
             - $inc: '#/headers/Access-Control-Allow-Origin'
             - $inc: '#/headers/Access-Control-Expose-Headers'
             - $inc: '#/headers/Access-Control-Allow-Credentials'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
   '/{container}/restype=container&comp=list':
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/list-blobs 
       tags:
@@ -509,11 +461,6 @@ x-ms-paths:
         - $ref: '#/parameters/MaxResults'
         - $ref: '#/parameters/Include'
         - $ref: '#/parameters/Timeout'
-
-        # client parameters
-        - $ref: '#/parameters/ApiVersionParameter'  # Version
-        - $ref: '#/parameters/ClientRequestId'
-        # Authentication Parameters.
       responses:
         '200':
           description: Success.
@@ -524,8 +471,7 @@ x-ms-paths:
             - $inc: '#/headers/Date'
           schema:
             $ref: '#/definitions/BlobEnumerationResults'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
   #
   # Blob Methods
   #
@@ -541,13 +487,10 @@ x-ms-paths:
       - $ref: '#/parameters/Snapshot'
       - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/ApiVersionParameter'  # Version
       - $ref: '#/parameters/Range'
       - $ref: '#/parameters/LeaseId'
       - $ref: '#/parameters/GetRangeContentMD5'
       - $ref: '#/parameters/Origin'
-      - $ref: '#/parameters/ClientRequestId'
-      # insert authentication stuff
       responses:
         '200':
           description: Returns the content of the entire blob.
@@ -625,8 +568,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-blob-content-md5'
           schema:
             type: file
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
     head: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-blob-properties
       tags:
       - blobs
@@ -638,10 +580,7 @@ x-ms-paths:
         - $ref: '#/parameters/Snapshot'
         - $ref: '#/parameters/Timeout'
 
-        - $ref: '#/parameters/ApiVersionParameter'  # Version
         - $ref: '#/parameters/LeaseId'
-        - $ref: '#/parameters/ClientRequestId'
-        # Authentication Parameters.
       responses:
         '200':
           description: Returns the properties of the blob.
@@ -674,6 +613,7 @@ x-ms-paths:
             - $inc: '#/headers/Accept-Ranges'
             - $inc: '#/headers/x-ms-blob-committed-block-count'
             - $inc: '#/headers/x-ms-server-encrypted'
+      $inc: '#/stuff/common-operation'
 
     delete: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/delete-blob
       tags:
@@ -687,11 +627,8 @@ x-ms-paths:
         - $ref: '#/parameters/Snapshot'
         - $ref: '#/parameters/Timeout'
         
-        - $ref: '#/parameters/ApiVersionParameter'
         - $ref: '#/parameters/LeaseId'
         - $ref: '#/parameters/DeleteSnapshots'
-        - $ref: '#/parameters/ClientRequestId'
-        # Authentication Parameters.
       responses:
         '202':
           description: The delete request was accepted and the blob will be deleted.
@@ -699,8 +636,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/put-blob
       tags:
@@ -714,7 +650,6 @@ x-ms-paths:
         - $ref: '#/parameters/Blob'
         - $ref: '#/parameters/Timeout'
         
-        - $ref: '#/parameters/ApiVersionParameter'
         - $ref: '#/parameters/ContentLength'
         - $ref: '#/parameters/ContentType'
         - $ref: '#/parameters/ContentEncoding'
@@ -731,7 +666,6 @@ x-ms-paths:
         - $ref: '#/parameters/LeaseId'
         - $ref: '#/parameters/BlobContentDisposition'
         - $ref: '#/parameters/Origin'
-        - $ref: '#/parameters/ClientRequestId'
         # page blobs only
         - $ref: '#/parameters/BlobContentLength'
         - $ref: '#/parameters/BlobSequenceNumber'
@@ -752,50 +686,7 @@ x-ms-paths:
             - $inc: '#/headers/Access-Control-Expose-Headers'
             - $inc: '#/headers/Access-Control-Allow-Credentials'
             - $inc: '#/headers/x-ms-request-server-encrypted'
-        default:
-          $ref: '#/responses/Error'
-
-  '/{container}/{blob}?fakeparam':
-     put:
-      tags:
-      - blobs
-      operationId: Blobs_Copy
-      description: The Copy Blob operation copies a blob to a destination within the storage account.
-      parameters:
-        - $ref: '#/parameters/Container'
-        - $ref: '#/parameters/Blob'
-        - $ref: '#/parameters/Timeout'
-        
-        - $ref: '#/parameters/ApiVersionParameter'
-        - $ref: '#/parameters/Metadata'
-        - $ref: '#/parameters/SourceIfModifiedSince'
-        - $ref: '#/parameters/SourceIfUnmodifiedSince'
-        - $ref: '#/parameters/SourceIfMatch'
-        - $ref: '#/parameters/SourceIfNoneMatch'
-        - $ref: '#/parameters/IfModifiedSince'
-        - $ref: '#/parameters/IfUnmodifiedSince'
-        - $ref: '#/parameters/IfMatch'
-        - $ref: '#/parameters/IfNoneMatch'
-        - $ref: '#/parameters/CopySource'
-        - $ref: '#/parameters/LeaseId'
-        - $ref: '#/parameters/SourceLeaseId'
-        - $ref: '#/parameters/ClientRequestId'
-        # Authentication Parameters.
-      responses:
-        '202':
-          description: The delete request was accepted and the blob will be deleted.
-          headers:
-            - $inc: '#/headers/ETag'
-            - $inc: '#/headers/Last-Modified'
-            - $inc: '#/headers/x-ms-request-id'
-            - $inc: '#/headers/x-ms-version'
-            - $inc: '#/headers/Date'
-            - $inc: '#/headers/x-ms-copy-id'
-            - $inc: '#/headers/x-ms-copy-status'
-        default:
-          $ref: '#/responses/Error'
-  
-    
+      $inc: '#/stuff/common-operation'
 
   '/{container}/{blob}?comp=properties':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/set-blob-properties
@@ -813,14 +704,12 @@ x-ms-paths:
           - properties
         - $ref: '#/parameters/Timeout'
         
-        - $ref: '#/parameters/ApiVersionParameter'
         - $ref: '#/parameters/BlobCacheControl'
         - $ref: '#/parameters/BlobContentType'
         - $ref: '#/parameters/BlobContentMD5'
         - $ref: '#/parameters/BlobContentEncoding'
         - $ref: '#/parameters/BlobContentLanguage'
         - $ref: '#/parameters/LeaseId'
-        - $ref: '#/parameters/ClientRequestId'
         - $ref: '#/parameters/BlobContentDisposition'
         - $ref: '#/parameters/Origin'
         # page blobs only (TODO: split out into separate function?)
@@ -840,8 +729,7 @@ x-ms-paths:
             - $inc: '#/headers/Access-Control-Allow-Origin'
             - $inc: '#/headers/Access-Control-Expose-Headers'
             - $inc: '#/headers/Access-Control-Allow-Credentials'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
   '/{container}/{blob}?comp=metadata':
     head: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-blob-metadata
@@ -859,10 +747,7 @@ x-ms-paths:
         - $ref: '#/parameters/Snapshot'
         - $ref: '#/parameters/Timeout'
         
-        - $ref: '#/parameters/ApiVersionParameter'
         - $ref: '#/parameters/LeaseId'
-        - $ref: '#/parameters/ClientRequestId'
-        # Authentication Parameters.
       responses:
         '200':
           description: The metadata was retrieved successfully.
@@ -873,8 +758,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/set-blob-metadata
       tags:
@@ -890,11 +774,8 @@ x-ms-paths:
           - metadata
         - $ref: '#/parameters/Timeout'
         
-        - $ref: '#/parameters/ApiVersionParameter'
         - $ref: '#/parameters/Metadata'
         - $ref: '#/parameters/LeaseId'
-        - $ref: '#/parameters/ClientRequestId'
-        # Authentication Parameters.
       responses:
         '200':
           description: The metadata was set successfully.
@@ -905,8 +786,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
             - $inc: '#/headers/x-ms-request-server-encrypted'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
   '/{container}/{blob}?comp=lease':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/lease-blob
@@ -923,15 +803,12 @@ x-ms-paths:
           - lease
         - $ref: '#/parameters/Timeout'
         
-        - $ref: '#/parameters/ApiVersionParameter'
         - $ref: '#/parameters/LeaseId'
         - $ref: '#/parameters/LeaseAction'
         - $ref: '#/parameters/LeaseBreakPeriod'
         - $ref: '#/parameters/LeaseDuration'
         - $ref: '#/parameters/ProposedLeaseId'
         - $ref: '#/parameters/Origin'
-        - $ref: '#/parameters/ClientRequestId'
-        # Authentication Parameters.
       responses:
         '200':
           description: The Renew/Change/Release operation completed successfully.
@@ -972,8 +849,7 @@ x-ms-paths:
             - $inc: '#/headers/Access-Control-Allow-Origin'
             - $inc: '#/headers/Access-Control-Expose-Headers'
             - $inc: '#/headers/Access-Control-Allow-Credentials'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
   '/{container}/{blob}?comp=snapshot':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/snapshot-blob
@@ -990,15 +866,12 @@ x-ms-paths:
           - snapshot
         - $ref: '#/parameters/Timeout'
         
-        - $ref: '#/parameters/ApiVersionParameter'
         - $ref: '#/parameters/Metadata'
         - $ref: '#/parameters/IfModifiedSince'
         - $ref: '#/parameters/IfUnmodifiedSince'
         - $ref: '#/parameters/IfMatch'
         - $ref: '#/parameters/IfNoneMatch'
         - $ref: '#/parameters/LeaseId'
-        - $ref: '#/parameters/ClientRequestId'
-        # Authentication Parameters.
       responses:
         '201':
           description: The snaptshot was taken successfully.
@@ -1009,11 +882,43 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
-  '/{container}/{blob}?comp=copy':
+  '/{container}/{blob}?comp=copy': # note: comp=copy is fake, just for disamb. with '/{container}/{blob}'
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/copy-blob
+      tags:
+      - blobs
+      operationId: Blobs_Copy
+      description: The Copy Blob operation copies a blob to a destination within the storage account.
+      parameters:
+        - $ref: '#/parameters/Container'
+        - $ref: '#/parameters/Blob'
+        - $ref: '#/parameters/Timeout'
+        
+        - $ref: '#/parameters/Metadata'
+        - $ref: '#/parameters/SourceIfModifiedSince'
+        - $ref: '#/parameters/SourceIfUnmodifiedSince'
+        - $ref: '#/parameters/SourceIfMatch'
+        - $ref: '#/parameters/SourceIfNoneMatch'
+        - $ref: '#/parameters/IfModifiedSince'
+        - $ref: '#/parameters/IfUnmodifiedSince'
+        - $ref: '#/parameters/IfMatch'
+        - $ref: '#/parameters/IfNoneMatch'
+        - $ref: '#/parameters/CopySource'
+        - $ref: '#/parameters/LeaseId'
+        - $ref: '#/parameters/SourceLeaseId'
+      responses:
+        '202':
+          description: The delete request was accepted and the blob will be deleted.
+          headers:
+            - $inc: '#/headers/ETag'
+            - $inc: '#/headers/Last-Modified'
+            - $inc: '#/headers/x-ms-request-id'
+            - $inc: '#/headers/x-ms-version'
+            - $inc: '#/headers/Date'
+            - $inc: '#/headers/x-ms-copy-id'
+            - $inc: '#/headers/x-ms-copy-status'
+      $inc: '#/stuff/common-operation'
   '/{container}/{blob}?comp=copy&copyid={CopyId}':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/abort-copy-blob
       tags:
@@ -1030,11 +935,8 @@ x-ms-paths:
         - $ref: '#/parameters/CopyId'
         - $ref: '#/parameters/Timeout'
         
-        - $ref: '#/parameters/ApiVersionParameter'
         - $ref: '#/parameters/LeaseId'
         - $ref: '#/parameters/CopyActionAbort'
-        - $ref: '#/parameters/ClientRequestId'
-        # Authentication Parameters.
       responses:
         '204':
           description: The delete request was accepted and the blob will be deleted.
@@ -1042,9 +944,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-request-id'
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
-
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
   #
   # Block Blob Methods
@@ -1065,12 +965,9 @@ x-ms-paths:
       - $ref: '#/parameters/BlockId'
       - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/ApiVersionParameter'  # Version
       - $ref: '#/parameters/ContentLength'
       - $ref: '#/parameters/ContentMD5'
       - $ref: '#/parameters/LeaseId'
-      - $ref: '#/parameters/ClientRequestId'
-      # insert authentication stuff
 
       - name: blocks
         in: body
@@ -1087,8 +984,8 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
             - $inc: '#/headers/x-ms-request-server-encrypted'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
+
   '/{container}/{blob}?comp=blocklist':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/put-block-list
       tags:
@@ -1105,7 +1002,6 @@ x-ms-paths:
         - blocklist
       - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/ApiVersionParameter'  # Version
       - $ref: '#/parameters/ContentLength'
       - $ref: '#/parameters/ContentMD5'
       - $ref: '#/parameters/BlobCacheControl'
@@ -1115,9 +1011,7 @@ x-ms-paths:
       - $ref: '#/parameters/BlobContentMD5'
       - $ref: '#/parameters/XMsMeta'
       - $ref: '#/parameters/LeaseId'
-      - $ref: '#/parameters/ClientRequestId'
       - $ref: '#/parameters/BlobContentDisposition'
-      # insert authentication stuff
 
       - name: blocks
         in: body
@@ -1135,8 +1029,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
             - $inc: '#/headers/x-ms-request-server-encrypted'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-block-list
       tags:
       - blockblobs
@@ -1153,10 +1046,7 @@ x-ms-paths:
       - $ref: '#/parameters/BlockListType'
       - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/ApiVersionParameter'  # Version
       - $ref: '#/parameters/LeaseId'
-      - $ref: '#/parameters/ClientRequestId'
-      # insert authentication stuff
       responses:
         '200':
           description: The page range was written.
@@ -1170,8 +1060,7 @@ x-ms-paths:
             - $inc: '#/headers/Date'
           schema:
             $ref: '#/definitions/BlockList'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
   
   #
   # Page Blob Methods
@@ -1191,7 +1080,6 @@ x-ms-paths:
         - page
       - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/ApiVersionParameter'  # Version
       - $ref: '#/parameters/Range'
       - $ref: '#/parameters/ContentLength'
       - $ref: '#/parameters/ContentMD5'
@@ -1204,10 +1092,8 @@ x-ms-paths:
       - $ref: '#/parameters/IfUnmodifiedSince'
       - $ref: '#/parameters/IfMatch'
       - $ref: '#/parameters/IfNoneMatch'
-      - $ref: '#/parameters/ClientRequestId'
 
       - $ref: '#/parameters/Body'
-      # insert authentication stuff
       responses:
         '201':
           description: The page range was written.
@@ -1220,8 +1106,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
             - $inc: '#/headers/x-ms-request-server-encrypted'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
   '/{container}/{blob}?comp=pagelist':
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-page-ranges
       tags:
@@ -1239,11 +1124,8 @@ x-ms-paths:
       - $ref: '#/parameters/Timeout'
       - $ref: '#/parameters/PrevSnapshot'
 
-      - $ref: '#/parameters/ApiVersionParameter'  # Version
       - $ref: '#/parameters/Range'
       - $ref: '#/parameters/LeaseId'
-      - $ref: '#/parameters/ClientRequestId'
-      # insert authentication stuff
       responses:
         '200':
           description: Information on the page blob was found.
@@ -1258,8 +1140,7 @@ x-ms-paths:
             type: string
             # TODO: https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-page-ranges
             # has sequence toggling between PageRange and ClearRange
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
   '/{container}/{blob}?comp=incrementalcopy':
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/incremental-copy-blob 
       tags:
@@ -1275,15 +1156,12 @@ x-ms-paths:
         - incrementalcopy
       - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/ApiVersionParameter'  # Version
       - $ref: '#/parameters/Metadata'
       - $ref: '#/parameters/IfModifiedSince'
       - $ref: '#/parameters/IfUnmodifiedSince'
       - $ref: '#/parameters/IfMatch'
       - $ref: '#/parameters/IfNoneMatch'
       - $ref: '#/parameters/CopySource'
-      - $ref: '#/parameters/ClientRequestId'
-      # insert authentication stuff
       responses:
         '202':
           description: The blob was copied.
@@ -1295,8 +1173,7 @@ x-ms-paths:
             - $inc: '#/headers/Date'
             - $inc: '#/headers/x-ms-copy-id'
             - $inc: '#/headers/x-ms-copy-status'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
   # 
   # Append Blob Methods
   #
@@ -1316,16 +1193,13 @@ x-ms-paths:
         - appendblock
       - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/ApiVersionParameter'  # Version
       - $ref: '#/parameters/Content-Length'
       - $ref: '#/parameters/Content-MD5'
       - $ref: '#/parameters/LeaseId'
-      - $ref: '#/parameters/ClientRequestId'
       - $ref: '#/parameters/BlobConditionMaxSize'
       - $ref: '#/parameters/BlobConditionAppendPos'
 
       - $ref: '#/parameters/Body'
-      # insert authentication stuff
       responses:
         '201':
           description: The block was created.
@@ -1338,8 +1212,7 @@ x-ms-paths:
             - $inc: '#/headers/Date'
             - $inc: '#/headers/x-ms-blob-append-offset'
             - $inc: '#/headers/x-ms-blob-committed-block-count'
-        default:
-          $ref: '#/responses/Error'
+      $inc: '#/stuff/common-operation'
 
 
   
