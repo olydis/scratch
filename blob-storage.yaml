@@ -1532,7 +1532,7 @@ definitions:
     description: a collection of signed identifiers
     type: array
     items: 
-      $ref: SignedIdentifier
+      $ref: '#/definitions/SignedIdentifier'
 
   StorageServiceProperties:
     description: Storage Service Properties.
@@ -2047,7 +2047,7 @@ parameters:
     in: body
     required: true
     schema: 
-      $ref: StorageServiceProperties
+      $ref: '#/definitions/StorageServiceProperties'
     x-ms-parameter-location: method
     description: The StorageService properties.
 
