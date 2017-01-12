@@ -195,8 +195,8 @@ x-ms-paths:
 
         # header parameters
         - $ref: '#/parameters/LeaseId'
-        - $ref: '#/parameters/If-Modified-Since'
-        - $ref: '#/parameters/If-Unmodified-Since'
+        - $ref: '#/parameters/IfModifiedSince'
+        - $ref: '#/parameters/IfUnmodifiedSince'
       responses:
         202: 
           description: Accepted
@@ -881,11 +881,7 @@ x-ms-paths:
       - $ref: '#/parameters/ContentMD5'
       - $ref: '#/parameters/LeaseId'
 
-      - name: blocks
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/Body'
+      - $ref: '#/parameters/Body'
 
       responses:
         '201':
@@ -918,7 +914,7 @@ x-ms-paths:
       - $ref: '#/parameters/BlobContentEncoding'
       - $ref: '#/parameters/BlobContentLanguage'
       - $ref: '#/parameters/BlobContentMD5'
-      - $ref: '#/parameters/XMsMeta'
+      - $ref: '#/parameters/Metadata'
       - $ref: '#/parameters/LeaseId'
       - $ref: '#/parameters/BlobContentDisposition'
 
@@ -1087,8 +1083,8 @@ x-ms-paths:
 
       - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/Content-Length'
-      - $ref: '#/parameters/Content-MD5'
+      - $ref: '#/parameters/ContentLength'
+      - $ref: '#/parameters/ContentMD5'
       - $ref: '#/parameters/LeaseId'
       - $ref: '#/parameters/BlobConditionMaxSize'
       - $ref: '#/parameters/BlobConditionAppendPos'
@@ -1209,6 +1205,16 @@ definitions:
       name: LeaseStatusType
       modelAsString: false
 
+  SequenceNumberAction:
+    type: string
+    enum:
+      - max # Sets the sequence number to be the higher of the value included with the request and the value currently stored for the blob.
+      - update # Sets the sequence number to the value included with the request.
+      - increment # Increments the value of the sequence number by 1. If specifying this option, do not include the x-ms-blob-sequence-number header; doing so will return status code 400 (Bad Request).
+    x-ms-enum:
+      name: SequenceNumberAction
+      modelAsString: false
+
   # Objects ========================================================================
   AccessPolicy:
     type: object
@@ -1231,6 +1237,7 @@ definitions:
         type: string
 
   Blob:
+    description: An Azure Storage blob
     type: object
     properties:
       Name:
@@ -1244,6 +1251,7 @@ definitions:
         type: object
 
   BlobProperties:
+    description: Properties of a blob
     type: object
     properties:
       Last-Modified:
@@ -1295,6 +1303,7 @@ definitions:
   BlobEnumerationResults:
     xml:
       name: EnumerationResults
+    description: An enumeration of blobs
     type: object
     properties:
       Prefix:
@@ -1310,10 +1319,9 @@ definitions:
           wrapped: true
         type: array # weird thingy with BlogPrefix
         items:
+          $ref: '#/definitions/Blob'
           xml:
             name: Blob
-          type:
-            $ref: '#/definitions/Blob'
       NextMarker:
         type: string
 
@@ -1371,6 +1379,7 @@ definitions:
 
   Container:
     type: object
+    description: An Azure Storage container
     properties:
       Name:
         type: string
@@ -1381,6 +1390,7 @@ definitions:
 
   ContainerProperties:
     type: object
+    description: Properties of a container
     properties:
       Last-Modified:
         type: string
@@ -1399,6 +1409,7 @@ definitions:
   ContainerEnumerationResults:
     xml:
       name: EnumerationResults
+    description: An enumaration of containers
     type: object
     properties:
       Prefix:
@@ -1412,10 +1423,9 @@ definitions:
           wrapped: true
         type: array # weird thingy with BlogPrefix
         items:
+          $ref: '#/definitions/Container'
           xml:
             name: Container
-          type:
-            $ref: '#/definitions/Container'
       NextMarker:
         type: string
 
@@ -1443,8 +1453,7 @@ definitions:
         type: string
       MaxAgeInSeconds: 
         description: The maximum amount time that a browser should cache the preflight OPTIONS request. 
-        type: number
-        format: integer
+        type: integer
         minimum: 0 
 
   GeoReplication:
@@ -1509,8 +1518,7 @@ definitions:
         type: boolean
       Days:
         description: Indicates the number of days that metrics or logging data should be retained. All data older than this value will be deleted
-        type: number
-        format: integer
+        type: integer
         minimum: 1
         maximim: 365
   
@@ -1660,6 +1668,15 @@ parameters:
     description: Optional. Set the blob’s content language. If specified, this
       property is stored with the blob and returned with a read request.
     
+  BlobContentLength:
+    name: x-ms-blob-content-length
+    in: header
+    required: false #required for page blobs... rethink if splitting up operations
+    type: integer
+    format: int64 #further stuff like that?
+    x-ms-parameter-location: method
+    description: This header specifies the maximum size for the page blob, up to 1 TB. The page blob size must be aligned to a 512-byte boundary.
+
   BlobContentMD5:
     name: x-ms-blob-content-md5
     in: header
@@ -1676,6 +1693,17 @@ parameters:
     type: string
     description: Optional. Sets the blob’s content type. If specified, this property
       is stored with the blob and returned with a read request.
+
+  BlobSequenceNumber:
+    name: x-ms-sequence-number
+    x-ms-client-name: blobSequenceNumber
+    in: header
+    required: false
+    type: integer
+    format: int64
+    default: 0
+    x-ms-parameter-location: method
+    description: Set for page blobs only. The sequence number is a user-controlled value that you can use to track requests. The value of the sequence number must be between 0 and 2^63 - 1. # oops, Swagger has no format for uint64!
 
   BlobType:
     name: x-ms-blob-type
@@ -1716,6 +1744,15 @@ parameters:
     x-ms-parameter-location: method
     description: Initial data
 
+  CacheControl:
+    name: Cache-Control
+    x-ms-client-name: cacheControl
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Cache control for given resource
+
   ContainerAcl:
     name: containerAcl
     in: body
@@ -1742,6 +1779,7 @@ parameters:
     enum:
       - abort
     x-ms-parameter-location: method
+    description: Dummy (constant parameter)
 
   CopyId:
     name: copyid
@@ -1769,6 +1807,24 @@ parameters:
     type: string
     x-ms-parameter-location: method
     description: The container name.
+
+  ContentEncoding:
+    name: Content-Encoding
+    x-ms-client-name: contentEncoding
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Specifies which content encodings have been applied to this resource.
+
+  ContentLanguage:
+    name: Content-Language
+    x-ms-client-name: contentLanguage
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Specifies the natural languages used by this resource.
 
   ContentLength:
     name: Content-Length
@@ -1807,6 +1863,15 @@ parameters:
     $inc: '#/definitions/DeleteSnapshots'
     x-ms-parameter-location: method
     in: header
+    required: false
+  
+  Delimiter:
+    name: delimiter
+    x-ms-client-name: delimiter
+    description: When the request includes this parameter, the operation returns a BlobPrefix element in the response body that acts as a placeholder for all blobs whose names begin with the same substring up to the appearance of the delimiter character. The delimiter may be a single character or a string.
+    type: string
+    x-ms-parameter-location: method
+    in: query
     required: false
 
   GetRangeContentMD5:
@@ -1861,6 +1926,7 @@ parameters:
     in: header
     required: false
     type: integer
+    description: Specify this header value to operate only on a blob if it has the specified sequence number.
 
   IfSequenceNumberLessThan:
     name: x-ms-if-sequence-number-lt
@@ -1868,6 +1934,7 @@ parameters:
     in: header
     required: false
     type: integer
+    description: Specify this header value to operate only on a blob if it has a sequence number less than the specified.
 
   IfSequenceNumberLessThanOrEqualTo:
     name: x-ms-if-sequence-number-le
@@ -1875,6 +1942,7 @@ parameters:
     in: header
     required: false
     type: integer
+    description: Specify this header value to operate only on a blob if it has a sequence number less than or equal to the specified.
 
   Include:
     name: include
@@ -1898,6 +1966,22 @@ parameters:
     - release
     - break
     description: Describes what lease action to take.
+    
+  LeaseBreakPeriod:
+    name: x-ms-lease-break-period
+    x-ms-client-name: breakPeriod
+    in: header
+    required: true
+    type: integer
+    description: For a break operation, proposed duration the lease should continue before it is broken, in seconds, between 0 and 60. This break period is only used if it is shorter than the time remaining on the lease. If longer, the time remaining on the lease is used. A new lease will not be available before the break period has expired, but the lease may be held for longer than the break period. If this header does not appear with a break operation, a fixed-duration lease breaks after the remaining lease period elapses, and an infinite lease breaks immediately.
+
+  LeaseDuration:
+    name: x-ms-lease-duration
+    x-ms-client-name: duration
+    in: header
+    required: true
+    type: integer
+    description: Specifies the duration of the lease, in seconds, or negative one (-1) for a lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be changed using renew or change.
 
   LeaseId:
     name: x-ms-lease-id
@@ -1908,7 +1992,7 @@ parameters:
     x-ms-parameter-location: method
     description: If specified, the operation only succeeds if the container’s lease
       is active and matches this ID.
-
+     
   Marker: 
     name: marker
     in: query
@@ -1921,8 +2005,7 @@ parameters:
     name: maxresults
     in: query
     required: false
-    type: number
-    format: integer
+    type: integer
     minimum: 0 
     maximum: 5000
     description: Specifies the maximum number of containers to return. If the request does not specify maxresults, or specifies a value greater than 5000, the server will return up to 5000 items. Note that if the listing operation crosses a partition boundary, then the service will return a continuation token for retrieving the remainder of the results. For this reason, it is possible that the service will return fewer results than specified by maxresults, or than the default of 5000. 
@@ -1931,8 +2014,7 @@ parameters:
     name: x-ms-meta
     in: query
     required: false
-    type: number
-    format: integer
+    type: integer
     minimum: 0
     x-ms-parameter-location: method
     description: Optional. Specifies a user-defined name-value pair associated with the blob. If no name-value pairs are specified, the operation will copy the metadata from the source blob or file to the destination blob. If one or more name-value pairs are specified, the destination blob is created with the specified metadata, and metadata is not copied from the source blob or file. 
@@ -1974,6 +2056,15 @@ parameters:
     format: date-time
     x-ms-parameter-location: method
     description:  Optional in version 2015-07-08 and newer. The prevsnapshot parameter is a DateTime value that specifies that the response will contain only pages that were changed between target blob and previous snapshot. Changed pages include both updated and cleared pages. The target blob may be a snapshot, as long as the snapshot specified by prevsnapshot is the older of the two. Note that incremental snapshots are currently supported only for blobs created on or after January 1, 2016.
+ 
+  ProposedLeaseId:
+    name: x-ms-proposed-lease-id
+    x-ms-client-name: proposedLeaseId
+    in: header
+    required: false
+    type: string
+    x-ms-parameter-location: method
+    description: Proposed lease ID, in a GUID string format. The Blob service returns 400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid Constructor (String) for a list of valid GUID string formats.
 
   Range:
     name: x-ms-range
@@ -1983,6 +2074,16 @@ parameters:
     type: string
     x-ms-parameter-location: method
     description: Return only the bytes of the blob in the specified range.
+
+  SequenceNumberAction:
+    name: x-ms-sequence-number-action
+    x-ms-client-name: sequenceNumberAction
+    in: header
+    required: false
+    $inc: '#/definitions/SequenceNumberAction'
+    x-ms-parameter-location: method
+    description: Required if the x-ms-blob-sequence-number header is set for the request. This property applies to page blobs only. 
+      This property indicates how the service should modify the blob's sequence number
 
   Snapshot:
     name: snapshot
@@ -2055,8 +2156,7 @@ parameters:
     name: timeout
     in: query
     required: false
-    type: number
-    format: integer
+    type: integer
     minimum: 0
     x-ms-parameter-location: method
     description: The timeout parameter is expressed in seconds. 
@@ -2065,8 +2165,8 @@ parameters:
 responses:
   Error:
     description: Error.
-    schema:
-      $ref: '#/definitions/BlobError'
+    #schema:
+    #  $ref: '#/definitions/BlobError'
 headers:
   Access-Control-Allow-Credentials: 
     type: boolean
