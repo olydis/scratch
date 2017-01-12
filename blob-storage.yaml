@@ -1615,6 +1615,7 @@ parameters:
     in: header
     required: false
     type: string
+    x-ms-parameter-location: method
     description: Optional. Sets the blob’s cache control. If specified, this property
       is stored with the blob and returned with a read request.
 
@@ -1650,6 +1651,7 @@ parameters:
     in: header
     required: false
     type: string
+    x-ms-parameter-location: method
     description: Optional. Sets the blob’s Content-Disposition header.
     
   BlobContentEncoding:
@@ -1657,6 +1659,7 @@ parameters:
     in: header
     required: false
     type: string
+    x-ms-parameter-location: method
     description: Optional. Sets the blob’s content encoding. If specified, this
       property is stored with the blob and returned with a read request.
     
@@ -1665,6 +1668,7 @@ parameters:
     in: header
     required: false
     type: string
+    x-ms-parameter-location: method
     description: Optional. Set the blob’s content language. If specified, this
       property is stored with the blob and returned with a read request.
     
@@ -1682,6 +1686,7 @@ parameters:
     in: header
     required: false
     type: string
+    x-ms-parameter-location: method
     description: Optional. An MD5 hash of the blob content. Note that this hash
       is not validated, as the hashes for the individual blocks were validated
       when each was uploaded.
@@ -1691,6 +1696,7 @@ parameters:
     in: header
     required: false
     type: string
+    x-ms-parameter-location: method
     description: Optional. Sets the blob’s content type. If specified, this property
       is stored with the blob and returned with a read request.
 
@@ -1796,7 +1802,6 @@ parameters:
     in: header
     required: false
     type: string
-    x-ms-parameter-location: method
     description: Provides a client-generated, opaque value with a 1 KB character limit
       that is recorded in the analytics logs when storage analytics logging is enabled.
 
@@ -1926,6 +1931,7 @@ parameters:
     in: header
     required: false
     type: integer
+    x-ms-parameter-location: method
     description: Specify this header value to operate only on a blob if it has the specified sequence number.
 
   IfSequenceNumberLessThan:
@@ -1934,6 +1940,7 @@ parameters:
     in: header
     required: false
     type: integer
+    x-ms-parameter-location: method
     description: Specify this header value to operate only on a blob if it has a sequence number less than the specified.
 
   IfSequenceNumberLessThanOrEqualTo:
@@ -1942,6 +1949,7 @@ parameters:
     in: header
     required: false
     type: integer
+    x-ms-parameter-location: method
     description: Specify this header value to operate only on a blob if it has a sequence number less than or equal to the specified.
 
   Include:
@@ -1951,6 +1959,7 @@ parameters:
     type: string
     enum: 
       - metadata
+    x-ms-parameter-location: method
     description: Include this parameter to specify that the container's metadata be returned as part of the response body.
 
   LeaseAction:
@@ -1965,6 +1974,7 @@ parameters:
     - change
     - release
     - break
+    x-ms-parameter-location: method
     description: Describes what lease action to take.
     
   LeaseBreakPeriod:
@@ -1973,6 +1983,7 @@ parameters:
     in: header
     required: true
     type: integer
+    x-ms-parameter-location: method
     description: For a break operation, proposed duration the lease should continue before it is broken, in seconds, between 0 and 60. This break period is only used if it is shorter than the time remaining on the lease. If longer, the time remaining on the lease is used. A new lease will not be available before the break period has expired, but the lease may be held for longer than the break period. If this header does not appear with a break operation, a fixed-duration lease breaks after the remaining lease period elapses, and an infinite lease breaks immediately.
 
   LeaseDuration:
@@ -1981,6 +1992,7 @@ parameters:
     in: header
     required: true
     type: integer
+    x-ms-parameter-location: method
     description: Specifies the duration of the lease, in seconds, or negative one (-1) for a lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be changed using renew or change.
 
   LeaseId:
@@ -2008,6 +2020,7 @@ parameters:
     type: integer
     minimum: 0 
     maximum: 5000
+    x-ms-parameter-location: method
     description: Specifies the maximum number of containers to return. If the request does not specify maxresults, or specifies a value greater than 5000, the server will return up to 5000 items. Note that if the listing operation crosses a partition boundary, then the service will return a continuation token for retrieving the remainder of the results. For this reason, it is possible that the service will return fewer results than specified by maxresults, or than the default of 5000. 
 
   Metadata:
@@ -2035,6 +2048,7 @@ parameters:
     in: header
     required: true
     $inc: '#/definitions/PageWrite'
+    x-ms-parameter-location: method
     description: |-
       Required. You may specify one of the following options:
         - Update: Writes the bytes specified by the request body into the specified range. The Range and Content-Length headers must match to perform the update.
