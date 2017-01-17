@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace TestGenerator.Generator
 {
-    static class ReverseEngineering
+    static class RequestReverseEngineering
     {
         private static bool TryAddParameterValue(string name, string value, ParameterLocation location, Method method, Dictionary<string, string> args)
         {
@@ -76,11 +76,12 @@ namespace TestGenerator.Generator
         public static ServiceCallInfo DetermineServiceCall(string recordedRequest, CodeModel serviceModel, Regex urlFilter)
         {
             // parse
-            var httpNewLine = "\r\n";
-            var divideIndex = new string(recordedRequest.Select(c => (char)(c%256)).ToArray()).IndexOf(httpNewLine + httpNewLine);
-            var body = recordedRequest.Substring(divideIndex + 4);
-            var lines = recordedRequest.Substring(0, divideIndex).Split(new[] { httpNewLine }, StringSplitOptions.RemoveEmptyEntries);
-            var introParts = lines[0].Split();
+            string intro;
+            Dictionary<string, string> headers;
+            string body;
+            Utilities.ParseRawHttpMessage(recordedRequest, out intro, out headers, out body);
+
+            var introParts = intro.Split();
             var method = introParts[0].ToLowerInvariant();
             var url = new Uri(introParts[1]);
             if (!urlFilter.Match(url.OriginalString).Success)
@@ -88,9 +89,6 @@ namespace TestGenerator.Generator
                 Logger.Instance.Log(Category.Info, $"Dropping `{url}` (did not match filter)");
                 return null;
             }
-            var headers = lines.Skip(1).TakeWhile(line => line != "")
-                .Select(line => Regex.Match(line, @"^(?<key>.*?)\: (?<value>.*?)$"))
-                .ToDictionary(x => x.Groups["key"].Value, x => x.Groups["value"].Value);
 
             // match
             var candids = serviceModel.Methods

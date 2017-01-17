@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0.25123" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0.25123</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="Exists('$(VSToolsPath)\DotNet\Microsoft.DotNet.Props')" />
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>784d4b45-f12a-4b8f-a86c-35a080814a19</ProjectGuid>
+    <RootNamespace>AutoRest.CSharp.Tests</RootNamespace>
+    <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
+    <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <DnxInvisibleFolder Include=".vs\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <!-- Overridable properties -->
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(MsBuildThisFileDirectory)..</SolutionDir>
+    <DotnetFrameworkName Condition="'$(DotnetFrameworkName)' == ''">net451</DotnetFrameworkName>
+    <DotnetRuntimeName Condition="'$(DotnetRuntimeName)' == ''">win7-x64</DotnetRuntimeName>
+    <DotnetOutputPath Condition="'$(DotnetOutputPath)' == ''">$(OutputPath)\$(Configuration)\$(DotnetFrameworkName)\$(DotnetRuntimeName)</DotnetOutputPath>
+    <CommonRoot>$(MsBuildThisFileDirectory)..</CommonRoot>
+    <LibraryFxTarget Condition="'$(LibraryFxTarget)' == ''">net45</LibraryFxTarget>
+  </PropertyGroup>
+  <Target Name="Build" Condition=" '$(OS)' != 'Windows_NT'">
+  </Target>
+  <Target Name="BeforeBuild" BeforeTargets="Build" Condition=" '$(OS)' != 'Windows_NT'">
+  </Target>
+  <Target Name="Clean" Condition=" '$(OS)' != 'Windows_NT'">
+  </Target>
+  <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.targets" Condition="Exists('$(VSToolsPath)\DotNet\Microsoft.DotNet.targets')" />
+</Project>
