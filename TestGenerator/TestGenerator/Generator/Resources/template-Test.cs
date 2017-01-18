@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Xunit;
 using /*<*/Dummy/*></clientNamespace>*/;
+using /*<*/Dummy/*></clientNamespaceModels>*/;
 using Microsoft.Rest.Azure;
 
 //<dump disabled/>

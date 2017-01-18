@@ -30,8 +30,7 @@ namespace TestGenerator.Generator
                 return localParams.Take(argCount);
             }
         }
-
-        public string BodyParamExpression
+        public string BodyParam
         {
             get
             {
@@ -39,19 +38,38 @@ namespace TestGenerator.Generator
                 if (bodyParam != null)
                 {
                     var value = Params[bodyParam.SerializedName];
-
-                    // strip BOM from payload
-                    value = value.Trim('\x00EF', '\x00BB', '\x00BF', '\uFEFF', '\u200B');
-
-                    if (bodyParam.ModelType.Name == "System.IO.Stream")
-                    {
-                        return $"new MemoryStream(Encoding.UTF8.GetBytes({Utilities.EscapeString(value)}))";
-                    }
-
-                    return $"Models.{bodyParam.ModelType.Name}.XmlDeserialize({Utilities.EscapeString(value)})";
+                    return value.Trim('\x00EF', '\x00BB', '\x00BF', '\uFEFF', '\u200B');
                 }
                 return null;
             }
+        }
+
+        public string BodyParamType
+        {
+            get
+            {
+                return Method.Body.ModelTypeName;
+            }
+        }
+
+        public string BodyParamInnerType
+        {
+            get
+            {
+                var type = Method.Body.ModelType;
+                type = (type as SequenceType)?.ElementType
+                    ?? (type as DictionaryType)?.ValueType
+                    ?? type;
+                return type.Name;
+            }
+        }
+
+        public string BodyInitStatement(string bodyParamName)
+        {
+            var bodyString = Utilities.EscapeString(BodyParam);
+            if (BodyParamType == "System.IO.Stream")
+                return $"{bodyParamName} = new MemoryStream(Encoding.UTF8.GetBytes({bodyString}))";
+            return $"{BodyParamInnerType}.TryDeserializePayload(\"application/xml\", {bodyString}, out {bodyParamName})";
         }
     }
 }

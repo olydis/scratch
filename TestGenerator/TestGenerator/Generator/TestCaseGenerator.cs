@@ -50,7 +50,10 @@ namespace TestGenerator.Generator
         {
             if (param.Location == ParameterLocation.Body)
                 return bodyParamName;
-            return CodeNamer.Instance.EscapeDefaultValue(value, param.ModelType);
+            if (param.ModelType is EnumType)
+                return $"{param.ModelTypeName}.{CodeNamer.Instance.EscapeDefaultValue(value, param.ModelType)}";
+            return CodeNamer.Instance.EscapeDefaultValue(value, param.ModelType)
+                .Replace(", this.Client.SerializationSettings", "");
         }
 
         public bool GenerateTest(string targetDir, string testId, string recordedRequest, string recordedResponse)
@@ -80,6 +83,7 @@ namespace TestGenerator.Generator
                 {
                     var fileContent = File.ReadAllText(templatePathTestFile);
                     fileContent = GetReplacePattern("clientNamespace").Replace(fileContent, CodeModel.Namespace);
+                    fileContent = GetReplacePattern("clientNamespaceModels").Replace(fileContent, $"{CodeModel.Namespace}.Models");
                     fileContent = GetReplacePattern("className").Replace(fileContent, className);
                     fileContent = GetReplacePattern("clientConstructorCall").Replace(fileContent, $"new {CodeModel.Name}(credentials)");
                     fileContent = GetReplacePattern("recordedRequest").Replace(fileContent, Utilities.EscapeString(recordedRequest));
@@ -89,10 +93,9 @@ namespace TestGenerator.Generator
 
 
                     // parse body if exists
-                    var bodyParamExpression = serviceCall.BodyParamExpression;
-                    if (bodyParamExpression != null)
+                    if (serviceCall.BodyParam != null)
                     {
-                        var bodyDeserCode = $"var {bodyParamName} = {bodyParamExpression};";
+                        var bodyDeserCode = $"{serviceCall.BodyParamType} {bodyParamName}; {serviceCall.BodyInitStatement(bodyParamName)};";
                         fileContent = GetReplacePattern("bodyParamInit").Replace(fileContent, bodyDeserCode);
                     }
 
@@ -128,10 +131,17 @@ namespace TestGenerator.Generator
                         if (response.Body != null)
                         {
                             sb.AppendLine(indent + "// body validation");
-                            sb.AppendLine(indent + $"var xmlBodyExpected = XElement.Parse({Utilities.EscapeString(responseInfo.Body)});");
-                            sb.AppendLine(indent + "var xmlBodyActual = new XElement(xmlBodyExpected.Name);");
-                            sb.AppendLine(indent + "result.Body.XmlSerialize(xmlBodyActual);");
-                            sb.AppendLine(indent + "// Assert.Equal(xmlBodyExpected, xmlBodyActual);");
+                            if (response.Body.Name == "System.IO.Stream")
+                            {
+
+                            }
+                            else
+                            {
+                                sb.AppendLine(indent + $"var xmlBodyExpected = XElement.Parse({Utilities.EscapeString(responseInfo.Body)});");
+                                sb.AppendLine(indent + "var xmlBodyActual = new XElement(xmlBodyExpected.Name);");
+                                sb.AppendLine(indent + "result.Body.XmlSerialize(xmlBodyActual);");
+                                sb.AppendLine(indent + "// Assert.Equal(xmlBodyExpected, xmlBodyActual);");
+                            }
                         }
                         //if (response.Headers != null)
                         //{
