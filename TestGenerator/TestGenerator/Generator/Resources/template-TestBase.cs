@@ -57,21 +57,20 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
         private void Serve(TcpClient server)
         {
             Debug.WriteLine($"Server ({this.GetType().Name}): Incoming request.");
-            using (var networkStream = server.GetStream())
-            {
-                // read request
-                var requestBuffer = new char[1 << 16];
-                var reader = new StreamReader(networkStream);
-                var read = reader.Read(requestBuffer, 0, requestBuffer.Length);
-                var request = new string(requestBuffer, 0, read);
+            var networkStream = server.GetStream();
 
-                // TODO: VALIDATION
+            // read request
+            var requestBuffer = new char[1 << 16];
+            var reader = new StreamReader(networkStream);
+            var read = reader.Read(requestBuffer, 0, requestBuffer.Length);
+            var request = new string(requestBuffer, 0, read);
 
-                // write response
-                var writer = new StreamWriter(networkStream);
-                writer.Write(RawResponse);
-                writer.Close();
-            }
+            // TODO: VALIDATION
+
+            // write response
+            var writer = new StreamWriter(networkStream);
+            writer.Write(RawResponse);
+            writer.Close();
         }
     }
 }

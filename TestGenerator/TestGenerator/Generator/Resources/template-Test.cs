@@ -6,12 +6,14 @@ using Microsoft.Rest;
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Xunit;
 using /*<*/Dummy/*></clientNamespace>*/;
 using Microsoft.Rest.Azure;
 
-//<dump/>
+//<dump disabled/>
 
 namespace /*<*/Dummy/*></clientNamespace>*/.Tests
 {
@@ -37,11 +39,14 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
             try
             {
                 //<call/>
-                //<throwIfExpectedSuccess/>
+                //<assertSuccess/>
+//<validation/>
             }
             catch (CloudException e)
             {
-                //<throwIfExpectedFail/>
+                //<assertFail/>
+
+                // TODO: validate e.Body or similar?
             }
 
             // stop server

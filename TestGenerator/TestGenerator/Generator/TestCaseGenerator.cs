@@ -60,7 +60,7 @@ namespace TestGenerator.Generator
             var dump = new StringBuilder();
             using (NewContext)
             {
-                Logger.Instance.AddListener(new SignalingLogListener(Category.Debug, message => dump.AppendLine($"// {message.Severity}\t{message.Message}")));
+                Logger.Instance.AddListener(new SignalingLogListener(Category.Debug, message => dump.AppendLine($"// {message.Severity}\t{message.Message.Replace("\r", @"\r").Replace("\n", @"\n")}")));
 
                 // parse request
                 var serviceCall = RequestReverseEngineering.DetermineServiceCall(recordedRequest, CodeModel, UrlFilter);
@@ -101,7 +101,8 @@ namespace TestGenerator.Generator
                     sbArgs.AppendLine();
                     foreach (var p in serviceCall.AvailableParams)
                         sbArgs.AppendLine($"                        {p.Name}: {GenerateArgumentCode(p, serviceCall.Params[p.SerializedName])},");
-                    var args = sbArgs.ToString().TrimEnd().TrimEnd(',');
+                    sbArgs.Append($"                        cancellationToken: new CancellationTokenSource(3000).Token");
+                    var args = sbArgs.ToString();
 
                     // gen call statement (return thingy will have `Headers`/`Body` properties if `returnType` has those things as non-null)
                     //var returnType = serviceCall.Method.ReturnType;
@@ -109,7 +110,38 @@ namespace TestGenerator.Generator
                     fileContent = GetReplacePattern("call").Replace(fileContent, callStatement);
 
                     // response validation
-                    fileContent = GetReplacePattern(responseInfo.ExpectException ? "throwIfExpectedFail" : "throwIfExpectedSuccess").Replace(fileContent, "throw;");
+                    if (responseInfo.ExpectException)
+                    {
+                        fileContent = GetReplacePattern("assertFail").Replace(fileContent, "");
+                        fileContent = GetReplacePattern("assertSuccess").Replace(fileContent, "Assert.True(false); // expected exception");
+
+                        fileContent = GetReplacePattern("validation").Replace(fileContent, "");
+                    }
+                    else
+                    {
+                        fileContent = GetReplacePattern("assertFail").Replace(fileContent, "throw; // expected success");
+                        fileContent = GetReplacePattern("assertSuccess").Replace(fileContent, "");
+
+                        var sb = new StringBuilder();
+                        string indent = "                ";
+                        var response = responseInfo.ExpectedReponse;
+                        if (response.Body != null)
+                        {
+                            sb.AppendLine(indent + "// body validation");
+                            sb.AppendLine(indent + $"var xmlBodyExpected = XElement.Parse({Utilities.EscapeString(responseInfo.Body)});");
+                            sb.AppendLine(indent + "var xmlBodyActual = new XElement(xmlBodyExpected.Name);");
+                            sb.AppendLine(indent + "result.Body.XmlSerialize(xmlBodyActual);");
+                            sb.AppendLine(indent + "// Assert.Equal(xmlBodyExpected, xmlBodyActual);");
+                        }
+                        //if (response.Headers != null)
+                        //{
+                        //    sb.AppendLine(indent + "// header validation");
+                        //    sb.AppendLine(indent + "var headers = result.Headers;");
+                        //    foreach (var expectedHeader in responseInfo.ExpectedTypedHeaderFields)
+                        //        sb.AppendLine(indent + $"Assert.Equal({CodeNamer.Instance.EscapeDefaultValue(expectedHeader.Value, expectedHeader.Key.ModelType)}, headers.{expectedHeader.Key.Name});");
+                        //}
+                        fileContent = GetReplacePattern("validation").Replace(fileContent, sb.ToString());
+                    }
 
                     // dump and finish
                     fileContent = GetReplacePattern("dump").Replace(fileContent, dump.ToString());

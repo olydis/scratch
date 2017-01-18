@@ -17,5 +17,17 @@ namespace TestGenerator.Generator
         public Response ExpectedReponse { get; set; }
 
         public bool ExpectException { get; set; }
+
+        public Dictionary<Property, string> ExpectedTypedHeaderFields
+        {
+            get
+            {
+                var headers = new Dictionary<Property, string>();
+                foreach (var headerField in (ExpectedReponse.Headers as CompositeType)?.Properties ?? Enumerable.Empty<Property>())
+                    if (Headers.ContainsKey(headerField.SerializedName))
+                        headers[headerField] = Headers[headerField.SerializedName];
+                return headers;
+            }
+        }
     }
 }

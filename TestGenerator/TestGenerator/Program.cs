@@ -23,10 +23,10 @@ namespace TestGenerator
         {
             var swaggerPath = @"C:\Users\jobader\Documents\GitHub\scratch\blob-storage-out.yaml";
             var codeGen = "Azure.CSharp";
-            var testFolder = @"E:\Managed.Blob.VersionedTests\raw2";
+            var testFolder = @"E:\Managed.Blob.VersionedTests\rawA";
             var targetFolder = @"E:\Managed.Blob.VersionedTests\gen";
             var autoRestExe = @"C:\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.exe";
-            var urlFilter = new Regex(@"http://localhost:10000/.*");
+            var urlFilter = new Regex(@"http://localhost:1000./.*");
 
             // create folders
             var targetFolderClient = Path.Combine(targetFolder, "client");
@@ -65,13 +65,31 @@ namespace TestGenerator
             foreach (var testId in testFolderDi.GetFiles("*.xml").Select(x => x.Name.Split('_')[0]))
             {
                 Logger.Instance.Log(Category.Info, $"Generating test {testId}");
-                var recordingFileRequest = testFolderDi.GetFiles($"{testId}_c.txt")[0];
-                var recordingFileResponse = testFolderDi.GetFiles($"{testId}_s.txt")[0];
+                var recordingFileRequest = File.ReadAllText(testFolderDi.GetFiles($"{testId}_c.txt")[0].FullName);
+                var recordingFileResponse = File.ReadAllText(testFolderDi.GetFiles($"{testId}_s.txt")[0].FullName);
+
+                if (recordingFileRequest.Length > (1 << 16))
+                {
+                    Logger.Instance.Log(Category.Warning, $"Request body too large ({recordingFileRequest.Length} bytes)");
+                    continue;
+                }
+                if (recordingFileResponse.Length > (1 << 16))
+                {
+                    Logger.Instance.Log(Category.Warning, $"Response body too large ({recordingFileResponse.Length} bytes)");
+                    continue;
+                }
+
+                // data fixups
+
+                // 1) `Transfer-Encoding: chunked` sometimes comes with empty body instead of `0\r\n\r\n` termination!
+                if (recordingFileResponse.Contains("Transfer-Encoding: chunked") && !recordingFileResponse.EndsWith("0\r\n\r\n"))
+                    recordingFileResponse += "0\r\n\r\n";
+
                 generator.GenerateTest(
                     targetFolder,
                     testId,
-                    File.ReadAllText(recordingFileRequest.FullName),
-                    File.ReadAllText(recordingFileResponse.FullName));
+                    recordingFileRequest,
+                    recordingFileResponse);
             }
             
             generator.GenerateTestContext(targetFolder);

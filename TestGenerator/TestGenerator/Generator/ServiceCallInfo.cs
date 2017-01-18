@@ -40,6 +40,9 @@ namespace TestGenerator.Generator
                 {
                     var value = Params[bodyParam.SerializedName];
 
+                    // strip BOM from payload
+                    value = value.Trim('\x00EF', '\x00BB', '\x00BF', '\uFEFF', '\u200B');
+
                     if (bodyParam.ModelType.Name == "System.IO.Stream")
                     {
                         return $"new MemoryStream(Encoding.UTF8.GetBytes({Utilities.EscapeString(value)}))";

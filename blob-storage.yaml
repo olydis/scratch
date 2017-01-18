@@ -24,7 +24,6 @@ schemes:
 - http
 consumes:
 - application/xml
-- application/json
 - application/octet-stream
 - text/plain
 produces:
@@ -583,7 +582,6 @@ x-ms-paths:
         - $ref: '#/parameters/Blob'
         - $ref: '#/parameters/Timeout'
         
-        - $ref: '#/parameters/ContentLength'
         - $ref: '#/parameters/ContentType'
         - $ref: '#/parameters/ContentEncoding'
         - $ref: '#/parameters/ContentLanguage'
@@ -877,7 +875,6 @@ x-ms-paths:
       - $ref: '#/parameters/BlockId'
       - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/ContentLength'
       - $ref: '#/parameters/ContentMD5'
       - $ref: '#/parameters/LeaseId'
 
@@ -907,7 +904,6 @@ x-ms-paths:
 
       - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/ContentLength'
       - $ref: '#/parameters/ContentMD5'
       - $ref: '#/parameters/BlobCacheControl'
       - $ref: '#/parameters/BlobContentType'
@@ -980,7 +976,6 @@ x-ms-paths:
       - $ref: '#/parameters/Timeout'
 
       - $ref: '#/parameters/Range'
-      - $ref: '#/parameters/ContentLength'
       - $ref: '#/parameters/ContentMD5'
       - $ref: '#/parameters/PageWrite'
       - $ref: '#/parameters/LeaseId'
@@ -1083,7 +1078,6 @@ x-ms-paths:
 
       - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/ContentLength'
       - $ref: '#/parameters/ContentMD5'
       - $ref: '#/parameters/LeaseId'
       - $ref: '#/parameters/BlobConditionMaxSize'
@@ -1726,6 +1720,7 @@ parameters:
     name: blockid
     x-ms-client-name: blockId
     in: query
+    type: string
     required: true
     x-ms-parameter-location: method
     description: A valid Base64 string value that identifies the block. Prior to encoding, the string must be less than or equal to 64 bytes in size.
@@ -1830,15 +1825,6 @@ parameters:
     type: string
     x-ms-parameter-location: method
     description: Specifies the natural languages used by this resource.
-
-  ContentLength:
-    name: Content-Length
-    x-ms-client-name: contentLength
-    in: header
-    required: true
-    type: integer
-    x-ms-parameter-location: method
-    description: Specifies the number of bytes being transmitted in the request body. When the x-ms-page-write header is set to clear, the value of this header must be set to zero.
 
   ContentMD5:
     name: Content-MD5

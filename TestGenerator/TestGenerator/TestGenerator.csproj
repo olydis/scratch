@@ -52,6 +52,9 @@
     <Reference Include="Microsoft.Rest.ClientRuntime">
       <HintPath>..\..\..\..\..\..\..\work\autorestx\src\core\AutoRest\bin\Debug\net451\win7-x64\Microsoft.Rest.ClientRuntime.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Rest.ClientRuntime.Azure">
+      <HintPath>..\..\..\..\..\..\..\work\autorestx\src\core\AutoRest\bin\Debug\net451\win7-x64\Microsoft.Rest.ClientRuntime.Azure.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\..\..\..\..\work\autorestx\src\core\AutoRest\bin\Debug\net451\win7-x64\Newtonsoft.Json.dll</HintPath>
     </Reference>

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,6 +21,7 @@ namespace TestGenerator.Generator
             intro = lines[0];
             headers = lines.Skip(1).TakeWhile(line => line != "")
                 .Select(line => Regex.Match(line, @"^(?<key>.*?)\: (?<value>.*?)$"))
+                .Distinct(new AutoRest.Core.Utilities.EqualityComparer<Match>((a, b) => a.Groups["key"].Value == b.Groups["key"].Value, x => x.Groups["key"].Value.GetHashCode()))
                 .ToDictionary(x => x.Groups["key"].Value, x => x.Groups["value"].Value);
         }
 
@@ -30,9 +34,16 @@ namespace TestGenerator.Generator
             return body;
         }
 
-        public static string EscapeString(string str)
+        public static string EscapeString(string input)
         {
-            return $"\"{str.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n").Replace("\r", "\\r")}\"";
+            using (var writer = new StringWriter())
+            {
+                using (var provider = CodeDomProvider.CreateProvider("CSharp"))
+                {
+                    provider.GenerateCodeFromExpression(new CodePrimitiveExpression(input), writer, null);
+                    return writer.ToString();
+                }
+            }
         }
     }
 }
