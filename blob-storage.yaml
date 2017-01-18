@@ -1242,7 +1242,7 @@ definitions:
       Properties:
         $ref: '#/definitions/BlobProperties'
       Metadata:
-        type: object
+        $ref: '#/definitions/Metadata'
 
   BlobProperties:
     description: Properties of a blob
@@ -1380,7 +1380,7 @@ definitions:
       Properties:
         $ref: '#/definitions/ContainerProperties'
       Metadata:
-        type: object
+        $ref: '#/definitions/Metadata'
 
   ContainerProperties:
     type: object
@@ -1486,6 +1486,10 @@ definitions:
       RetentionPolicy:
         $ref: '#/definitions/RetentionPolicy'
 
+  Metadata:
+    type: object
+    additionalProperties:
+      type: string
   Metrics:
     description:
     properties:
