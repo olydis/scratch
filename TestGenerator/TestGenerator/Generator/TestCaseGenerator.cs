@@ -50,7 +50,7 @@ namespace TestGenerator.Generator
         {
             if (param.Location == ParameterLocation.Body)
                 return bodyParamName;
-            if (param.ModelType is EnumType)
+            if ((param.ModelType as EnumType)?.ModelAsString == false)
                 return $"{param.ModelTypeName}.{CodeNamer.Instance.EscapeDefaultValue(value, param.ModelType)}";
             return CodeNamer.Instance.EscapeDefaultValue(value, param.ModelType)
                 .Replace(", this.Client.SerializationSettings", "");
@@ -95,7 +95,7 @@ namespace TestGenerator.Generator
                     // parse body if exists
                     if (serviceCall.BodyParam != null)
                     {
-                        var bodyDeserCode = $"{serviceCall.BodyParamType} {bodyParamName}; {serviceCall.BodyInitStatement(bodyParamName)};";
+                        var bodyDeserCode = $"{serviceCall.BodyParamType} {bodyParamName}; {serviceCall.BodyInitStatement(bodyParamName)}; Assert.NotNull({bodyParamName});";
                         fileContent = GetReplacePattern("bodyParamInit").Replace(fileContent, bodyDeserCode);
                     }
 
@@ -133,7 +133,17 @@ namespace TestGenerator.Generator
                             sb.AppendLine(indent + "// body validation");
                             if (response.Body.Name == "System.IO.Stream")
                             {
-
+                                sb.AppendLine(indent + $"byte[] dataBodyExpected = Encoding.UTF8.GetBytes({Utilities.EscapeString(responseInfo.Body)});");
+                                sb.AppendLine(indent + "byte[] dataBodyActual;");
+                                sb.AppendLine(indent + "using (var ms = new MemoryStream()) { result.Body.CopyTo(ms); dataBodyActual = ms.ToArray(); }");
+                                sb.AppendLine(indent + "Assert.Equal(dataBodyExpected.Length, dataBodyActual.Length);");
+                                sb.AppendLine(indent + "for (int i = 0; i < dataBodyExpected.Length; ++i) Assert.Equal(dataBodyExpected[i], dataBodyActual[i]);");
+                            }
+                            else if (response.Body.Name == "string")
+                            {
+                                sb.AppendLine(indent + $"var strBodyExpected = {Utilities.EscapeString(responseInfo.Body)};");
+                                sb.AppendLine(indent + "var strBodyActual = result.Body;");
+                                sb.AppendLine(indent + "Assert.Equal(strBodyExpected, strBodyActual);");
                             }
                             else
                             {

@@ -61,14 +61,14 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
 
             // read request
             var requestBuffer = new char[1 << 16];
-            var reader = new StreamReader(networkStream);
+            var reader = new StreamReader(networkStream, Encoding.UTF8);
             var read = reader.Read(requestBuffer, 0, requestBuffer.Length);
             var request = new string(requestBuffer, 0, read);
 
             // TODO: VALIDATION
 
             // write response
-            var writer = new StreamWriter(networkStream);
+            var writer = new StreamWriter(networkStream, Encoding.UTF8);
             writer.Write(RawResponse);
             writer.Close();
         }

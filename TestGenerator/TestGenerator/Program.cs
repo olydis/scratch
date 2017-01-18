@@ -56,6 +56,8 @@ namespace TestGenerator
         {
             var proc = Process.Start(autoRestExe, $"-Input \"{swaggerPath}\" -CodeGenerator {codeGen} -OutputDirectory \"{targetFolder}\" -Namespace {TestClientNamespace}");
             proc.WaitForExit();
+            if (proc.ExitCode != 0)
+                throw new Exception("AutoRest failed!");
         }
 
         static void GenerateTests(string targetFolder, TestCaseGenerator generator, string testFolder)

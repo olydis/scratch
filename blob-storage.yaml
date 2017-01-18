@@ -1353,22 +1353,16 @@ definitions:
         xml:
           wrapped: true
 
-  BlockLookup:
-    type: object
-    properties:
-      State:
-        $ref: '#/definitions/BlockListType'
-      Id:
-        type: string
-
   BlockLookupList:
     type: array
     x-ms-external: true
     xml:
-      name: BlockList,
+      name: BlockList
       wrapped: true
     items:
-      $ref: '#/definitions/Block'
+      type: string
+      xml:
+        name: Latest
       # weird dependent tag name and value
 
   Container:

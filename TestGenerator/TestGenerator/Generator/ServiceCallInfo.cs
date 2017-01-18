@@ -1,4 +1,5 @@
 ﻿using AutoRest.Core.Model;
+using AutoRest.CSharp;
 using AutoRest.CSharp.Model;
 using System;
 using System.Collections.Generic;
@@ -69,7 +70,8 @@ namespace TestGenerator.Generator
             var bodyString = Utilities.EscapeString(BodyParam);
             if (BodyParamType == "System.IO.Stream")
                 return $"{bodyParamName} = new MemoryStream(Encoding.UTF8.GetBytes({bodyString}))";
-            return $"{BodyParamInnerType}.TryDeserializePayload(\"application/xml\", {bodyString}, out {bodyParamName})";
+            var expression = XmlDeserializerGenerator.Generate(Method.CodeModel, Method.Body.ModelType);
+            return $"Assert.True({Method.CodeModel.Name}Extensions.CallWithSingle({expression}, XElement.Parse({bodyString}), out {bodyParamName}));";
         }
     }
 }

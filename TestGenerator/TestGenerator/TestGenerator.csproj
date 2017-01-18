@@ -35,28 +35,28 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoRest.Core">
-      <HintPath>..\..\..\..\..\..\..\work\autorestx\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.Core.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.Core.dll</HintPath>
     </Reference>
     <Reference Include="AutoRest.CSharp">
-      <HintPath>..\..\..\..\..\..\..\work\autorestx\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="AutoRest.CSharp.Azure">
-      <HintPath>..\..\..\..\..\..\..\work\autorestx\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.CSharp.Azure.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.CSharp.Azure.dll</HintPath>
     </Reference>
     <Reference Include="AutoRest.CSharp.Azure.Fluent">
-      <HintPath>..\..\..\..\..\..\..\work\autorestx\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.CSharp.Azure.Fluent.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.CSharp.Azure.Fluent.dll</HintPath>
     </Reference>
     <Reference Include="AutoRest.Swagger">
-      <HintPath>..\..\..\..\..\..\..\work\autorestx\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.Swagger.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.Swagger.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Rest.ClientRuntime">
-      <HintPath>..\..\..\..\..\..\..\work\autorestx\src\core\AutoRest\bin\Debug\net451\win7-x64\Microsoft.Rest.ClientRuntime.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\Microsoft.Rest.ClientRuntime.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Rest.ClientRuntime.Azure">
-      <HintPath>..\..\..\..\..\..\..\work\autorestx\src\core\AutoRest\bin\Debug\net451\win7-x64\Microsoft.Rest.ClientRuntime.Azure.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\Microsoft.Rest.ClientRuntime.Azure.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\..\..\work\autorestx\src\core\AutoRest\bin\Debug\net451\win7-x64\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -67,16 +67,16 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="xunit.abstractions">
-      <HintPath>..\..\..\..\..\..\..\work\autorestx\src\generator\AutoRest.CSharp.Unit.Tests\bin\Debug\net451\win7-x64\xunit.abstractions.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\autorest\src\generator\AutoRest.CSharp.Unit.Tests\bin\Debug\net451\win7-x64\xunit.abstractions.dll</HintPath>
     </Reference>
     <Reference Include="xunit.assert">
-      <HintPath>..\..\..\..\..\..\..\work\autorestx\src\generator\AutoRest.CSharp.Unit.Tests\bin\Debug\net451\win7-x64\xunit.assert.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\autorest\src\generator\AutoRest.CSharp.Unit.Tests\bin\Debug\net451\win7-x64\xunit.assert.dll</HintPath>
     </Reference>
     <Reference Include="xunit.core">
-      <HintPath>..\..\..\..\..\..\..\work\autorestx\src\generator\AutoRest.CSharp.Unit.Tests\bin\Debug\net451\win7-x64\xunit.core.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\autorest\src\generator\AutoRest.CSharp.Unit.Tests\bin\Debug\net451\win7-x64\xunit.core.dll</HintPath>
     </Reference>
     <Reference Include="YamlDotNet">
-      <HintPath>..\..\..\..\..\..\..\work\autorestx\src\core\AutoRest\bin\Debug\net451\win7-x64\YamlDotNet.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
