@@ -1299,6 +1299,14 @@ definitions:
     description: An enumeration of blobs
     type: object
     properties:
+      ServiceEndpoint:
+        type: string
+        xml:
+          attribute: true
+      ContainerName:
+        type: string
+        xml:
+          attribute: true
       Prefix:
         type: string
       Marker:
@@ -1399,6 +1407,10 @@ definitions:
     description: An enumaration of containers
     type: object
     properties:
+      ServiceEndpoint:
+        type: string
+        xml:
+          attribute: true
       Prefix:
         type: string
       Marker:

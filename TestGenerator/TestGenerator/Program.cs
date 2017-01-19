@@ -23,7 +23,7 @@ namespace TestGenerator
         {
             var swaggerPath = @"C:\Users\jobader\Documents\GitHub\scratch\blob-storage-out.yaml";
             var codeGen = "Azure.CSharp";
-            var testFolder = @"E:\Managed.Blob.VersionedTests\rawA";
+            var testFolder = @"E:\Managed.Blob.VersionedTests\rawPayloads";
             var targetFolder = @"E:\Managed.Blob.VersionedTests\gen";
             var autoRestExe = @"C:\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.exe";
             var urlFilter = new Regex(@"http://localhost:1000./.*");

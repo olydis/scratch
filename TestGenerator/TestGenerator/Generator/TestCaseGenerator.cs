@@ -162,6 +162,24 @@ namespace TestGenerator.Generator
                                 sb.AppendLine(indent + "var xmlBodyActual = new XElement(xmlBodyExpected.Name);");
                                 sb.AppendLine(indent + "result.Body.XmlSerialize(xmlBodyActual);");
                                 sb.AppendLine(indent + "// Assert.Equal(xmlBodyExpected, xmlBodyActual);");
+
+                                // VS code diff
+                                sb.AppendLine();
+                                sb.AppendLine(indent + "if (Debugger.IsAttached)");
+                                sb.AppendLine(indent + "{");
+                                sb.AppendLine(indent + "    var fileA = Path.GetTempFileName();");
+                                sb.AppendLine(indent + "    var fileB = Path.GetTempFileName();");
+                                sb.AppendLine(indent + "    File.WriteAllText(fileA, xmlBodyExpected.ToString());");
+                                sb.AppendLine(indent + "    File.WriteAllText(fileB, xmlBodyActual.ToString());");
+                                sb.AppendLine(indent + "    var p = Process.Start(\"code\", $\"-w -d \\\"{fileA}\\\" \\\"{fileB}\\\"\");");
+                                sb.AppendLine(indent + "    p.WaitForExit();");
+                                sb.AppendLine(indent + "    try");
+                                sb.AppendLine(indent + "    {");
+                                sb.AppendLine(indent + "        File.Delete(fileA);");
+                                sb.AppendLine(indent + "        File.Delete(fileB);");
+                                sb.AppendLine(indent + "    }");
+                                sb.AppendLine(indent + "    catch { }");
+                                sb.AppendLine(indent + "}");
                             }
                         }
                         //if (response.Headers != null)
