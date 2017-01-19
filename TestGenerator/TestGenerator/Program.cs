@@ -67,8 +67,8 @@ namespace TestGenerator
             foreach (var testId in testFolderDi.GetFiles("*.xml").Select(x => x.Name.Split('_')[0]))
             {
                 Logger.Instance.Log(Category.Info, $"Generating test {testId}");
-                var recordingFileRequest = File.ReadAllText(testFolderDi.GetFiles($"{testId}_c.txt")[0].FullName);
-                var recordingFileResponse = File.ReadAllText(testFolderDi.GetFiles($"{testId}_s.txt")[0].FullName);
+                var recordingFileRequest = File.ReadAllText(testFolderDi.GetFiles($"{testId}_c.txt")[0].FullName, Encoding.UTF8);
+                var recordingFileResponse = File.ReadAllText(testFolderDi.GetFiles($"{testId}_s.txt")[0].FullName, Encoding.UTF8);
 
                 if (recordingFileRequest.Length > (1 << 16))
                 {

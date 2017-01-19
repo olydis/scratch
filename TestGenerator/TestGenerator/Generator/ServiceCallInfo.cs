@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace TestGenerator.Generator
 {
@@ -70,8 +71,10 @@ namespace TestGenerator.Generator
             var bodyString = Utilities.EscapeString(BodyParam);
             if (BodyParamType == "System.IO.Stream")
                 return $"{bodyParamName} = new MemoryStream(Encoding.UTF8.GetBytes({bodyString}))";
+            if (string.IsNullOrEmpty(bodyString))
+                bodyString = new XElement("root").ToString();
             var expression = XmlDeserializerGenerator.Generate(Method.CodeModel, Method.Body.ModelType);
-            return $"Assert.True({Method.CodeModel.Name}Extensions.CallWithSingle({expression}, XElement.Parse({bodyString}), out {bodyParamName}));";
+            return $"Assert.True({Method.CodeModel.Name}Extensions.CallWithSingle({expression}, XElement.Parse({bodyString}), out {bodyParamName}))";
         }
     }
 }

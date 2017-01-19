@@ -582,7 +582,6 @@ x-ms-paths:
         - $ref: '#/parameters/Blob'
         - $ref: '#/parameters/Timeout'
         
-        - $ref: '#/parameters/ContentType'
         - $ref: '#/parameters/ContentEncoding'
         - $ref: '#/parameters/ContentLanguage'
         - $ref: '#/parameters/ContentMD5'
@@ -1028,7 +1027,7 @@ x-ms-paths:
             - $inc: '#/headers/x-ms-version'
             - $inc: '#/headers/Date'
           schema:
-            type: string
+            type: object
             # TODO: https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-page-ranges
             # has sequence toggling between PageRange and ClearRange
       $inc: '#/stuff/common-operation'
@@ -1759,15 +1758,6 @@ parameters:
       $ref: '#/definitions/SignedIdentifiers'
     x-ms-parameter-location: method 
     description: the acls for the container
-
-  ContentType:
-    name: Content-Type
-    x-ms-client-name: contentType
-    in: header
-    required: false
-    type: string
-    x-ms-parameter-location: method
-    description: Specifies the content type of the resource
   
   CopyActionAbort:
     name: x-ms-copy-action

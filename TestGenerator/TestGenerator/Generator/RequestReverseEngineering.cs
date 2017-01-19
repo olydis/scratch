@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace TestGenerator.Generator
 {
@@ -49,7 +50,7 @@ namespace TestGenerator.Generator
             // extract path params
             var pathParams = pathRegex.GetGroupNames().Where(paramName => !Regex.Match(paramName, @"^\d+$").Success);
             foreach (var paramName in pathParams)
-                if (!TryAddParameterValue(paramName, pathMatch.Groups[paramName].Value, ParameterLocation.Path, method, args))
+                if (!TryAddParameterValue(paramName, HttpUtility.UrlDecode(pathMatch.Groups[paramName].Value), ParameterLocation.Path, method, args))
                     return null;
             // required path params missing?
             if (method.Parameters.Any(p => p.Location == ParameterLocation.Path && p.IsRequired && !args.ContainsKey(p.SerializedName)))
@@ -58,7 +59,7 @@ namespace TestGenerator.Generator
             // extract query params
             var queryParams = Regex.Matches(url.Query, @"[?&](?<key>[^=]*)=(?<value>[^&#]*)").OfType<Match>();
             foreach (var queryParam in queryParams)
-                TryAddParameterValue(queryParam.Groups["key"].Value, queryParam.Groups["value"].Value, ParameterLocation.Query, method, args);
+                TryAddParameterValue(queryParam.Groups["key"].Value, HttpUtility.UrlDecode(queryParam.Groups["value"].Value), ParameterLocation.Query, method, args);
             // required query params missing?
             if (method.Parameters.Any(p => p.Location == ParameterLocation.Query && p.IsRequired && !args.ContainsKey(p.SerializedName)))
                 return null;

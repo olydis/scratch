@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -68,8 +69,8 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
             // TODO: VALIDATION
 
             // write response
-            var writer = new StreamWriter(networkStream, Encoding.UTF8);
-            writer.Write(RawResponse);
+            var writer = new StreamWriter(networkStream, new UTF8Encoding(false));
+            writer.Write(Regex.Replace(RawResponse, "Content-Length: .*?\r\n", ""));
             writer.Close();
         }
     }

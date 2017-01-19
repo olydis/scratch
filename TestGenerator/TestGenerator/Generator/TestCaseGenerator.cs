@@ -145,6 +145,12 @@ namespace TestGenerator.Generator
                                 sb.AppendLine(indent + "var strBodyActual = result.Body;");
                                 sb.AppendLine(indent + "Assert.Equal(strBodyExpected, strBodyActual);");
                             }
+                            else if (response.Body.Name == "object")
+                            {
+                                sb.AppendLine(indent + $"var strBodyExpected = XElement.Parse({Utilities.EscapeString(responseInfo.Body)}).ToString();");
+                                sb.AppendLine(indent + "var strBodyActual = result.Body.ToString();");
+                                sb.AppendLine(indent + "Assert.Equal(strBodyExpected, strBodyActual);");
+                            }
                             else
                             {
                                 sb.AppendLine(indent + $"var xmlBodyExpected = XElement.Parse({Utilities.EscapeString(responseInfo.Body)});");
@@ -165,7 +171,7 @@ namespace TestGenerator.Generator
 
                     // dump and finish
                     fileContent = GetReplacePattern("dump").Replace(fileContent, dump.ToString());
-                    File.WriteAllText(Path.Combine(targetDir, $"{className}.cs"), fileContent);
+                    File.WriteAllText(Path.Combine(targetDir, $"{className}.cs"), fileContent, Encoding.UTF8);
                 }
             }
 
