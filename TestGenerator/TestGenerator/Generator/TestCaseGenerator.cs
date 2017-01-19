@@ -119,6 +119,11 @@ namespace TestGenerator.Generator
                         fileContent = GetReplacePattern("assertSuccess").Replace(fileContent, "Assert.True(false); // expected exception");
 
                         fileContent = GetReplacePattern("validation").Replace(fileContent, "");
+
+                        if (responseInfo.ExpectedStatusCode < 500)
+                        {
+                            fileContent = GetReplacePattern("cancelled500oddness").Replace(fileContent, "throw;");
+                        }
                     }
                     else
                     {

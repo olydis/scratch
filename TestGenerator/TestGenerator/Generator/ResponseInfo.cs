@@ -14,6 +14,8 @@ namespace TestGenerator.Generator
 
         public string Body { get; set; }
 
+        public int ExpectedStatusCode { get; set; }
+
         public Response ExpectedReponse { get; set; }
 
         public bool ExpectException { get; set; }

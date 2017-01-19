@@ -58,7 +58,8 @@ namespace TestGenerator.Generator
                 Body = body,
                 Headers = headers,
                 ExpectedReponse = response,
-                ExpectException = expectException
+                ExpectException = expectException,
+                ExpectedStatusCode = statusCode
             };
         }
     }

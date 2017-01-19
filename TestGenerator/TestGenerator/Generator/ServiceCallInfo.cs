@@ -71,8 +71,8 @@ namespace TestGenerator.Generator
             var bodyString = Utilities.EscapeString(BodyParam);
             if (BodyParamType == "System.IO.Stream")
                 return $"{bodyParamName} = new MemoryStream(Encoding.UTF8.GetBytes({bodyString}))";
-            if (string.IsNullOrEmpty(bodyString))
-                bodyString = new XElement("root").ToString();
+            if (string.IsNullOrEmpty(BodyParam))
+                bodyString = "\"<root/>\"";
             var expression = XmlDeserializerGenerator.Generate(Method.CodeModel, Method.Body.ModelType);
             return $"Assert.True({Method.CodeModel.Name}Extensions.CallWithSingle({expression}, XElement.Parse({bodyString}), out {bodyParamName}))";
         }
