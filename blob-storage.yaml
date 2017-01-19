@@ -250,6 +250,7 @@ x-ms-paths:
         # header parameters
         - $ref: '#/parameters/LeaseId'
         - $ref: '#/parameters/Metadata'
+        - $ref: '#/parameters/IfModifiedSince'
       responses:
         200:
           description: Success
@@ -308,6 +309,8 @@ x-ms-paths:
         # header parameters
         - $ref: '#/parameters/LeaseId'
         - $ref: '#/parameters/BlobPublicAccess'
+        - $ref: '#/parameters/IfModifiedSince'
+        - $ref: '#/parameters/IfUnmodifiedSince'
       responses:
         200:
           description: Success.
@@ -339,6 +342,8 @@ x-ms-paths:
         - $ref: '#/parameters/LeaseDuration'
         - $ref: '#/parameters/ProposedLeaseId'
         - $ref: '#/parameters/Origin'
+        - $ref: '#/parameters/IfModifiedSince'
+        - $ref: '#/parameters/IfUnmodifiedSince'
       responses:
         '200':
           description: The Renew/Change/Release operation completed successfully.
@@ -409,15 +414,19 @@ x-ms-paths:
       operationId: Blobs_Get
       description: The Get Blob operation reads or downloads a blob from the system, including its metadata and properties. You can also call Get Blob to read a snapshot.
       parameters:
-      - $ref: '#/parameters/Container'
-      - $ref: '#/parameters/Blob'
-      - $ref: '#/parameters/Snapshot'
-      - $ref: '#/parameters/Timeout'
+        - $ref: '#/parameters/Container'
+        - $ref: '#/parameters/Blob'
+        - $ref: '#/parameters/Snapshot'
+        - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/Range'
-      - $ref: '#/parameters/LeaseId'
-      - $ref: '#/parameters/GetRangeContentMD5'
-      - $ref: '#/parameters/Origin'
+        - $ref: '#/parameters/Range'
+        - $ref: '#/parameters/LeaseId'
+        - $ref: '#/parameters/GetRangeContentMD5'
+        - $ref: '#/parameters/Origin'
+        - $ref: '#/parameters/IfModifiedSince'
+        - $ref: '#/parameters/IfUnmodifiedSince'
+        - $ref: '#/parameters/IfMatch'
+        - $ref: '#/parameters/IfNoneMatch'
       responses:
         '200':
           description: Returns the content of the entire blob.
@@ -502,6 +511,10 @@ x-ms-paths:
         - $ref: '#/parameters/Timeout'
 
         - $ref: '#/parameters/LeaseId'
+        - $ref: '#/parameters/IfModifiedSince'
+        - $ref: '#/parameters/IfUnmodifiedSince'
+        - $ref: '#/parameters/IfMatch'
+        - $ref: '#/parameters/IfNoneMatch'
       responses:
         '200':
           description: Returns the properties of the blob.
@@ -550,6 +563,10 @@ x-ms-paths:
         
         - $ref: '#/parameters/LeaseId'
         - $ref: '#/parameters/DeleteSnapshots'
+        - $ref: '#/parameters/IfModifiedSince'
+        - $ref: '#/parameters/IfUnmodifiedSince'
+        - $ref: '#/parameters/IfMatch'
+        - $ref: '#/parameters/IfNoneMatch'
       responses:
         '202':
           description: The delete request was accepted and the blob will be deleted.
@@ -585,6 +602,10 @@ x-ms-paths:
         - $ref: '#/parameters/LeaseId'
         - $ref: '#/parameters/BlobContentDisposition'
         - $ref: '#/parameters/Origin'
+        - $ref: '#/parameters/IfModifiedSince'
+        - $ref: '#/parameters/IfUnmodifiedSince'
+        - $ref: '#/parameters/IfMatch'
+        - $ref: '#/parameters/IfNoneMatch'
         # page blobs only
         - $ref: '#/parameters/BlobContentLength'
         - $ref: '#/parameters/BlobSequenceNumber'
@@ -655,6 +676,10 @@ x-ms-paths:
         - $ref: '#/parameters/Timeout'
         
         - $ref: '#/parameters/LeaseId'
+        - $ref: '#/parameters/IfModifiedSince'
+        - $ref: '#/parameters/IfUnmodifiedSince'
+        - $ref: '#/parameters/IfMatch'
+        - $ref: '#/parameters/IfNoneMatch'
       responses:
         '200':
           description: The metadata was retrieved successfully.
@@ -710,6 +735,10 @@ x-ms-paths:
         - $ref: '#/parameters/LeaseDuration'
         - $ref: '#/parameters/ProposedLeaseId'
         - $ref: '#/parameters/Origin'
+        - $ref: '#/parameters/IfModifiedSince'
+        - $ref: '#/parameters/IfUnmodifiedSince'
+        - $ref: '#/parameters/IfMatch'
+        - $ref: '#/parameters/IfNoneMatch'
       responses:
         '200':
           description: The Renew/Change/Release operation completed successfully.
@@ -872,26 +901,30 @@ x-ms-paths:
       description: The Put Block List operation writes a blob by specifying the list of block IDs that make up the blob. In order to be written as part of a blob, a block must have been successfully written to the server in a prior Put Block operation.
         You can call Put Block List to update a blob by uploading only those blocks that have changed, then committing the new and existing blocks together. You can do this by specifying whether to commit a block from the committed block list or from the uncommitted block list, or to commit the most recently uploaded version of the block, whichever list it may belong to.
       parameters:
-      - $ref: '#/parameters/Container'
-      - $ref: '#/parameters/Blob'
+        - $ref: '#/parameters/Container'
+        - $ref: '#/parameters/Blob'
 
-      - $ref: '#/parameters/Timeout'
+        - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/ContentMD5'
-      - $ref: '#/parameters/BlobCacheControl'
-      - $ref: '#/parameters/BlobContentType'
-      - $ref: '#/parameters/BlobContentEncoding'
-      - $ref: '#/parameters/BlobContentLanguage'
-      - $ref: '#/parameters/BlobContentMD5'
-      - $ref: '#/parameters/Metadata'
-      - $ref: '#/parameters/LeaseId'
-      - $ref: '#/parameters/BlobContentDisposition'
+        - $ref: '#/parameters/ContentMD5'
+        - $ref: '#/parameters/BlobCacheControl'
+        - $ref: '#/parameters/BlobContentType'
+        - $ref: '#/parameters/BlobContentEncoding'
+        - $ref: '#/parameters/BlobContentLanguage'
+        - $ref: '#/parameters/BlobContentMD5'
+        - $ref: '#/parameters/Metadata'
+        - $ref: '#/parameters/LeaseId'
+        - $ref: '#/parameters/BlobContentDisposition'
+        - $ref: '#/parameters/IfModifiedSince'
+        - $ref: '#/parameters/IfUnmodifiedSince'
+        - $ref: '#/parameters/IfMatch'
+        - $ref: '#/parameters/IfNoneMatch'
 
-      - name: blocks
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/BlockLookupList'
+        - name: blocks
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/BlockLookupList'
       responses:
         '201':
           description: The block list was recorded.
@@ -981,15 +1014,19 @@ x-ms-paths:
       operationId: PageBlobs_GetPageRanges
       description: The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot of a page blob
       parameters:
-      - $ref: '#/parameters/Container'
-      - $ref: '#/parameters/Blob'
+        - $ref: '#/parameters/Container'
+        - $ref: '#/parameters/Blob'
 
-      - $ref: '#/parameters/Snapshot'
-      - $ref: '#/parameters/Timeout'
-      - $ref: '#/parameters/PrevSnapshot'
+        - $ref: '#/parameters/Snapshot'
+        - $ref: '#/parameters/Timeout'
+        - $ref: '#/parameters/PrevSnapshot'
 
-      - $ref: '#/parameters/Range'
-      - $ref: '#/parameters/LeaseId'
+        - $ref: '#/parameters/Range'
+        - $ref: '#/parameters/LeaseId'
+        - $ref: '#/parameters/IfModifiedSince'
+        - $ref: '#/parameters/IfUnmodifiedSince'
+        - $ref: '#/parameters/IfMatch'
+        - $ref: '#/parameters/IfNoneMatch'
       responses:
         '200':
           description: Information on the page blob was found.
@@ -1046,17 +1083,21 @@ x-ms-paths:
       description: The Append Block operation commits a new block of data to the end of an existing append blob.
         The Append Block operation is permitted only if the blob was created with x-ms-blob-type set to AppendBlob. Append Block is supported only on version 2015-02-21 version or later.
       parameters:
-      - $ref: '#/parameters/Container'
-      - $ref: '#/parameters/Blob'
+        - $ref: '#/parameters/Container'
+        - $ref: '#/parameters/Blob'
 
-      - $ref: '#/parameters/Timeout'
+        - $ref: '#/parameters/Timeout'
 
-      - $ref: '#/parameters/ContentMD5'
-      - $ref: '#/parameters/LeaseId'
-      - $ref: '#/parameters/BlobConditionMaxSize'
-      - $ref: '#/parameters/BlobConditionAppendPos'
+        - $ref: '#/parameters/ContentMD5'
+        - $ref: '#/parameters/LeaseId'
+        - $ref: '#/parameters/BlobConditionMaxSize'
+        - $ref: '#/parameters/BlobConditionAppendPos'
+        - $ref: '#/parameters/IfModifiedSince'
+        - $ref: '#/parameters/IfUnmodifiedSince'
+        - $ref: '#/parameters/IfMatch'
+        - $ref: '#/parameters/IfNoneMatch'
 
-      - $ref: '#/parameters/Body'
+        - $ref: '#/parameters/Body'
       responses:
         '201':
           description: The block was created.
