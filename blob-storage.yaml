@@ -2017,10 +2017,9 @@ parameters:
 
   Metadata:
     name: x-ms-meta
-    in: query
+    in: header
     required: false
-    type: integer
-    minimum: 0
+    type: string
     x-ms-parameter-location: method
     description: Optional. Specifies a user-defined name-value pair associated with the blob. If no name-value pairs are specified, the operation will copy the metadata from the source blob or file to the destination blob. If one or more name-value pairs are specified, the destination blob is created with the specified metadata, and metadata is not copied from the source blob or file. 
       Note that beginning with version 2009-09-19, metadata names must adhere to the naming rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more information.
