@@ -50,10 +50,6 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
 
                 // TODO: validate e.Body or similar?
             }
-            catch (TaskCanceledException e)
-            {
-                //<cancelled500oddness/>
-            }
 
             // stop server
             StopServer();
