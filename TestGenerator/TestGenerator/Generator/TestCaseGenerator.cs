@@ -91,7 +91,6 @@ namespace TestGenerator.Generator
                     //fileContent = GetReplacePattern("recordedRequestBody").Replace(fileContent, Utilities.EscapeString(Utilities.GetHttpBody(recordedRequest)));
                     //fileContent = GetReplacePattern("recordedResponseBody").Replace(fileContent, Utilities.EscapeString(responseInfo.Body));
 
-
                     // parse body if exists
                     if (serviceCall.BodyParam != null)
                     {
@@ -104,7 +103,7 @@ namespace TestGenerator.Generator
                     sbArgs.AppendLine();
                     foreach (var p in serviceCall.AvailableParams)
                         sbArgs.AppendLine($"                        {p.Name}: {GenerateArgumentCode(p, serviceCall.Params[p.SerializedName])},");
-                    sbArgs.Append($"                        cancellationToken: new CancellationTokenSource(3000).Token");
+                    sbArgs.Append($"                        cancellationToken: cancellationToken");
                     var args = sbArgs.ToString();
 
                     // gen call statement (return thingy will have `Headers`/`Body` properties if `returnType` has those things as non-null)

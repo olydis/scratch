@@ -73,8 +73,8 @@ namespace TestGenerator.Generator
                 return $"{bodyParamName} = new MemoryStream(Encoding.UTF8.GetBytes({bodyString}))";
             if (string.IsNullOrEmpty(BodyParam))
                 bodyString = "\"<root/>\"";
-            var expression = XmlDeserializerGenerator.Generate(Method.CodeModel, Method.Body.ModelType);
-            return $"Assert.True({Method.CodeModel.Name}Extensions.CallWithSingle({expression}, XElement.Parse({bodyString}), out {bodyParamName}))";
+            var expression = XmlSerialization.GenerateDeserializer(Method.CodeModel, Method.Body.ModelType);
+            return $"Assert.True(XmlSerialization.Root({expression})(XElement.Parse({bodyString}), out {bodyParamName}))";
         }
     }
 }

@@ -9,6 +9,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using Xunit;
 
 namespace /*<*/Dummy/*></clientNamespace>*/.Tests
 {
@@ -50,14 +52,18 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
                         // shut off retries
                         listener.BeginAcceptTcpClient(iar2 =>
                         {
-                            var server = listener.EndAcceptTcpClient(iar2);
-                            var networkStream = server.GetStream();
-                            ReadHttpRequest(networkStream);
-                            var writer = new StreamWriter(networkStream, new UTF8Encoding(false));
-                            writer.WriteLine("HTTP/1.1 400 Mute");
-                            writer.WriteLine("Connection: close");
-                            writer.WriteLine();
-                            writer.Close();
+                            try
+                            {
+                                var server = listener.EndAcceptTcpClient(iar2);
+                                var networkStream = server.GetStream();
+                                ReadHttpRequest(networkStream);
+                                var writer = new StreamWriter(networkStream, new UTF8Encoding(false));
+                                writer.WriteLine("HTTP/1.1 400 Mute");
+                                writer.WriteLine("Connection: close");
+                                writer.WriteLine();
+                                writer.Close();
+                            }
+                            catch { /* might have been disposed */ }
                         }, null);
                     }, null);
                     break;
@@ -85,8 +91,26 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
 
             // read request
             var request = ReadHttpRequest(networkStream);
+            var requestReader = new StringReader(request);
+            while (requestReader.ReadLine() != "") ;
+            var actualRequestBody = requestReader.ReadToEnd();
 
-            // TODO: VALIDATION
+            // compare
+            if (Debugger.IsAttached)
+            {
+                var fileA = Path.GetTempFileName();
+                var fileB = Path.GetTempFileName();
+                File.WriteAllText(fileA, RawRequest);
+                File.WriteAllText(fileB, request);
+                var p = Process.Start("code", $"-w -d \"{fileA}\" \"{fileB}\"");
+                p.WaitForExit();
+                try
+                {
+                    File.Delete(fileA);
+                    File.Delete(fileB);
+                }
+                catch { }
+            }
 
             // write response
             var writer = new StreamWriter(networkStream, new UTF8Encoding(false));

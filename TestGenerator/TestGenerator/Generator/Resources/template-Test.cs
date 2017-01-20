@@ -40,9 +40,11 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
             //<bodyParamInit/>
             try
             {
+                serviceClient.HttpClient.DefaultRequestHeaders.ExpectContinue = false;
+                var cancellationToken = Debugger.IsAttached ? new CancellationToken() : new CancellationTokenSource(3000).Token;
                 //<call/>
                 //<assertSuccess/>
-//<validation/>
+                //<validation/>
             }
             catch (CloudException e)
             {
