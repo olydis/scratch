@@ -1,6 +1,4 @@
-﻿
-
-/*<*/using Microsoft.Rest;/*></rem>*/
+﻿/*<*/using Microsoft.Rest;/*></rem>*/
 /*<*/using System;/*></rem>*/
 /*<*/using System.Diagnostics;/*></rem>*/
 /*<*/using System.Threading;/*></rem>*/
@@ -9,53 +7,50 @@
 /*<*/using Dummy.Tests;/*></rem>*/
 /*<*/using Microsoft.Rest.Azure;/*></rem>*/
 
+//<dump disabled/>
 
-    //<dump disabled/>
+public class /*<*/BugDummy/*></className>*/ : TestBase
+{
+    private static readonly string recordedRequest = /*<*/"recordedRequest"/*></recordedRequest>*/;
+    private static readonly string recordedResponse = /*<*/"recordedResponse"/*></recordedResponse>*/;
 
-    public class /*<*/BugDummy/*></className>*/ : TestBase
+    public /*<*/BugDummy/*></className>*/() : base(recordedRequest, recordedResponse)
+    { }
+
+    [Fact]
+    public void Execute()
     {
-        private static readonly string recordedRequest = /*<*/"recordedRequest"/*></recordedRequest>*/;
-        private static readonly string recordedResponse = /*<*/"recordedResponse"/*></recordedResponse>*/;
+        // start server
+        StartServer();
 
-        public /*<*/BugDummy/*></className>*/() : base(recordedRequest, recordedResponse)
-        { }
-
-        [Fact]
-        public void Execute()
+        try
         {
-            // start server
-            StartServer();
-
+            // create and use client
+            var credentials = new TokenCredentials("TOKEN", Guid.NewGuid().ToString());
+            var serviceClient = /*<*/ (dynamic) null /*></clientConstructorCall>*/;
+            serviceClient.BaseUri = new UriBuilder("http", "localhost", Port).Uri.ToString();
+            //<bodyParamInit/>
             try
             {
-                // create and use client
-                var credentials = new TokenCredentials("TOKEN", Guid.NewGuid().ToString());
-                var serviceClient = /*<*/ (dynamic) null /*></clientConstructorCall>*/;
-                serviceClient.BaseUri = new UriBuilder("http", "localhost", Port).Uri.ToString();
-                //<bodyParamInit/>
-                try
-                {
-                    serviceClient.HttpClient.DefaultRequestHeaders.ExpectContinue = false;
-                    var cancellationToken = Debugger.IsAttached
-                        ? new CancellationToken()
-                        : new CancellationTokenSource(10000).Token;
-                    //<call/>
-                    //<assertSuccess/>
-                    //<validation/>
-                }
-                catch (CloudException e)
-                {
-                    //<assertFail/>
-
-                    // TODO: validate e.Body or similar?
-                }
+                serviceClient.HttpClient.DefaultRequestHeaders.ExpectContinue = false;
+                var cancellationToken = Debugger.IsAttached
+                    ? new CancellationToken()
+                    : new CancellationTokenSource(10000).Token;
+                //<call/>
+                //<assertSuccess/>
+                //<validation/>
             }
-            finally
+            catch (CloudException e)
             {
-                // stop server
-                StopServer();
+                //<assertFail/>
+
+                // TODO: validate e.Body or similar?
             }
         }
+        finally
+        {
+            // stop server
+            StopServer();
+        }
     }
-
-    //<nextTest/>
+}

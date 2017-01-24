@@ -110,6 +110,7 @@ namespace TestGenerator.Generator
                         var fileContent = File.ReadAllText(templatePathTestFile);
                         fileContent = GetReplacePattern("clientNamespace").Replace(fileContent, CodeModel.Namespace);
                         fileContent = GetReplacePattern("clientNamespaceModels").Replace(fileContent, $"{CodeModel.Namespace}.Models");
+                        fileContent = GetReplacePattern("clientNamespaceTests").Replace(fileContent, $"{CodeModel.Namespace}.Tests");
                         File.WriteAllText(fileName, fileContent, Encoding.UTF8);
                     }
                     lockOn = touched[fileName];
@@ -205,8 +206,13 @@ namespace TestGenerator.Generator
                         else
                         {
                             sb.AppendLine(indent + $"var xmlBodyExpected = XElement.Parse({Utilities.EscapeString(responseInfo.Body)});");
-                            sb.AppendLine(indent + "var xmlBodyActual = new XElement(xmlBodyExpected.Name);");
-                            sb.AppendLine(indent + "result.Body.XmlSerialize(xmlBodyActual);");
+                            if (response.Body is SequenceType)
+                                sb.AppendLine(indent + $"var xmlBodyActual = new XElement(xmlBodyExpected.Name, result.Body.Select(x => new XElement(\"{(response.Body as SequenceType).ElementXmlName}\", x)));");
+                            else
+                            {
+                                sb.AppendLine(indent + "var xmlBodyActual = new XElement(xmlBodyExpected.Name);");
+                                sb.AppendLine(indent + "result.Body.XmlSerialize(xmlBodyActual);");
+                            }
                             sb.AppendLine(indent + "// Assert.Equal(xmlBodyExpected, xmlBodyActual);");
 
                             // VS code diff
@@ -245,9 +251,7 @@ namespace TestGenerator.Generator
             retry:
                 try
                 {
-                    var realFileContent = File.ReadAllText(fileName, Encoding.UTF8);
-                    realFileContent = GetReplacePattern("nextTest").Replace(realFileContent, fileContent);
-                    File.WriteAllText(fileName, realFileContent, Encoding.UTF8);
+                    File.AppendAllText(fileName, Environment.NewLine + Environment.NewLine + fileContent.Trim(), Encoding.UTF8);
                 }
                 catch (IOException e)
                 {

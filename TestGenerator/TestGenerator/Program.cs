@@ -24,7 +24,7 @@ namespace TestGenerator
         {
             var swaggerPath = @"C:\Users\jobader\Documents\GitHub\scratch\blob-storage-out.yaml";
             var codeGen = "Azure.CSharp";
-            var testFolder = @"E:\BlobStorageTests\Recordings1\rawA";
+            var testFolder = @"E:\BlobStorageTests\Recordings1\raw";
             var targetFolder = @"E:\BlobStorageTests\Tests1";
             var autoRestExe = @"C:\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.exe";
             var urlFilter = new Regex(@"http://localhost:1000./.*");

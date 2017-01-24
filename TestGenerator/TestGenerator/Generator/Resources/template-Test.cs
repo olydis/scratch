@@ -5,6 +5,7 @@
 using Microsoft.Rest;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -12,10 +13,6 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Xunit;
 using /*<*/Dummy/*></clientNamespace>*/;
-using /*<*/Dummy.Tests/*></clientNamespaceModels>*/;
+using /*<*/Dummy/*></clientNamespaceModels>*/;
+using /*<*/Dummy.Tests/*></clientNamespaceTests>*/;
 using Microsoft.Rest.Azure;
-
-namespace /*<*/Dummy/*></clientNamespace>*/.Tests
-{
-    //<nextTest/>
-}
