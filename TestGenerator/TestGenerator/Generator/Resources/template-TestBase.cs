@@ -78,6 +78,7 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
 
         private string ReadHttpRequest(NetworkStream stream)
         {
+            Thread.Sleep(800); // laziness
             var requestBuffer = new char[1 << 16];
             var reader = new StreamReader(stream, Encoding.UTF8);
             var read = reader.Read(requestBuffer, 0, requestBuffer.Length);

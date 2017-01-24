@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Threading;
 using static AutoRest.Core.Utilities.DependencyInjection;
 
 namespace TestGenerator.Generator
@@ -24,6 +24,7 @@ namespace TestGenerator.Generator
         private static readonly string templatePathSolution = @"Generator\Resources\template-Test.sln";
         private static readonly string templatePathProject = @"Generator\Resources\template-Test.xproj";
         private static readonly string templatePathTestFile = @"Generator\Resources\template-Test.cs";
+        private static readonly string templatePathTestClass = @"Generator\Resources\template-TestClass.cs";
         private static readonly string templatePathTestBaseFile = @"Generator\Resources\template-TestBase.cs";
         private static readonly string bodyParamName = "body";
         private static readonly string returnValueName = "result";
@@ -31,10 +32,20 @@ namespace TestGenerator.Generator
         public CodeModelCs CodeModel { get; }
         public Regex UrlFilter { get; }
 
+        // indicates whether given method was tested with a
+        // - successful response
+        // - failing response
+        private Dictionary<Method, Tuple<bool, bool>> coverage;
+        
+        private Dictionary<string, object> touched;
+
         public TestCaseGenerator(CodeModelCs codeModel, Regex urlFilter)
         {
             this.CodeModel = codeModel;
             this.UrlFilter = urlFilter;
+
+            this.coverage = codeModel.Methods.ToDictionary(m => m, m => new Tuple<bool, bool>(false, false));
+            this.touched = new Dictionary<string, object>();
         }
 
         /// <summary>
@@ -56,15 +67,16 @@ namespace TestGenerator.Generator
                 .Replace(", this.Client.SerializationSettings", "");
         }
 
+
         public bool GenerateTest(string targetDir, string testId, string recordedRequest, string recordedResponse)
         {
             var className = $"Test{testId}";
 
-            var dump = new StringBuilder();
             using (NewContext)
             {
+                var dump = new StringBuilder();
                 Logger.Instance.AddListener(new SignalingLogListener(Category.Debug, message => dump.AppendLine($"// {message.Severity}\t{message.Message.Replace("\r", @"\r").Replace("\n", @"\n")}")));
-
+                
                 // parse request
                 var serviceCall = RequestReverseEngineering.DetermineServiceCall(recordedRequest, CodeModel, UrlFilter);
                 if (serviceCall == null)
@@ -78,121 +90,172 @@ namespace TestGenerator.Generator
                 // parse response
                 var responseInfo = ResponseReverseEngineering.ParseResponse(recordedResponse, serviceCall.Method);
 
-                // generate test file
-                using (ExtensionsLoader.GetPlugin().Activate()) // so all the right naming is done (also: default value escaping)
+                // file info
+                var fileName = Path.Combine(targetDir, $"{serviceCall.Method.Group}_{serviceCall.Method.Name}_{(responseInfo.ExpectException ? "fail" : "succ")}.cs");
+                object lockOn;
+
+                lock (this)
                 {
-                    var fileContent = File.ReadAllText(templatePathTestFile);
-                    fileContent = GetReplacePattern("clientNamespace").Replace(fileContent, CodeModel.Namespace);
-                    fileContent = GetReplacePattern("clientNamespaceModels").Replace(fileContent, $"{CodeModel.Namespace}.Models");
-                    fileContent = GetReplacePattern("className").Replace(fileContent, className);
-                    fileContent = GetReplacePattern("clientConstructorCall").Replace(fileContent, $"new {CodeModel.Name}(credentials)");
-                    fileContent = GetReplacePattern("recordedRequest").Replace(fileContent, Utilities.EscapeString(recordedRequest));
-                    fileContent = GetReplacePattern("recordedResponse").Replace(fileContent, Utilities.EscapeString(recordedResponse));
-                    //fileContent = GetReplacePattern("recordedRequestBody").Replace(fileContent, Utilities.EscapeString(Utilities.GetHttpBody(recordedRequest)));
-                    //fileContent = GetReplacePattern("recordedResponseBody").Replace(fileContent, Utilities.EscapeString(responseInfo.Body));
+                    // update coverage data
+                    var mcoverage = this.coverage[serviceCall.Method];
+                    this.coverage[serviceCall.Method] = !responseInfo.ExpectException
+                        ? new Tuple<bool, bool>(true, mcoverage.Item2)
+                        : new Tuple<bool, bool>(mcoverage.Item1, true);
 
-                    // parse body if exists
-                    if (serviceCall.BodyParam != null)
+                    // (re)used test file:
+                    if (!touched.ContainsKey(fileName))
                     {
-                        var bodyDeserCode = $"{serviceCall.BodyParamType} {bodyParamName}; {serviceCall.BodyInitStatement(bodyParamName)}; Assert.NotNull({bodyParamName});";
-                        fileContent = GetReplacePattern("bodyParamInit").Replace(fileContent, bodyDeserCode);
+                        touched.Add(fileName, new object());
+                        // generate stub
+                        var fileContent = File.ReadAllText(templatePathTestFile);
+                        fileContent = GetReplacePattern("clientNamespace").Replace(fileContent, CodeModel.Namespace);
+                        fileContent = GetReplacePattern("clientNamespaceModels").Replace(fileContent, $"{CodeModel.Namespace}.Models");
+                        File.WriteAllText(fileName, fileContent, Encoding.UTF8);
                     }
-
-                    // generate C# code for args
-                    var sbArgs = new StringBuilder();
-                    sbArgs.AppendLine();
-                    foreach (var p in serviceCall.AvailableParams)
-                        sbArgs.AppendLine($"                        {p.Name}: {GenerateArgumentCode(p, serviceCall.Params[p.SerializedName])},");
-                    sbArgs.Append($"                        cancellationToken: cancellationToken");
-                    var args = sbArgs.ToString();
-
-                    // gen call statement (return thingy will have `Headers`/`Body` properties if `returnType` has those things as non-null)
-                    //var returnType = serviceCall.Method.ReturnType;
-                    var callStatement = $"var {returnValueName} = await serviceClient.{serviceCall.Method.Group.Value}.{serviceCall.Method.Name}WithHttpMessagesAsync({args});";
-                    fileContent = GetReplacePattern("call").Replace(fileContent, callStatement);
-
-                    // response validation
-                    if (responseInfo.ExpectException)
-                    {
-                        fileContent = GetReplacePattern("assertFail").Replace(fileContent, "");
-                        fileContent = GetReplacePattern("assertSuccess").Replace(fileContent, "Assert.True(false); // expected exception");
-
-                        fileContent = GetReplacePattern("validation").Replace(fileContent, "");
-                    }
-                    else
-                    {
-                        fileContent = GetReplacePattern("assertFail").Replace(fileContent, "throw; // expected success");
-                        fileContent = GetReplacePattern("assertSuccess").Replace(fileContent, "");
-
-                        var sb = new StringBuilder();
-                        string indent = "                ";
-                        var response = responseInfo.ExpectedReponse;
-                        if (response.Body != null)
-                        {
-                            sb.AppendLine(indent + "// body validation");
-                            if (response.Body.Name == "System.IO.Stream")
-                            {
-                                sb.AppendLine(indent + $"byte[] dataBodyExpected = Encoding.UTF8.GetBytes({Utilities.EscapeString(responseInfo.Body)});");
-                                sb.AppendLine(indent + "byte[] dataBodyActual;");
-                                sb.AppendLine(indent + "using (var ms = new MemoryStream()) { result.Body.CopyTo(ms); dataBodyActual = ms.ToArray(); }");
-                                sb.AppendLine(indent + "Assert.Equal(dataBodyExpected.Length, dataBodyActual.Length);");
-                                sb.AppendLine(indent + "for (int i = 0; i < dataBodyExpected.Length; ++i) Assert.Equal(dataBodyExpected[i], dataBodyActual[i]);");
-                            }
-                            else if (response.Body.Name == "string")
-                            {
-                                sb.AppendLine(indent + $"var strBodyExpected = {Utilities.EscapeString(responseInfo.Body)};");
-                                sb.AppendLine(indent + "var strBodyActual = result.Body;");
-                                sb.AppendLine(indent + "Assert.Equal(strBodyExpected, strBodyActual);");
-                            }
-                            else if (response.Body.Name == "object")
-                            {
-                                sb.AppendLine(indent + $"var strBodyExpected = XElement.Parse({Utilities.EscapeString(responseInfo.Body)}).ToString();");
-                                sb.AppendLine(indent + "var strBodyActual = result.Body.ToString();");
-                                sb.AppendLine(indent + "Assert.Equal(strBodyExpected, strBodyActual);");
-                            }
-                            else
-                            {
-                                sb.AppendLine(indent + $"var xmlBodyExpected = XElement.Parse({Utilities.EscapeString(responseInfo.Body)});");
-                                sb.AppendLine(indent + "var xmlBodyActual = new XElement(xmlBodyExpected.Name);");
-                                sb.AppendLine(indent + "result.Body.XmlSerialize(xmlBodyActual);");
-                                sb.AppendLine(indent + "// Assert.Equal(xmlBodyExpected, xmlBodyActual);");
-
-                                // VS code diff
-                                sb.AppendLine();
-                                sb.AppendLine(indent + "if (Debugger.IsAttached)");
-                                sb.AppendLine(indent + "{");
-                                sb.AppendLine(indent + "    var fileA = Path.GetTempFileName();");
-                                sb.AppendLine(indent + "    var fileB = Path.GetTempFileName();");
-                                sb.AppendLine(indent + "    File.WriteAllText(fileA, xmlBodyExpected.ToString());");
-                                sb.AppendLine(indent + "    File.WriteAllText(fileB, xmlBodyActual.ToString());");
-                                sb.AppendLine(indent + "    var p = Process.Start(\"code\", $\"-w -d \\\"{fileA}\\\" \\\"{fileB}\\\"\");");
-                                sb.AppendLine(indent + "    p.WaitForExit();");
-                                sb.AppendLine(indent + "    try");
-                                sb.AppendLine(indent + "    {");
-                                sb.AppendLine(indent + "        File.Delete(fileA);");
-                                sb.AppendLine(indent + "        File.Delete(fileB);");
-                                sb.AppendLine(indent + "    }");
-                                sb.AppendLine(indent + "    catch { }");
-                                sb.AppendLine(indent + "}");
-                            }
-                        }
-                        //if (response.Headers != null)
-                        //{
-                        //    sb.AppendLine(indent + "// header validation");
-                        //    sb.AppendLine(indent + "var headers = result.Headers;");
-                        //    foreach (var expectedHeader in responseInfo.ExpectedTypedHeaderFields)
-                        //        sb.AppendLine(indent + $"Assert.Equal({CodeNamer.Instance.EscapeDefaultValue(expectedHeader.Value, expectedHeader.Key.ModelType)}, headers.{expectedHeader.Key.Name});");
-                        //}
-                        fileContent = GetReplacePattern("validation").Replace(fileContent, sb.ToString());
-                    }
-
-                    // dump and finish
-                    fileContent = GetReplacePattern("dump").Replace(fileContent, dump.ToString());
-                    File.WriteAllText(Path.Combine(targetDir, $"{className}.cs"), fileContent, Encoding.UTF8);
+                    lockOn = touched[fileName];
                 }
+
+                // generate test class
+                lock (lockOn)
+                    GenerateTestClass(fileName, className, recordedRequest, recordedResponse, serviceCall, responseInfo, dump);
             }
 
             return true;
+        }
+
+        private void GenerateTestClass(
+            string fileName,
+            string className,
+            string recordedRequest,
+            string recordedResponse,
+            ServiceCallInfo serviceCall,
+            ResponseInfo responseInfo,
+            StringBuilder dump)
+        {
+            using (ExtensionsLoader.GetPlugin().Activate()) // so all the right naming is done (also: default value escaping)
+            {
+                var fileContent = File.ReadAllText(templatePathTestClass);
+                fileContent = GetReplacePattern("rem").Replace(fileContent, "");
+                fileContent = GetReplacePattern("className").Replace(fileContent, className);
+                fileContent = GetReplacePattern("clientConstructorCall").Replace(fileContent, $"new {CodeModel.Name}(credentials)");
+                fileContent = GetReplacePattern("recordedRequest").Replace(fileContent, Utilities.EscapeString(recordedRequest));
+                fileContent = GetReplacePattern("recordedResponse").Replace(fileContent, Utilities.EscapeString(recordedResponse));
+                //fileContent = GetReplacePattern("recordedRequestBody").Replace(fileContent, Utilities.EscapeString(Utilities.GetHttpBody(recordedRequest)));
+                //fileContent = GetReplacePattern("recordedResponseBody").Replace(fileContent, Utilities.EscapeString(responseInfo.Body));
+
+                // parse body if exists
+                if (serviceCall.BodyParam != null)
+                {
+                    var bodyDeserCode = $"{serviceCall.BodyParamType} {bodyParamName}; {serviceCall.BodyInitStatement(bodyParamName)}; Assert.NotNull({bodyParamName});";
+                    fileContent = GetReplacePattern("bodyParamInit").Replace(fileContent, bodyDeserCode);
+                }
+
+                // generate C# code for args
+                var sbArgs = new StringBuilder();
+                sbArgs.AppendLine();
+                foreach (var p in serviceCall.AvailableParams)
+                    sbArgs.AppendLine($"                        {p.Name}: {GenerateArgumentCode(p, serviceCall.Params[p.SerializedName])},");
+                sbArgs.Append("                        cancellationToken: cancellationToken");
+                var args = sbArgs.ToString();
+
+                // gen call statement (return thingy will have `Headers`/`Body` properties if `returnType` has those things as non-null)
+                //var returnType = serviceCall.Method.ReturnType;
+                var callStatement = $"var {returnValueName} = serviceClient.{serviceCall.Method.Group.Value}.{serviceCall.Method.Name}WithHttpMessagesAsync({args}).GetAwaiter().GetResult();";
+                fileContent = GetReplacePattern("call").Replace(fileContent, callStatement);
+
+                // response validation
+                if (responseInfo.ExpectException)
+                {
+                    fileContent = GetReplacePattern("assertFail").Replace(fileContent, "");
+                    fileContent = GetReplacePattern("assertSuccess").Replace(fileContent, "Assert.True(false); // expected exception");
+
+                    fileContent = GetReplacePattern("validation").Replace(fileContent, "");
+                }
+                else
+                {
+                    fileContent = GetReplacePattern("assertFail").Replace(fileContent, "throw; // expected success");
+                    fileContent = GetReplacePattern("assertSuccess").Replace(fileContent, "");
+
+                    var sb = new StringBuilder();
+                    string indent = "                ";
+                    var response = responseInfo.ExpectedReponse;
+                    if (response.Body != null)
+                    {
+                        sb.AppendLine(indent + "// body validation");
+                        if (response.Body.Name == "System.IO.Stream")
+                        {
+                            sb.AppendLine(indent + $"byte[] dataBodyExpected = Encoding.UTF8.GetBytes({Utilities.EscapeString(responseInfo.Body)});");
+                            sb.AppendLine(indent + "byte[] dataBodyActual;");
+                            sb.AppendLine(indent + "using (var ms = new MemoryStream()) { result.Body.CopyTo(ms); dataBodyActual = ms.ToArray(); }");
+                            sb.AppendLine(indent + "Assert.Equal(dataBodyExpected.Length, dataBodyActual.Length);");
+                            sb.AppendLine(indent + "for (int i = 0; i < dataBodyExpected.Length; ++i) Assert.Equal(dataBodyExpected[i], dataBodyActual[i]);");
+                        }
+                        else if (response.Body.Name == "string")
+                        {
+                            sb.AppendLine(indent + $"var strBodyExpected = {Utilities.EscapeString(responseInfo.Body)};");
+                            sb.AppendLine(indent + "var strBodyActual = result.Body;");
+                            sb.AppendLine(indent + "Assert.Equal(strBodyExpected, strBodyActual);");
+                        }
+                        else if (response.Body.Name == "object")
+                        {
+                            sb.AppendLine(indent + $"var strBodyExpected = XElement.Parse({Utilities.EscapeString(responseInfo.Body)}).ToString();");
+                            sb.AppendLine(indent + "var strBodyActual = result.Body.ToString();");
+                            sb.AppendLine(indent + "Assert.Equal(strBodyExpected, strBodyActual);");
+                        }
+                        else
+                        {
+                            sb.AppendLine(indent + $"var xmlBodyExpected = XElement.Parse({Utilities.EscapeString(responseInfo.Body)});");
+                            sb.AppendLine(indent + "var xmlBodyActual = new XElement(xmlBodyExpected.Name);");
+                            sb.AppendLine(indent + "result.Body.XmlSerialize(xmlBodyActual);");
+                            sb.AppendLine(indent + "// Assert.Equal(xmlBodyExpected, xmlBodyActual);");
+
+                            // VS code diff
+                            sb.AppendLine();
+                            sb.AppendLine(indent + "if (Debugger.IsAttached)");
+                            sb.AppendLine(indent + "{");
+                            sb.AppendLine(indent + "    var fileA = Path.GetTempFileName();");
+                            sb.AppendLine(indent + "    var fileB = Path.GetTempFileName();");
+                            sb.AppendLine(indent + "    File.WriteAllText(fileA, xmlBodyExpected.ToString());");
+                            sb.AppendLine(indent + "    File.WriteAllText(fileB, xmlBodyActual.ToString());");
+                            sb.AppendLine(indent + "    var p = Process.Start(\"code\", $\"-w -d \\\"{fileA}\\\" \\\"{fileB}\\\"\");");
+                            sb.AppendLine(indent + "    p.WaitForExit();");
+                            sb.AppendLine(indent + "    try");
+                            sb.AppendLine(indent + "    {");
+                            sb.AppendLine(indent + "        File.Delete(fileA);");
+                            sb.AppendLine(indent + "        File.Delete(fileB);");
+                            sb.AppendLine(indent + "    }");
+                            sb.AppendLine(indent + "    catch { }");
+                            sb.AppendLine(indent + "}");
+                        }
+                    }
+                    //if (response.Headers != null)
+                    //{
+                    //    sb.AppendLine(indent + "// header validation");
+                    //    sb.AppendLine(indent + "var headers = result.Headers;");
+                    //    foreach (var expectedHeader in responseInfo.ExpectedTypedHeaderFields)
+                    //        sb.AppendLine(indent + $"Assert.Equal({CodeNamer.Instance.EscapeDefaultValue(expectedHeader.Value, expectedHeader.Key.ModelType)}, headers.{expectedHeader.Key.Name});");
+                    //}
+                    fileContent = GetReplacePattern("validation").Replace(fileContent, sb.ToString());
+                }
+
+                // dump and finish
+                fileContent = GetReplacePattern("dump").Replace(fileContent.Trim(), dump.ToString());
+
+                // chain test
+            retry:
+                try
+                {
+                    var realFileContent = File.ReadAllText(fileName, Encoding.UTF8);
+                    realFileContent = GetReplacePattern("nextTest").Replace(realFileContent, fileContent);
+                    File.WriteAllText(fileName, realFileContent, Encoding.UTF8);
+                }
+                catch (IOException e)
+                {
+                    Logger.Instance.Log(Category.Warning, "IO EXCEPTION: " + e);
+                    Thread.Sleep(1000);
+                    goto retry;
+                }
+            }
         }
 
         public void GenerateTestContext(string targetDir)
@@ -220,6 +283,22 @@ namespace TestGenerator.Generator
             // static project files
             foreach (var staticFile in staticPorjectFiles)
                 File.Copy(staticFile, Path.Combine(targetDir, Path.GetFileName(staticFile)), true);
+        }
+
+        public string CoverageReport
+        {
+            get
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("Covered:");
+                foreach (var methodCoverage in coverage)
+                    sb.AppendLine($"- {methodCoverage.Key.Group}_{methodCoverage.Key.Name}:" +
+                                  $"{(methodCoverage.Value.Item1 ? " success" : "")}" +
+                                  $"{(methodCoverage.Value.Item1 ? " failure" : "")}");
+                var coverageRatio = coverage.Sum(c => (c.Value.Item1 ? 0.5 : 0) + (c.Value.Item2 ? 0.5 : 0)) / coverage.Count;
+                sb.AppendLine($"Total coverage: {coverageRatio:F2}");
+                return sb.ToString();
+            }
         }
     }
 }

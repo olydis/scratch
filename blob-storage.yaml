@@ -2339,7 +2339,6 @@ headers:
   x-ms-snapshot:
     x-ms-client-name: Snapshot
     type: string
-    format: date-time-rfc1123
     description: Uniquely identifies the snapshot and indicates the snapshot version. It may be used in subsequent requests to access the snapshot
   x-ms-server-encrypted: 
     x-ms-client-name: IsServerEncrypted

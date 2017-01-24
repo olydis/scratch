@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using TestGenerator.Generator;
 using static AutoRest.Core.Utilities.DependencyInjection;
@@ -23,8 +24,8 @@ namespace TestGenerator
         {
             var swaggerPath = @"C:\Users\jobader\Documents\GitHub\scratch\blob-storage-out.yaml";
             var codeGen = "Azure.CSharp";
-            var testFolder = @"E:\Managed.Blob.VersionedTests\rawPayloads";
-            var targetFolder = @"E:\Managed.Blob.VersionedTests\gen";
+            var testFolder = @"E:\BlobStorageTests\Recordings1\rawA";
+            var targetFolder = @"E:\BlobStorageTests\Tests1";
             var autoRestExe = @"C:\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.exe";
             var urlFilter = new Regex(@"http://localhost:1000./.*");
 
@@ -49,6 +50,9 @@ namespace TestGenerator
                 //GenerateClient(targetFolderClient, swaggerPath, codeGen, autoRestExe);
                 GenerateTests(targetFolderTests, testGenerator, testFolder);
                 //GenerateProject(targetFolder, testGenerator);
+
+                // coverage
+                Console.WriteLine(testGenerator.CoverageReport);
             }
         }
 
@@ -63,22 +67,27 @@ namespace TestGenerator
         static void GenerateTests(string targetFolder, TestCaseGenerator generator, string testFolder)
         {
             var testFolderDi = new DirectoryInfo(testFolder);
+            
+            var testIds = testFolderDi.GetFiles("*.xml").Select(x => x.Name.Substring(0, x.Name.LastIndexOf("_", StringComparison.Ordinal))).AsParallel();
+            int progress = 0;
+            int progressMax = testIds.Count();
 
-            foreach (var testId in testFolderDi.GetFiles("*.xml").Select(x => x.Name.Split('_')[0]))
+            ThreadPool.SetMinThreads(32, 32);
+            Parallel.ForEach(testIds, new ParallelOptions { MaxDegreeOfParallelism = 32 }, testId =>
             {
-                Logger.Instance.Log(Category.Info, $"Generating test {testId}");
+                Logger.Instance.Log(Category.Info, $"@{Thread.CurrentThread.ManagedThreadId}: Generating test {testId}");
                 var recordingFileRequest = File.ReadAllText(testFolderDi.GetFiles($"{testId}_c.txt")[0].FullName, Encoding.UTF8);
                 var recordingFileResponse = File.ReadAllText(testFolderDi.GetFiles($"{testId}_s.txt")[0].FullName, Encoding.UTF8);
 
                 if (recordingFileRequest.Length > (1 << 16))
                 {
                     Logger.Instance.Log(Category.Warning, $"Request body too large ({recordingFileRequest.Length} bytes)");
-                    continue;
+                    return;
                 }
                 if (recordingFileResponse.Length > (1 << 16))
                 {
                     Logger.Instance.Log(Category.Warning, $"Response body too large ({recordingFileResponse.Length} bytes)");
-                    continue;
+                    return;
                 }
 
                 // data fixups
@@ -87,12 +96,16 @@ namespace TestGenerator
                 if (recordingFileResponse.Contains("Transfer-Encoding: chunked") && !recordingFileResponse.EndsWith("0\r\n\r\n"))
                     recordingFileResponse += "0\r\n\r\n";
 
+                // generate!
                 generator.GenerateTest(
                     targetFolder,
                     testId,
                     recordingFileRequest,
                     recordingFileResponse);
-            }
+
+                Interlocked.Increment(ref progress);
+                Console.Title = $"{progress} / {progressMax}";
+            });
             
             generator.GenerateTestContext(targetFolder);
         }
