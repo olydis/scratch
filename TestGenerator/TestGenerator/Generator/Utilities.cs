@@ -36,6 +36,9 @@ namespace TestGenerator.Generator
 
         public static string EscapeString(string input)
         {
+            var bytes = Encoding.UTF8.GetBytes(input);
+            return $@"Encoding.UTF8.GetString(new byte[]{{{string.Join(",", bytes)}}})";
+
             using (var writer = new StringWriter())
             {
                 using (var provider = CodeDomProvider.CreateProvider("CSharp"))

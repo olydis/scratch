@@ -63,6 +63,8 @@ namespace TestGenerator.Generator
                 return bodyParamName;
             if ((param.ModelType as EnumType)?.ModelAsString == false)
                 return $"{param.ModelTypeName}.{CodeNamer.Instance.EscapeDefaultValue(value, param.ModelType)}";
+            if ((param.ModelType as PrimaryType)?.KnownPrimaryType == KnownPrimaryType.String)
+                return Utilities.EscapeString(value);
             return CodeNamer.Instance.EscapeDefaultValue(value, param.ModelType)
                 .Replace(", this.Client.SerializationSettings", "");
         }
