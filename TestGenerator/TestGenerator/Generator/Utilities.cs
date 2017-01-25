@@ -37,7 +37,8 @@ namespace TestGenerator.Generator
         public static string EscapeString(string input)
         {
             var bytes = Encoding.UTF8.GetBytes(input);
-            return $@"Encoding.UTF8.GetString(new byte[]{{{string.Join(",", bytes)}}})";
+            if (bytes.Any(b => b > 127))
+                return $@"Encoding.UTF8.GetString(new byte[]{{{string.Join(",", bytes)}}})";
 
             using (var writer = new StringWriter())
             {

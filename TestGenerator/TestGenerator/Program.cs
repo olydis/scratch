@@ -3,6 +3,7 @@ using AutoRest.Core.Extensibility;
 using AutoRest.Core.Logging;
 using AutoRest.CSharp.Model;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -47,9 +48,9 @@ namespace TestGenerator
                 var testGenerator = new TestCaseGenerator(codeModel, urlFilter);
 
                 // generate
+                GenerateProject(targetFolder, testGenerator);
                 //GenerateClient(targetFolderClient, swaggerPath, codeGen, autoRestExe);
-                GenerateTests(targetFolderTests, testGenerator, testFolder);
-                //GenerateProject(targetFolder, testGenerator);
+                //GenerateTests(targetFolderTests, testGenerator, testFolder);
 
                 // coverage
                 Console.WriteLine(testGenerator.CoverageReport);
@@ -68,16 +69,21 @@ namespace TestGenerator
         {
             var testFolderDi = new DirectoryInfo(testFolder);
             
-            var testIds = testFolderDi.GetFiles("*.xml").Select(x => x.Name.Substring(0, x.Name.LastIndexOf("_", StringComparison.Ordinal))).AsParallel();
+            var testIds = testFolderDi.GetFiles("*.xml").Select(x => x.Name.Substring(0, x.Name.LastIndexOf("_", StringComparison.Ordinal))).ToArray();
             int progress = 0;
             int progressMax = testIds.Count();
-
-            ThreadPool.SetMinThreads(32, 32);
-            Parallel.ForEach(testIds, new ParallelOptions { MaxDegreeOfParallelism = 32 }, testId =>
+            
+            ThreadPool.SetMinThreads(128, 128);
+            Parallel.ForEach(
+                Partitioner.Create(testIds, EnumerablePartitionerOptions.NoBuffering).AsParallel(), 
+                new ParallelOptions { MaxDegreeOfParallelism = 128 }, 
+                testId =>
             {
                 Logger.Instance.Log(Category.Info, $"@{Thread.CurrentThread.ManagedThreadId}: Generating test {testId}");
-                var recordingFileRequest = File.ReadAllText(testFolderDi.GetFiles($"{testId}_c.txt")[0].FullName, Encoding.UTF8);
-                var recordingFileResponse = File.ReadAllText(testFolderDi.GetFiles($"{testId}_s.txt")[0].FullName, Encoding.UTF8);
+                var recordingFilePathRequest = testFolderDi.GetFiles($"{testId}_c.txt")[0].FullName;
+                var recordingFilePathResponse = testFolderDi.GetFiles($"{testId}_s.txt")[0].FullName;
+                var recordingFileRequest = File.ReadAllText(recordingFilePathRequest, Encoding.UTF8);
+                var recordingFileResponse = File.ReadAllText(recordingFilePathResponse, Encoding.UTF8);
 
                 if (recordingFileRequest.Length > (1 << 16))
                 {
@@ -101,7 +107,9 @@ namespace TestGenerator
                     targetFolder,
                     testId,
                     recordingFileRequest,
-                    recordingFileResponse);
+                    recordingFileResponse,
+                    recordingFilePathRequest,
+                    recordingFilePathResponse);
 
                 Interlocked.Increment(ref progress);
                 Console.Title = $"{progress} / {progressMax}";
@@ -113,7 +121,7 @@ namespace TestGenerator
         static void GenerateProject(string targetFolder, TestCaseGenerator generator)
         {
             Logger.Instance.Log(Category.Info, $"Generating project file");
-            generator.GeneratePorjectContext(targetFolder);
+            generator.GenerateProjectContext(targetFolder);
         }
     }
 }

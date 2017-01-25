@@ -62,7 +62,7 @@ namespace TestGenerator.Generator
             if (param.Location == ParameterLocation.Body)
                 return bodyParamName;
             if ((param.ModelType as EnumType)?.ModelAsString == false)
-                return $"{param.ModelTypeName}.{CodeNamer.Instance.EscapeDefaultValue(value, param.ModelType)}";
+                return $"{Utilities.EscapeString(value)}.Parse{param.ModelTypeName}().Value";
             if ((param.ModelType as PrimaryType)?.KnownPrimaryType == KnownPrimaryType.String)
                 return Utilities.EscapeString(value);
             return CodeNamer.Instance.EscapeDefaultValue(value, param.ModelType)
@@ -70,7 +70,9 @@ namespace TestGenerator.Generator
         }
 
 
-        public bool GenerateTest(string targetDir, string testId, string recordedRequest, string recordedResponse)
+        public bool GenerateTest(string targetDir, string testId, 
+            string recordedRequest, string recordedResponse,
+            string recordingFilePathRequest, string recordingFilePathResponse)
         {
             var className = $"Test{testId}";
 
@@ -120,7 +122,10 @@ namespace TestGenerator.Generator
 
                 // generate test class
                 lock (lockOn)
-                    GenerateTestClass(fileName, className, recordedRequest, recordedResponse, serviceCall, responseInfo, dump);
+                    GenerateTestClass(fileName, className, 
+                        recordedRequest, recordedResponse, 
+                        recordingFilePathRequest, recordingFilePathResponse, 
+                        serviceCall, responseInfo, dump);
             }
 
             return true;
@@ -131,6 +136,8 @@ namespace TestGenerator.Generator
             string className,
             string recordedRequest,
             string recordedResponse,
+            string recordingFilePathRequest,
+            string recordingFilePathResponse,
             ServiceCallInfo serviceCall,
             ResponseInfo responseInfo,
             StringBuilder dump)
@@ -141,8 +148,8 @@ namespace TestGenerator.Generator
                 fileContent = GetReplacePattern("rem").Replace(fileContent, "");
                 fileContent = GetReplacePattern("className").Replace(fileContent, className);
                 fileContent = GetReplacePattern("clientConstructorCall").Replace(fileContent, $"new {CodeModel.Name}(credentials)");
-                fileContent = GetReplacePattern("recordedRequest").Replace(fileContent, Utilities.EscapeString(recordedRequest));
-                fileContent = GetReplacePattern("recordedResponse").Replace(fileContent, Utilities.EscapeString(recordedResponse));
+                fileContent = GetReplacePattern("recordedRequest").Replace(fileContent, $"File.ReadAllText({Utilities.EscapeString(recordingFilePathRequest)}, Encoding.UTF8)");
+                fileContent = GetReplacePattern("recordedResponse").Replace(fileContent, $"File.ReadAllText({Utilities.EscapeString(recordingFilePathResponse)}, Encoding.UTF8)");
                 //fileContent = GetReplacePattern("recordedRequestBody").Replace(fileContent, Utilities.EscapeString(Utilities.GetHttpBody(recordedRequest)));
                 //fileContent = GetReplacePattern("recordedResponseBody").Replace(fileContent, Utilities.EscapeString(responseInfo.Body));
 
@@ -272,7 +279,7 @@ namespace TestGenerator.Generator
             File.WriteAllText(Path.Combine(targetDir, $"TestBase.cs"), fileContent);
         }
 
-        public void GeneratePorjectContext(string targetDir)
+        public void GenerateProjectContext(string targetDir)
         {
             string fileContent;
 

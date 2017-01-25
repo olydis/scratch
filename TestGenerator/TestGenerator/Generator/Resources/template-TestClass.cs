@@ -40,7 +40,7 @@ public class /*<*/BugDummy/*></className>*/ : TestBase
                 //<assertSuccess/>
                 //<validation/>
             }
-            catch (CloudException e)
+            catch (CloudException)
             {
                 //<assertFail/>
 
