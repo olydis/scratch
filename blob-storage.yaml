@@ -439,7 +439,6 @@ x-ms-paths:
             - $inc: '#/headers/ETag'
             - $inc: '#/headers/Content-MD5'
             - $inc: '#/headers/Content-Encoding'
-            - $inc: '#/headers/Content-Language'
             - $inc: '#/headers/Cache-Control'
             - $inc: '#/headers/Content-Disposition'
             - $inc: '#/headers/x-ms-blob-sequence-number'
@@ -474,7 +473,6 @@ x-ms-paths:
             - $inc: '#/headers/ETag'
             - $inc: '#/headers/Content-MD5'
             - $inc: '#/headers/Content-Encoding'
-            - $inc: '#/headers/Content-Language'
             - $inc: '#/headers/Cache-Control'
             - $inc: '#/headers/Content-Disposition'
             - $inc: '#/headers/x-ms-blob-sequence-number'
@@ -537,7 +535,6 @@ x-ms-paths:
             - $inc: '#/headers/ETag'
             - $inc: '#/headers/Content-MD5'
             - $inc: '#/headers/Content-Encoding'
-            - $inc: '#/headers/Content-Language'
             - $inc: '#/headers/Content-Disposition'
             - $inc: '#/headers/Cache-Control'
             - $inc: '#/headers/x-ms-blob-sequence-number'
@@ -2154,9 +2151,6 @@ headers:
   Content-Encoding: 
     type: string
     description: This header returns the value that was specified for the Content-Encoding request header
-  Content-Language: 
-    type: string
-    description: This header returns the value that was specified for the Content-Language request header. 
   Content-Length: 
     type: integer
     description: The number of bytes present in the response body.
