@@ -1238,7 +1238,7 @@ definitions:
         type: string
       Snapshot:
         type: string
-        format: date-time-rfc1123
+        format: date-time
       Properties:
         $ref: '#/definitions/BlobProperties'
       Metadata:
@@ -1263,6 +1263,8 @@ definitions:
       Content-Language:
         type: string
       Content-MD5:
+        type: string
+      Content-Disposition:
         type: string
       Cache-Control:
         type: string
@@ -1570,6 +1572,10 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/CorsRule'
+          xml:
+            name: CorsRule
+        xml:
+          wrapped: true
       DefaultServiceVersion:
         description: The default version to use for requests to the Blob service if an incoming request’s version is not specified. Possible values include version 2008-10-27 and all more recent versions
         type: string
