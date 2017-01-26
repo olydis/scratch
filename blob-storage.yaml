@@ -588,7 +588,6 @@ x-ms-paths:
         - $ref: '#/parameters/Blob'
         - $ref: '#/parameters/Timeout'
         
-        - $ref: '#/parameters/ContentLanguage'
         - $ref: '#/parameters/CacheControl'
         - $ref: '#/parameters/BlobContentType'
         - $ref: '#/parameters/BlobContentEncoding'
@@ -1807,15 +1806,6 @@ parameters:
     type: string
     x-ms-parameter-location: method
     description: The container name.
-
-  ContentLanguage:
-    name: Content-Language
-    x-ms-client-name: contentLanguage
-    in: header
-    required: false
-    type: string
-    x-ms-parameter-location: method
-    description: Specifies the natural languages used by this resource.
 
   CopySource:
     name: x-ms-copy-source
