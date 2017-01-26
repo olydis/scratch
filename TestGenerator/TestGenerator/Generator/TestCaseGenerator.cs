@@ -36,7 +36,7 @@ namespace TestGenerator.Generator
         // indicates whether given method was tested with a
         // - successful response
         // - failing response
-        private Dictionary<Method, Tuple<bool, bool>> coverage;
+        private Dictionary<Method, Tuple<int, int>> coverage;
         
         private Dictionary<string, StreamWriter> touched;
 
@@ -45,7 +45,7 @@ namespace TestGenerator.Generator
             this.CodeModel = codeModel;
             this.UrlFilter = urlFilter;
 
-            this.coverage = codeModel.Methods.ToDictionary(m => m, m => new Tuple<bool, bool>(false, false));
+            this.coverage = codeModel.Methods.ToDictionary(m => m, m => new Tuple<int, int>(0, 0));
             this.touched = new Dictionary<string, StreamWriter>();
         }
 
@@ -92,7 +92,7 @@ namespace TestGenerator.Generator
                 Logger.Instance.AddListener(new SignalingLogListener(Category.Debug, message => dump.AppendLine($"// {message.Severity}\t{message.Message.Replace("\r", @"\r").Replace("\n", @"\n")}")));
                 
                 // parse request
-                var serviceCall = RequestReverseEngineering.DetermineServiceCall(recordedRequest, CodeModel, UrlFilter);
+                var serviceCall = RequestReverseEngineering.DetermineServiceCall(testId, recordedRequest, CodeModel, UrlFilter);
                 if (serviceCall == null)
                 {
                     return false;
@@ -113,8 +113,8 @@ namespace TestGenerator.Generator
                     // update coverage data
                     var mcoverage = this.coverage[serviceCall.Method];
                     this.coverage[serviceCall.Method] = !responseInfo.ExpectException
-                        ? new Tuple<bool, bool>(true, mcoverage.Item2)
-                        : new Tuple<bool, bool>(mcoverage.Item1, true);
+                        ? new Tuple<int, int>(mcoverage.Item1 + 1, mcoverage.Item2)
+                        : new Tuple<int, int>(mcoverage.Item1, mcoverage.Item2 + 1);
 
                     // (re)used test file:
                     if (!touched.ContainsKey(fileName))
@@ -207,7 +207,7 @@ namespace TestGenerator.Generator
                         sb.AppendLine(indent + "// body validation");
                         if (response.Body.Name == "System.IO.Stream")
                         {
-                            sb.AppendLine(indent + $"byte[] dataBodyExpected = Encoding.UTF8.GetBytes({Utilities.EscapeString(responseInfo.Body)});");
+                            sb.AppendLine(indent + $"byte[] dataBodyExpected = Encoding.UTF8.GetBytes(RawResponseBody);");
                             sb.AppendLine(indent + "byte[] dataBodyActual;");
                             sb.AppendLine(indent + "using (var ms = new MemoryStream()) { result.Body.CopyTo(ms); dataBodyActual = ms.ToArray(); }");
                             sb.AppendLine(indent + "Assert.Equal(dataBodyExpected.Length, dataBodyActual.Length);");
@@ -215,19 +215,19 @@ namespace TestGenerator.Generator
                         }
                         else if (response.Body.Name == "string")
                         {
-                            sb.AppendLine(indent + $"var strBodyExpected = {Utilities.EscapeString(responseInfo.Body)};");
+                            sb.AppendLine(indent + $"var strBodyExpected = RawResponseBody;");
                             sb.AppendLine(indent + "var strBodyActual = result.Body;");
                             sb.AppendLine(indent + "Assert.Equal(strBodyExpected, strBodyActual);");
                         }
                         else if (response.Body.Name == "object")
                         {
-                            sb.AppendLine(indent + $"var strBodyExpected = XElement.Parse({Utilities.EscapeString(responseInfo.Body)}).ToString();");
+                            sb.AppendLine(indent + $"var strBodyExpected = XElement.Parse(RawResponseBody).ToString();");
                             sb.AppendLine(indent + "var strBodyActual = result.Body.ToString();");
                             sb.AppendLine(indent + "Assert.Equal(strBodyExpected, strBodyActual);");
                         }
                         else
                         {
-                            sb.AppendLine(indent + $"var xmlBodyExpected = XElement.Parse({Utilities.EscapeString(responseInfo.Body)});");
+                            sb.AppendLine(indent + $"var xmlBodyExpected = XElement.Parse(RawResponseBody);");
                             if (response.Body is SequenceType)
                                 sb.AppendLine(indent + $"var xmlBodyActual = new XElement(xmlBodyExpected.Name, result.Body.Select(x => new XElement(\"{(response.Body as SequenceType).ElementXmlName}\", x)));");
                             else
@@ -254,6 +254,8 @@ namespace TestGenerator.Generator
                             sb.AppendLine(indent + "    }");
                             sb.AppendLine(indent + "    catch { }");
                             sb.AppendLine(indent + "}");
+                            sb.AppendLine();
+                            sb.AppendLine(indent + "FuzzyMatch(xmlBodyExpected, xmlBodyActual);");
                         }
                     }
                     //if (response.Headers != null)
@@ -316,10 +318,11 @@ namespace TestGenerator.Generator
                 var sb = new StringBuilder();
                 sb.AppendLine("Covered:");
                 foreach (var methodCoverage in coverage)
-                    sb.AppendLine($"- {methodCoverage.Key.Group}_{methodCoverage.Key.Name}:" +
-                                  $"{(methodCoverage.Value.Item1 ? " success" : "")}" +
-                                  $"{(methodCoverage.Value.Item1 ? " failure" : "")}");
-                var coverageRatio = coverage.Sum(c => (c.Value.Item1 ? 0.5 : 0) + (c.Value.Item2 ? 0.5 : 0)) / coverage.Count;
+                    sb.AppendLine("- " +
+                                  $"{methodCoverage.Value.Item1:D5} " +
+                                  $"{methodCoverage.Value.Item2:D5} " +
+                                  $"{methodCoverage.Key.Group}_{methodCoverage.Key.Name}");
+                var coverageRatio = coverage.Sum(c => (c.Value.Item1 > 0 ? 0.5 : 0) + (c.Value.Item2 > 0 ? 0.5 : 0)) / coverage.Count;
                 sb.AppendLine($"Total coverage: {coverageRatio:F2}");
                 return sb.ToString();
             }

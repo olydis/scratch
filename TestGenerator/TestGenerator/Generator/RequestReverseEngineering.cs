@@ -15,6 +15,10 @@ namespace TestGenerator.Generator
     {
         private static bool TryAddParameterValue(string name, string value, ParameterLocation location, Method method, Dictionary<string, string> args)
         {
+            //// SPECIAL DOOHICKEY for Blob Storage: Date/x-ms-date are usable (we modeled Date, so parse towards that)
+            //if (name == "x-ms-date")
+            //    name = "Date";
+
             // param exists? and matches value in case it is a constant?
             var param = method.Parameters.FirstOrDefault(p => p.Location == location && p.SerializedName == name);
             if (param == null || (param.IsConstant && param.DefaultValue != value))
@@ -36,7 +40,17 @@ namespace TestGenerator.Generator
 
             var args = new Dictionary<string, string>();
             
-            var pathPrefixRegex = @"\/(?<accountName>[^/]*)";
+            // EXTRACT ACCOUNT NAME
+            string pathPrefixRegex = "";
+            var accountNameUrl = Regex.Match(url.Host, @"(?<accountName>[^/]*)\.blob\.core\.windows\.net");
+            if (accountNameUrl.Success) // get accountname differently if 
+            {
+                TryAddParameterValue("accountName", HttpUtility.UrlDecode(accountNameUrl.Groups["accountName"].Value), ParameterLocation.Path, method, args);
+            }
+            else
+            {
+                pathPrefixRegex = @"\/(?<accountName>[^/]*)";
+            }
 
             // match local path
             var pathPattern = Regex.Replace(method.Url.Value.TrimEnd('/'), @"\{(?<key>[^}]*)\}", "(?<${key}>[^/]+)");
@@ -74,7 +88,7 @@ namespace TestGenerator.Generator
             return args;
         }
 
-        public static ServiceCallInfo DetermineServiceCall(string recordedRequest, CodeModel serviceModel, Regex urlFilter)
+        public static ServiceCallInfo DetermineServiceCall(string testId, string recordedRequest, CodeModel serviceModel, Regex urlFilter)
         {
             // parse
             string intro;
@@ -87,7 +101,7 @@ namespace TestGenerator.Generator
             var url = new Uri(introParts[1]);
             if (!urlFilter.Match(url.OriginalString).Success)
             {
-                Logger.Instance.Log(Category.Info, $"Dropping `{url}` (did not match filter)");
+                Logger.Instance.Log(Category.Info, $"{testId}: Dropping `{url}` (did not match filter)");
                 return null;
             }
 
@@ -113,13 +127,13 @@ namespace TestGenerator.Generator
             // select candidate service call
             if (candids.Count() == 0)
             {
-                Logger.Instance.Log(Category.Warning, $"Could determine method for `{method} {url}`");
+                Logger.Instance.Log(Category.Error, $"{testId}: Could not determine method for `{method} {url}`");
                 return null;
             }
             if (candids.Count() > 1)
             {
                 candids = candids.OrderByDescending(x => x.Method.Parameters.Count(p => p.Location == ParameterLocation.Query && p.IsRequired)).ToList();
-                Logger.Instance.Log(Category.Warning, $"Found multiple candidates, will choose first (most required query params): `{string.Join(", ", candids.Select(x => x.Method.Group + "_" + x.Method.Name))}`");
+                Logger.Instance.Log(Category.Warning, $"{testId}: Found multiple candidates, will choose first (most required query params): `{string.Join(", ", candids.Select(x => x.Method.Group + "_" + x.Method.Name))}`");
             }
             var serviceCall = candids.First();
 
@@ -131,7 +145,7 @@ namespace TestGenerator.Generator
             }
             else if (body.Length > 0)
             {
-                Logger.Instance.Log(Category.Warning, $"Found non-empty body but selected a service call without a body parameter.");
+                Logger.Instance.Log(Category.Warning, $"{testId}: Found non-empty body but selected a service call without a body parameter.");
             }
             
             return serviceCall;

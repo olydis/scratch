@@ -15,7 +15,7 @@ namespace TestGenerator.Generator
         public static void ParseRawHttpMessage(string message, out string intro, out Dictionary<string, string> headers, out string body)
         {
             var httpNewLine = "\r\n";
-            var divideIndex = new string(message.Select(c => (char)(c % 256)).ToArray()).IndexOf(httpNewLine + httpNewLine);
+            var divideIndex = new string(message.Select(c => (char)(c % 256)).ToArray()).IndexOf(httpNewLine + httpNewLine, StringComparison.Ordinal);
             body = message.Substring(divideIndex + 4);
             var lines = message.Substring(0, divideIndex).Split(new[] { httpNewLine }, StringSplitOptions.RemoveEmptyEntries);
             intro = lines[0];
@@ -23,15 +23,6 @@ namespace TestGenerator.Generator
                 .Select(line => Regex.Match(line, @"^(?<key>.*?)\: (?<value>.*?)$"))
                 .Distinct(new AutoRest.Core.Utilities.EqualityComparer<Match>((a, b) => a.Groups["key"].Value == b.Groups["key"].Value, x => x.Groups["key"].Value.GetHashCode()))
                 .ToDictionary(x => x.Groups["key"].Value, x => x.Groups["value"].Value);
-        }
-
-        public static string GetHttpBody(string message)
-        {
-            string intro;
-            Dictionary<string, string> headers;
-            string body;
-            ParseRawHttpMessage(message, out intro, out headers, out body);
-            return body;
         }
 
         public static string EscapeString(string input)

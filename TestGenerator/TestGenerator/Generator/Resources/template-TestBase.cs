@@ -18,6 +18,41 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
     {
         static int nextPort = 8000;
 
+        private static string GetHttpBody(string message)
+        {
+            var httpNewLine = "\r\n";
+            var divideIndex = new string(message.Select(c => (char)(c % 256)).ToArray()).IndexOf(httpNewLine + httpNewLine, StringComparison.Ordinal);
+            var body = message.Substring(divideIndex + 4).Trim('\x00EF', '\x00BB', '\x00BF', '\uFEFF', '\u200B');
+
+            // parse chunked body
+            if (message.Contains("Transfer-Encoding: chunked"))
+            {
+                var enc = Encoding.GetEncoding(1252);
+                Func<string, string> toByteStr = str => enc.GetString(Encoding.UTF8.GetBytes(str));
+                Func<string, string> fromByteStr = str => Encoding.UTF8.GetString(enc.GetBytes(str));
+
+                var bodyReader = new StringReader(toByteStr(body));
+                body = "";
+                int len;
+                while ((len = Convert.ToInt32(bodyReader.ReadLine(), 16)) > 0)
+                {
+                    var buffer = new char[len];
+                    if (bodyReader.ReadBlock(buffer, 0, len) != len)
+                        throw new InvalidDataException();
+                    body += fromByteStr(new string(buffer));
+
+                    if (body != body.Trim('\x00EF', '\x00BB', '\x00BF', '\uFEFF', '\u200B'))
+                    {
+                        body = body.Trim('\x00EF', '\x00BB', '\x00BF', '\uFEFF', '\u200B');
+                        bodyReader.Read();
+                        bodyReader.Read();// apparently not accounted for in chunk length...
+                    }
+                }
+            }
+
+            return body;
+        }
+
         public TestBase(string rawRequest, string rawResponse)
         {
             this.RawRequest = rawRequest;
@@ -27,6 +62,10 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
         protected string RawRequest { get; }
         protected string RawResponse { get; }
 
+        protected string RawRequestBody => GetHttpBody(RawRequest);
+
+        protected string RawResponseBody => GetHttpBody(RawResponse);
+
         protected int Port { get; private set; }
                 
         private TcpListener listener;
@@ -35,6 +74,8 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
         {
             listener.Stop();
         }
+
+        protected Exception ServerException { get; private set; } = null;
 
         protected void StartServer()
         {
@@ -65,10 +106,11 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
                                     writer.WriteLine();
                                     writer.Close();
                                 }
-                                catch { /* might have been disposed */ }
+                                catch (ObjectDisposedException) { /* might have been disposed */ }
                             }, null);
                         }
-                        catch { /* might have been disposed */ }
+                        catch (ObjectDisposedException) { /* might have been disposed */ }
+                        catch (Exception e) { ServerException = e; }
                     }, null);
                     break;
                 }
@@ -98,7 +140,7 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
             var request = ReadHttpRequest(networkStream);
             var requestReader = new StringReader(request);
             while (requestReader.ReadLine() != "") ;
-            var actualRequestBody = requestReader.ReadToEnd();
+            var actualRequestBody = requestReader.ReadToEnd().Trim('\x00EF', '\x00BB', '\x00BF', '\uFEFF', '\u200B');
 
             // compare
             if (Debugger.IsAttached)
@@ -116,11 +158,34 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
                 }
                 catch { }
             }
+            XElement xml1 = null, xml2 = null;
+            try { xml1 = XElement.Parse(RawRequestBody); } catch { }
+            try { xml2 = XElement.Parse(actualRequestBody); } catch { }
+            FuzzyMatch(xml1, xml2);
 
             // write response
             var writer = new StreamWriter(networkStream, new UTF8Encoding(false));
             writer.Write(Regex.Replace(RawResponse, "Content-Length: .*?\r\n", ""));
             writer.Close();
+        }
+
+        protected void FuzzyMatch(XElement xml1, XElement xml2)
+        {
+            Assert.Equal(xml1 == null, xml2 == null);
+            if (xml1 == null)
+                return;
+
+            Assert.Equal(xml1.Value, xml2.Value);
+
+            var attr1 = xml1.Attributes().Select(a => $"{a.Name}: {a.Value}").OrderBy(x => x);
+            var attr2 = xml2.Attributes().Select(a => $"{a.Name}: {a.Value}").OrderBy(x => x);
+            Assert.Equal(attr1, attr2);
+
+            var children1 = xml1.Elements().OrderBy(x => x.Name.LocalName).Where(x => x.HasAttributes || x.HasElements || !string.IsNullOrEmpty(x.Value)).ToArray();
+            var children2 = xml1.Elements().OrderBy(x => x.Name.LocalName).Where(x => x.HasAttributes || x.HasElements || !string.IsNullOrEmpty(x.Value)).ToArray();
+            Assert.Equal(children1.Length, children2.Length);
+            for (int i = 0; i < children1.Length; ++i)
+                FuzzyMatch(children1[i], children2[i]);
         }
     }
 }

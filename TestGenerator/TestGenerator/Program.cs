@@ -25,8 +25,10 @@ namespace TestGenerator
         {
             var swaggerPath = @"C:\Users\jobader\Documents\GitHub\scratch\blob-storage-out.yaml";
             var codeGen = "Azure.CSharp";
-            var testFolder = @"E:\BlobStorageTests\Recordings1\rawErr";
-            var targetFolder = @"E:\BlobStorageTests\Tests1";
+            var testFolder = @"E:\BlobStorageTests\ALL";
+            //var testFolder = @"E:\BlobStorageTests\Recordings1\rawPayloads";
+           // var testFolder = @"E:\BlobStorageTests\Recordings2\tmp";
+            var targetFolder = @"E:\BlobStorageTests\Tests";
             var autoRestExe = @"C:\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.exe";
             var urlFilter = new Regex(@"(http://localhost:1000./.*)|(http://.*\.blob\.core\.windows\.net/.*)");
 
@@ -40,7 +42,7 @@ namespace TestGenerator
             {
                 // get code model
                 CodeModelCs codeModel;
-                Logger.Instance.AddListener(new ConsoleLogListener());
+                Logger.Instance.AddListener(new ConsoleLogListener(Category.Warning));
                 var settings = new Settings {CodeGenerator = codeGen};
                 codeModel = AutoRestPipeline.GenerateCodeModel(File.ReadAllText(swaggerPath), codeGen);
 
