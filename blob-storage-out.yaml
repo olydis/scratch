@@ -1215,9 +1215,7 @@ x-ms-paths:
       - $ref: '#/parameters/Container'
       - $ref: '#/parameters/Blob'
       - $ref: '#/parameters/Timeout'
-      - $ref: '#/parameters/ContentEncoding'
       - $ref: '#/parameters/ContentLanguage'
-      - $ref: '#/parameters/ContentMD5'
       - $ref: '#/parameters/CacheControl'
       - $ref: '#/parameters/BlobContentType'
       - $ref: '#/parameters/BlobContentEncoding'
@@ -1710,7 +1708,6 @@ x-ms-paths:
       - $ref: '#/parameters/Blob'
       - $ref: '#/parameters/BlockId'
       - $ref: '#/parameters/Timeout'
-      - $ref: '#/parameters/ContentMD5'
       - $ref: '#/parameters/LeaseId'
       - $ref: '#/parameters/Body'
       - $ref: '#/parameters/ApiVersionParameter'
@@ -1757,7 +1754,6 @@ x-ms-paths:
       - $ref: '#/parameters/Container'
       - $ref: '#/parameters/Blob'
       - $ref: '#/parameters/Timeout'
-      - $ref: '#/parameters/ContentMD5'
       - $ref: '#/parameters/BlobCacheControl'
       - $ref: '#/parameters/BlobContentType'
       - $ref: '#/parameters/BlobContentEncoding'
@@ -1873,7 +1869,6 @@ x-ms-paths:
       - $ref: '#/parameters/Blob'
       - $ref: '#/parameters/Timeout'
       - $ref: '#/parameters/Range'
-      - $ref: '#/parameters/ContentMD5'
       - $ref: '#/parameters/PageWrite'
       - $ref: '#/parameters/LeaseId'
       - $ref: '#/parameters/IfSequenceNumberLessThanOrEqualTo'
@@ -2060,7 +2055,6 @@ x-ms-paths:
       - $ref: '#/parameters/Container'
       - $ref: '#/parameters/Blob'
       - $ref: '#/parameters/Timeout'
-      - $ref: '#/parameters/ContentMD5'
       - $ref: '#/parameters/LeaseId'
       - $ref: '#/parameters/BlobConditionMaxSize'
       - $ref: '#/parameters/BlobConditionAppendPos'
@@ -2654,7 +2648,7 @@ parameters:
     type: string
     enum:
     - committed
-    - uncomitted
+    - uncommitted
     - all
     x-ms-enum:
       name: BlockListType
@@ -2714,14 +2708,6 @@ parameters:
     type: string
     x-ms-parameter-location: method
     description: The container name.
-  ContentEncoding:
-    name: Content-Encoding
-    x-ms-client-name: contentEncoding
-    in: header
-    required: false
-    type: string
-    x-ms-parameter-location: method
-    description: Specifies which content encodings have been applied to this resource.
   ContentLanguage:
     name: Content-Language
     x-ms-client-name: contentLanguage
@@ -2730,14 +2716,6 @@ parameters:
     type: string
     x-ms-parameter-location: method
     description: Specifies the natural languages used by this resource.
-  ContentMD5:
-    name: Content-MD5
-    x-ms-client-name: contentMD5
-    in: header
-    required: false
-    type: string
-    x-ms-parameter-location: method
-    description: An MD5 hash of the page content. This hash is used to verify the integrity of the page during transport. When this header is specified, the storage service compares the hash of the content that has arrived with the header value that was sent. If the two hashes do not match, the operation will fail with error code 400 (Bad Request). The Content-MD5 header is not permitted when the x-ms-page-write header is set to clear. If it is included with the request, the Blob service returns status code 400 (Bad Request).
   CopySource:
     name: x-ms-copy-source
     x-ms-client-name: copySource
