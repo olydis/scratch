@@ -1,25 +1,4 @@
 # Search Management Client
-* [Search Management Client](#search-management-client)
-   * [General](#general)
-   * [Security](#security)
-   * [Operations on Query Keys](#operations-on-query-keys)
-      * [List](#list)
-      * [Model Definition: ListQueryKeysResult](#model-definition-listquerykeysresult)
-      * [Model Definition: QueryKey](#model-definition-querykey)
-   * [Operations on Services](#operations-on-services)
-      * [CreateOrUpdate](#createorupdate)
-      * [Delete](#delete)
-      * [List](#list-1)
-      * [Model Definition: SearchServiceProperties](#model-definition-searchserviceproperties)
-      * [Model Definition: SearchServiceCreateOrUpdateParameters](#model-definition-searchservicecreateorupdateparameters)
-      * [Model Definition: SearchServiceResource](#model-definition-searchserviceresource)
-      * [Model Definition: SearchServiceListResult](#model-definition-searchservicelistresult)
-   * [Common Definitions](#common-definitions)
-      * [Client Parameter: SubscriptionId](#client-parameter-subscriptionid)
-      * [Client Parameter: ApiVersion](#client-parameter-apiversion)
-      * [Method Parameter: ResourceGroupName](#method-parameter-resourcegroupname)
-      * [Method Parameter: SearchServiceName](#method-parameter-searchservicename)
-      * [Error Response](#error-response)
 
 ## General
 This client that can be used to manage Azure Search services and API keys.
@@ -28,7 +7,7 @@ This client that can be used to manage Azure Search services and API keys.
 swagger: '2.0'
 info:
   title: SearchManagementClient
-  description: '#/descriptions/???'
+  description: '#general'
   version: '2015-02-28'
 host: management.azure.com
 schemes:
@@ -68,7 +47,7 @@ paths:
       tags:
       - QueryKeys
       operationId: QueryKeys_List
-      description: '#/descriptions/???'
+      description: '#list'
       externalDocs:
         url: https://msdn.microsoft.com/library/azure/dn832701.aspx
       parameters:
@@ -98,7 +77,7 @@ definitions:
         items:
           '$ref': '#/definitions/QueryKey'
         description: The query keys for the Azure Search service.
-    description: '#/descriptions/???'
+    description: '#model-definition-listquerykeysresult'
 ```
 
 ### Model Definition: QueryKey
@@ -116,7 +95,7 @@ definitions:
         readOnly: true
         type: string
         description: The value of the query API key.
-    description: '#/descriptions/???'
+    description: '#model-definition-querykeys'
 ```
 
 ## Operations on Services
@@ -132,7 +111,7 @@ paths:
       tags:
       - Services
       operationId: Services_CreateOrUpdate
-      description: '#/descriptions/???'
+      description: '#createorupdate'
       externalDocs:
         url: https://msdn.microsoft.com/library/azure/dn832687.aspx
       parameters:
@@ -169,7 +148,7 @@ paths:
       tags:
       - Services
       operationId: Services_Delete
-      description: '#/descriptions/???'
+      description: '#delete'
       externalDocs:
         url: https://msdn.microsoft.com/library/azure/dn832692.aspx
       parameters:
@@ -198,7 +177,7 @@ paths:
       tags:
       - Services
       operationId: Services_List
-      description: '#/descriptions/???'
+      description: '#list'
       externalDocs:
         url: https://msdn.microsoft.com/library/azure/dn832688.aspx
       parameters:
@@ -231,7 +210,7 @@ definitions:
         type: integer
         format: int32
         description: The number of partitions in the Search service; if specified, it can be 1, 2, 3, 4, 6, or 12.
-    description: '#/descriptions/???'
+    description: '#model-definition-searchserviceproperties'
 ```
 
 ### Model Definition: SearchServiceCreateOrUpdateParameters
@@ -252,7 +231,7 @@ definitions:
       properties:
         '$ref': '#/definitions/SearchServiceProperties'
         description: Properties of the Search service.
-    description: '#/descriptions/???'
+    description: '#model-definition-searchservicecreateorupdateparameters'
 ```
 
 ### Model Definition: SearchServiceResource
@@ -279,7 +258,7 @@ definitions:
         additionalProperties:
           type: string
         description: Tags to help categorize the Search service in the Azure Portal.
-    description: '#/descriptions/???'
+    description: '#model-definition-searchserviceresource'
 ```
 
 ### Model Definition: SearchServiceListResult
@@ -295,7 +274,7 @@ definitions:
         items:
           '$ref': '#/definitions/SearchServiceResource'
         description: The Search services in the resource group.
-    description: '#/descriptions/???'
+    description: '#model-definition-searchservicelistresult'
 ```
 
 ## Common Definitions
@@ -311,7 +290,7 @@ parameters:
     in: path
     required: true
     type: string
-    description: '#/descriptions/???'
+    description: '#client-parameter-subscriptionid'
 ```
 
 ### Client Parameter: ApiVersion
@@ -324,7 +303,7 @@ parameters:
     in: query
     required: true
     type: string
-    description: '#/descriptions/???'
+    description: '#client-parameter-apiversion'
 ```
 
 ### Method Parameter: ResourceGroupName
@@ -338,7 +317,7 @@ parameters:
     required: true
     type: string
     x-ms-parameter-location: method
-    description: '#/descriptions/???'
+    description: '#method-parameter-resourcegroupname'
 ```
 
 ### Method Parameter: SearchServiceName
@@ -352,7 +331,7 @@ parameters:
     required: true
     type: string
     x-ms-parameter-location: method
-    description: '#/descriptions/???'
+    description: '#method-parameter-searchservicename'
 ```
 
 ### Error Response
