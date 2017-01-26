@@ -2154,11 +2154,11 @@ definitions:
       Start:
         description: the date-time the policy is active
         type: string
-        format: date-time-rfc1123
+        format: date-time
       Expiry:
         description: the date-time the policy expires
         type: string
-        format: date-time-rfc1123
+        format: date-time
       Permission:
         description: the permissions for the acl policy
         type: string
@@ -2468,6 +2468,11 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/SignedIdentifier'
+      xml:
+        name: SignedIdentifier
+    xml:
+      wrapped: true
+      name: SignedIdentifiers
   StorageServiceProperties:
     description: Storage Service Properties.
     type: object
