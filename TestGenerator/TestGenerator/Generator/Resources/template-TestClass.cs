@@ -35,7 +35,7 @@ public class /*<*/BugDummy/*></className>*/ : TestBase
                 serviceClient.HttpClient.DefaultRequestHeaders.ExpectContinue = false;
                 var cancellationToken = Debugger.IsAttached
                     ? new CancellationToken()
-                    : new CancellationTokenSource(10000).Token;
+                    : new CancellationTokenSource(3000).Token;
                 //<call/>
                 //<assertSuccess/>
                 //<validation/>

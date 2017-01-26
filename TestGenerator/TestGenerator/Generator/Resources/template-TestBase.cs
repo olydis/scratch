@@ -171,18 +171,24 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
 
         protected void FuzzyMatch(XElement xml1, XElement xml2)
         {
+            // SPECIAL DOOHICKEY: `BlockList` only supported with `Latest` stuff
+            Func<XElement, bool> doohickeyFilter = e => xml1.Name.LocalName != "BlockList" || e.Name.LocalName == "Latest";
+
             Assert.Equal(xml1 == null, xml2 == null);
             if (xml1 == null)
                 return;
 
-            Assert.Equal(xml1.Value, xml2.Value);
+            Assert.Equal(xml1.Name.LocalName, xml2.Name.LocalName);
+
+            if (!xml1.HasElements && !xml2.HasElements)
+                Assert.Equal(xml1.Value, xml2.Value);
 
             var attr1 = xml1.Attributes().Select(a => $"{a.Name}: {a.Value}").OrderBy(x => x);
             var attr2 = xml2.Attributes().Select(a => $"{a.Name}: {a.Value}").OrderBy(x => x);
             Assert.Equal(attr1, attr2);
 
-            var children1 = xml1.Elements().OrderBy(x => x.Name.LocalName).Where(x => x.HasAttributes || x.HasElements || !string.IsNullOrEmpty(x.Value)).ToArray();
-            var children2 = xml1.Elements().OrderBy(x => x.Name.LocalName).Where(x => x.HasAttributes || x.HasElements || !string.IsNullOrEmpty(x.Value)).ToArray();
+            var children1 = xml1.Elements().Where(doohickeyFilter).OrderBy(x => x.Name.LocalName).Where(x => x.HasAttributes || x.HasElements || !string.IsNullOrEmpty(x.Value)).ToArray();
+            var children2 = xml2.Elements().Where(doohickeyFilter).OrderBy(x => x.Name.LocalName).Where(x => x.HasAttributes || x.HasElements || !string.IsNullOrEmpty(x.Value)).ToArray();
             Assert.Equal(children1.Length, children2.Length);
             for (int i = 0; i < children1.Length; ++i)
                 FuzzyMatch(children1[i], children2[i]);
