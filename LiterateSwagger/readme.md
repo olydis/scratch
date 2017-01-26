@@ -38,7 +38,9 @@ csharp:
 
 use `-enable-ruby` on the cmdline. 
 
-``` yaml enabled=$(enable-ruby)
+
+``` yaml           
+# enabled=$(enable-ruby) 
 ruby:
   output-folder: $(output-folder)/ruby
   namespace: Azure::Example
@@ -48,7 +50,7 @@ ruby:
 
 We want to override the name of the `method-group` to just `Keys`
 
-``` yaml 
+``` yaml
 directive:
   - from: SearchManagement  # aka the example.md file
     where: $..paths[@..operationId="QueryKeys_*"]
@@ -64,7 +66,8 @@ directive:
 
 Only do this when `-debug` is specified in the cmdline.
 
-``` yaml enabled=$(debug)
+``` yaml
+# enabled=$(debug)
 directive:
   - generate-trace-information: true
 
