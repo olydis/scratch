@@ -50,12 +50,16 @@ public class /*<*/BugDummy/*></className>*/ : TestBase
             {
                 //<assertFail/>
             }
+            catch (ArgumentException)
+            {
+                //<assertFail/>
+            }
         }
         catch
         {
             // prioritize! The server exception might have caused the exception on this thread (but get's swallowed by VS and such)
             if (ServerException != null)
-                throw ServerException;
+                /*<*/throw ServerException/*></assertServerFail>*/;
             else
                 throw;
         }

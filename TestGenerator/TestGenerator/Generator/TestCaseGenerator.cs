@@ -169,7 +169,7 @@ namespace TestGenerator.Generator
                 // parse body if exists
                 if (serviceCall.BodyParam != null)
                 {
-                    var bodyDeserCode = $"{serviceCall.BodyParamType} {bodyParamName}; {serviceCall.BodyInitStatement(bodyParamName)}; Assert.NotNull({bodyParamName});";
+                    var bodyDeserCode = $"{serviceCall.BodyParamType} {bodyParamName}; {serviceCall.BodyInitStatement(bodyParamName)};";
                     fileContent = GetReplacePattern("bodyParamInit").Replace(fileContent, bodyDeserCode);
                 }
 
@@ -190,6 +190,7 @@ namespace TestGenerator.Generator
                 if (responseInfo.ExpectException)
                 {
                     fileContent = GetReplacePattern("assertFail").Replace(fileContent, "");
+                    fileContent = GetReplacePattern("assertServerFail").Replace(fileContent, "/*expecting failure*/");
                     fileContent = GetReplacePattern("assertSuccess").Replace(fileContent, "Assert.True(false); // expected exception");
 
                     fileContent = GetReplacePattern("validation").Replace(fileContent, "");
@@ -228,8 +229,14 @@ namespace TestGenerator.Generator
                         else
                         {
                             sb.AppendLine(indent + $"var xmlBodyExpected = XElement.Parse(RawResponseBody);");
-                            if (response.Body is SequenceType)
+                            if (response.Body is SequenceType && (response.Body as SequenceType).ElementType is CompositeType)
+                            {
+                                sb.AppendLine(indent + $"var xmlBodyActual = new XElement(xmlBodyExpected.Name, result.Body.Select(x => x.XmlSerialize(new XElement(\"{(response.Body as SequenceType).ElementXmlName}\"))));");
+                            }
+                            else if (response.Body is SequenceType)
+                            {
                                 sb.AppendLine(indent + $"var xmlBodyActual = new XElement(xmlBodyExpected.Name, result.Body.Select(x => new XElement(\"{(response.Body as SequenceType).ElementXmlName}\", x)));");
+                            }
                             else
                             {
                                 sb.AppendLine(indent + "var xmlBodyActual = new XElement(xmlBodyExpected.Name);");

@@ -71,7 +71,10 @@ namespace TestGenerator.Generator
             if (BodyParamType == "System.IO.Stream")
                 return $"{bodyParamName} = new MemoryStream(Encoding.UTF8.GetBytes({bodyString}))";
             if (string.IsNullOrEmpty(BodyParam))
-                bodyString = "\"<root/>\"";
+                if (Method.Body.IsNullable())
+                    return $"{bodyParamName} = null";
+                else
+                    bodyString = "\"<root/>\"";
             var expression = XmlSerialization.GenerateDeserializer(Method.CodeModel, Method.Body.ModelType);
             return $"Assert.True(XmlSerialization.Root({expression})(XElement.Parse({bodyString}), out {bodyParamName}))";
         }
