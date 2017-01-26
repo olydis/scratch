@@ -1,4 +1,4 @@
-# Search Management Client
+# Search Management
 
 ## General
 This client that can be used to manage Azure Search services and API keys.
@@ -6,7 +6,7 @@ This client that can be used to manage Azure Search services and API keys.
 ```yaml
 swagger: '2.0'
 info:
-  title: SearchManagementClient
+  title: Search Management
   description: '#general'
   version: '2015-02-28'
 host: management.azure.com
