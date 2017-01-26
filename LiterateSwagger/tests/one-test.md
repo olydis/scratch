@@ -4,7 +4,8 @@ Note: this was pulled right from a Fiddler request.
 
 ## Requests
 
-``` message (request)
+``` message
+# (request)
 PUT http://localhost:10000/testaccount1/containersc5d3e7c5509046d2aa3f8bb095593T?timeout=30 HTTP/1.1
 x-ms-version: 2016-05-31
 x-ms-blob-type: PageBlob
@@ -20,7 +21,8 @@ Content-Length: 23
 
 ## Responses
 
-``` message (response)
+``` message 
+# (response)
 HTTP/1.1 400 Bad Request
 Content-Type: text/html; charset=us-ascii
 Server: Microsoft-HTTPAPI/2.0
