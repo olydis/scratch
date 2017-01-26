@@ -24,12 +24,11 @@ namespace TestGenerator.Generator
             get
             {
                 var localParams = Method.LocalParameters;
-                var argCount = localParams.TakeWhile(p => Params.ContainsKey(p.SerializedName)).Count();
-                if (localParams.Skip(argCount).Any(p => p.IsRequired))
+                if (localParams.Any(p => !Params.ContainsKey(p.SerializedName) && p.IsRequired))
                 {
                     throw new Exception("encountered more required parameters than I have values for");
                 }
-                return localParams.Take(argCount);
+                return localParams.Where(p => Params.ContainsKey(p.SerializedName));
             }
         }
         public string BodyParam

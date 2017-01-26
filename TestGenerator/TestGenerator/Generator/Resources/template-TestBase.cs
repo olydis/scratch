@@ -48,23 +48,27 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
                     listener.Start();
                     listener.BeginAcceptTcpClient(iar =>
                     {
-                        Serve(listener.EndAcceptTcpClient(iar));
-                        // shut off retries
-                        listener.BeginAcceptTcpClient(iar2 =>
+                        try
                         {
-                            try
+                            Serve(listener.EndAcceptTcpClient(iar));
+                            // shut off retries
+                            listener.BeginAcceptTcpClient(iar2 =>
                             {
-                                var server = listener.EndAcceptTcpClient(iar2);
-                                var networkStream = server.GetStream();
-                                ReadHttpRequest(networkStream);
-                                var writer = new StreamWriter(networkStream, new UTF8Encoding(false));
-                                writer.WriteLine("HTTP/1.1 400 Mute");
-                                writer.WriteLine("Connection: close");
-                                writer.WriteLine();
-                                writer.Close();
-                            }
-                            catch { /* might have been disposed */ }
-                        }, null);
+                                try
+                                {
+                                    var server = listener.EndAcceptTcpClient(iar2);
+                                    var networkStream = server.GetStream();
+                                    ReadHttpRequest(networkStream);
+                                    var writer = new StreamWriter(networkStream, new UTF8Encoding(false));
+                                    writer.WriteLine("HTTP/1.1 400 Mute");
+                                    writer.WriteLine("Connection: close");
+                                    writer.WriteLine();
+                                    writer.Close();
+                                }
+                                catch { /* might have been disposed */ }
+                            }, null);
+                        }
+                        catch { /* might have been disposed */ }
                     }, null);
                     break;
                 }

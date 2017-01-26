@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Microsoft.Rest.Serialization;
 using static AutoRest.Core.Utilities.DependencyInjection;
 
 namespace TestGenerator.Generator
@@ -37,7 +38,7 @@ namespace TestGenerator.Generator
         // - failing response
         private Dictionary<Method, Tuple<bool, bool>> coverage;
         
-        private Dictionary<string, object> touched;
+        private Dictionary<string, StreamWriter> touched;
 
         public TestCaseGenerator(CodeModelCs codeModel, Regex urlFilter)
         {
@@ -45,7 +46,7 @@ namespace TestGenerator.Generator
             this.UrlFilter = urlFilter;
 
             this.coverage = codeModel.Methods.ToDictionary(m => m, m => new Tuple<bool, bool>(false, false));
-            this.touched = new Dictionary<string, object>();
+            this.touched = new Dictionary<string, StreamWriter>();
         }
 
         /// <summary>
@@ -59,10 +60,19 @@ namespace TestGenerator.Generator
 
         private string GenerateArgumentCode(ParameterCs param, string value)
         {
+            // EARLY BLOW UP (we *can't* generate service calls with arguments that don't type...)
+            if ((param.ModelType as PrimaryType)?.KnownPrimaryType == KnownPrimaryType.Int)
+                try { int.Parse(value); }
+                catch { throw new InvalidDataException($"integer arg had non-integer value ({value} : {param.ModelType.Name})"); }
+            if ((param.ModelType as PrimaryType)?.KnownPrimaryType == KnownPrimaryType.DateTime ||
+                (param.ModelType as PrimaryType)?.KnownPrimaryType == KnownPrimaryType.DateTimeRfc1123)
+                try { SafeJsonConvert.DeserializeObject<DateTime>(value); }
+                catch { throw new InvalidDataException($"datetime arg had non-datetime value ({value} : {param.ModelType.Name})"); }
+
             if (param.Location == ParameterLocation.Body)
                 return bodyParamName;
             if ((param.ModelType as EnumType)?.ModelAsString == false)
-                return $"{Utilities.EscapeString(value)}.Parse{param.ModelTypeName}().Value";
+                return $"{Utilities.EscapeString(value)}.Parse{param.ModelType.Name}() ?? ({param.ModelType.Name})Enum.Parse(typeof({param.ModelType.Name}), {Utilities.EscapeString(value)})";
             if ((param.ModelType as PrimaryType)?.KnownPrimaryType == KnownPrimaryType.String)
                 return Utilities.EscapeString(value);
             return CodeNamer.Instance.EscapeDefaultValue(value, param.ModelType)
@@ -96,7 +106,7 @@ namespace TestGenerator.Generator
 
                 // file info
                 var fileName = Path.Combine(targetDir, $"{serviceCall.Method.Group}_{serviceCall.Method.Name}_{(responseInfo.ExpectException ? "fail" : "succ")}.cs");
-                object lockOn;
+                StreamWriter fileWriter;
 
                 lock (this)
                 {
@@ -109,30 +119,29 @@ namespace TestGenerator.Generator
                     // (re)used test file:
                     if (!touched.ContainsKey(fileName))
                     {
-                        touched.Add(fileName, new object());
+                        fileWriter = new StreamWriter(File.Create(fileName), Encoding.UTF8);
+                        touched.Add(fileName, fileWriter);
                         // generate stub
                         var fileContent = File.ReadAllText(templatePathTestFile);
                         fileContent = GetReplacePattern("clientNamespace").Replace(fileContent, CodeModel.Namespace);
                         fileContent = GetReplacePattern("clientNamespaceModels").Replace(fileContent, $"{CodeModel.Namespace}.Models");
                         fileContent = GetReplacePattern("clientNamespaceTests").Replace(fileContent, $"{CodeModel.Namespace}.Tests");
-                        File.WriteAllText(fileName, fileContent, Encoding.UTF8);
+                        fileWriter.Write(fileContent);
                     }
-                    lockOn = touched[fileName];
+                    fileWriter = touched[fileName];
                 }
 
                 // generate test class
-                lock (lockOn)
-                    GenerateTestClass(fileName, className, 
+                GenerateTestClass(className, 
                         recordedRequest, recordedResponse, 
                         recordingFilePathRequest, recordingFilePathResponse, 
-                        serviceCall, responseInfo, dump);
+                        serviceCall, responseInfo, fileWriter, dump);
             }
 
             return true;
         }
 
         private void GenerateTestClass(
-            string fileName,
             string className,
             string recordedRequest,
             string recordedResponse,
@@ -140,6 +149,7 @@ namespace TestGenerator.Generator
             string recordingFilePathResponse,
             ServiceCallInfo serviceCall,
             ResponseInfo responseInfo,
+            StreamWriter fileWriter, // when writing out
             StringBuilder dump)
         {
             using (ExtensionsLoader.GetPlugin().Activate()) // so all the right naming is done (also: default value escaping)
@@ -149,7 +159,10 @@ namespace TestGenerator.Generator
                 fileContent = GetReplacePattern("className").Replace(fileContent, className);
                 fileContent = GetReplacePattern("clientConstructorCall").Replace(fileContent, $"new {CodeModel.Name}(credentials)");
                 fileContent = GetReplacePattern("recordedRequest").Replace(fileContent, $"File.ReadAllText({Utilities.EscapeString(recordingFilePathRequest)}, Encoding.UTF8)");
-                fileContent = GetReplacePattern("recordedResponse").Replace(fileContent, $"File.ReadAllText({Utilities.EscapeString(recordingFilePathResponse)}, Encoding.UTF8)");
+                if (recordingFilePathResponse != null)
+                    fileContent = GetReplacePattern("recordedResponse").Replace(fileContent, $"File.ReadAllText({Utilities.EscapeString(recordingFilePathResponse)}, Encoding.UTF8)");
+                else
+                    fileContent = GetReplacePattern("recordedResponse").Replace(fileContent, Utilities.EscapeString(recordedResponse));
                 //fileContent = GetReplacePattern("recordedRequestBody").Replace(fileContent, Utilities.EscapeString(Utilities.GetHttpBody(recordedRequest)));
                 //fileContent = GetReplacePattern("recordedResponseBody").Replace(fileContent, Utilities.EscapeString(responseInfo.Body));
 
@@ -257,22 +270,20 @@ namespace TestGenerator.Generator
                 fileContent = GetReplacePattern("dump").Replace(fileContent.Trim(), dump.ToString());
 
                 // chain test
-            retry:
-                try
+                lock (fileWriter)
                 {
-                    File.AppendAllText(fileName, Environment.NewLine + Environment.NewLine + fileContent.Trim(), Encoding.UTF8);
-                }
-                catch (IOException e)
-                {
-                    Logger.Instance.Log(Category.Warning, "IO EXCEPTION: " + e);
-                    Thread.Sleep(1000);
-                    goto retry;
+                    fileWriter.WriteLine();
+                    fileWriter.WriteLine(fileContent.Trim());
                 }
             }
         }
 
         public void GenerateTestContext(string targetDir)
         {
+            // flush tests
+            foreach (var fileWriter in touched.Values)
+                fileWriter.Close();
+
             // TestBase.cs
             var fileContent = File.ReadAllText(templatePathTestBaseFile);
             fileContent = GetReplacePattern("clientNamespace").Replace(fileContent, CodeModel.Namespace);
