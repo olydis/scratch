@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Microsoft.Rest;
 using Xunit;
 
 namespace /*<*/Dummy/*></clientNamespace>*/.Tests
@@ -58,6 +59,8 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
             this.RawRequest = rawRequest;
             this.RawResponse = rawResponse;
         }
+
+        public ServiceClientCredentials Credentials => new TokenCredentials("TOKEN", Guid.NewGuid().ToString());
 
         protected string RawRequest { get; }
         protected string RawResponse { get; }

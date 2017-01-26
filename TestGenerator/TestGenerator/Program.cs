@@ -25,11 +25,11 @@ namespace TestGenerator
         {
             var swaggerPath = @"C:\Users\jobader\Documents\GitHub\scratch\blob-storage-out.yaml";
             var codeGen = "Azure.CSharp";
-            var testFolder = @"E:\BlobStorageTests\ALL";
-            //var testFolder = @"E:\BlobStorageTests\rawErr";
+            //var testFolder = @"E:\BlobStorageTests\ALL";
+            var testFolder = @"E:\BlobStorageTests\rawErr";
             //var testFolder = @"E:\BlobStorageTests\Recordings1\rawPayloads";
             // var testFolder = @"E:\BlobStorageTests\Recordings2\tmp";
-            var targetFolder = @"E:\BlobStorageTests\Tests";
+            var targetFolder = @"E:\BlobStorageTests\TestsErr";
             var autoRestExe = @"C:\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.exe";
             var urlFilter = new Regex(@"(http://localhost:1000./.*)|(http://.*\.blob\.core\.windows\.net/.*)");
 
@@ -52,7 +52,7 @@ namespace TestGenerator
 
                 // generate
                 //GenerateProject(targetFolder, testGenerator);
-                GenerateClient(targetFolderClient, swaggerPath, codeGen, autoRestExe);
+                //GenerateClient(targetFolderClient, swaggerPath, codeGen, autoRestExe);
                 GenerateTests(targetFolderTests, testGenerator, testFolder);
 
                 // coverage

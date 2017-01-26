@@ -26,7 +26,6 @@ public class /*<*/BugDummy/*></className>*/ : TestBase
         try
         {
             // create and use client
-            var credentials = new TokenCredentials("TOKEN", Guid.NewGuid().ToString());
             var serviceClient = /*<*/ (dynamic) null /*></clientConstructorCall>*/;
             serviceClient.BaseUri = new UriBuilder("http", "localhost", Port).Uri.ToString();
             //<bodyParamInit/>
