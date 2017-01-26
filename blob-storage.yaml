@@ -1976,7 +1976,7 @@ parameters:
     required: false
     type: integer
     minimum: 0 
-    maximum: 5000
+    #maximum: 5000
     x-ms-parameter-location: method
     description: Specifies the maximum number of containers to return. If the request does not specify maxresults, or specifies a value greater than 5000, the server will return up to 5000 items. Note that if the listing operation crosses a partition boundary, then the service will return a continuation token for retrieving the remainder of the results. For this reason, it is possible that the service will return fewer results than specified by maxresults, or than the default of 5000. 
 
