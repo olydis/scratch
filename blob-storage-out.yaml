@@ -2146,10 +2146,6 @@ definitions:
   AccessPolicy:
     type: object
     description: An Access policy
-    required:
-    - Start
-    - Expiry
-    - Permission
     properties:
       Start:
         description: the date-time the policy is active
