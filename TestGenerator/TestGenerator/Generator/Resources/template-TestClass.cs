@@ -14,7 +14,7 @@ public class /*<*/BugDummy/*></className>*/ : TestBase
     private static readonly string recordedRequest = /*<*/"recordedRequest"/*></recordedRequest>*/;
     private static readonly string recordedResponse = /*<*/"recordedResponse"/*></recordedResponse>*/;
 
-    public /*<*/BugDummy/*></className>*/() : base(recordedRequest, recordedResponse)
+    public /*<*/BugDummy/*></className>*/() : base(recordedRequest, recordedResponse, /*<*/null/*></accountName>*/)
     { }
 
     [Fact]

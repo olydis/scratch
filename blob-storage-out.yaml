@@ -29,7 +29,6 @@ consumes:
 - text/plain
 produces:
 - application/xml
-- application/json
 - application/octet-stream
 - text/plain
 x-ms-paths:

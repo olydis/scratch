@@ -65,6 +65,8 @@ namespace TestGenerator.Generator
             }
         }
 
+        public string AccountName => Params["accountName"];
+
         public string BodyInitStatement(string bodyParamName)
         {
             var bodyString = Utilities.EscapeString(BodyParam);

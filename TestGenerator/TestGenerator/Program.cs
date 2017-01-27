@@ -52,7 +52,7 @@ namespace TestGenerator
 
                 // generate
                 //GenerateProject(targetFolder, testGenerator);
-                //GenerateClient(targetFolderClient, swaggerPath, codeGen, autoRestExe);
+                GenerateClient(targetFolderClient, swaggerPath, codeGen, autoRestExe);
                 GenerateTests(targetFolderTests, testGenerator, testFolder);
 
                 // coverage

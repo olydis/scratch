@@ -157,6 +157,7 @@ namespace TestGenerator.Generator
                 var fileContent = File.ReadAllText(templatePathTestClass);
                 fileContent = GetReplacePattern("rem").Replace(fileContent, "");
                 fileContent = GetReplacePattern("className").Replace(fileContent, className);
+                fileContent = GetReplacePattern("accountName").Replace(fileContent, Utilities.EscapeString(serviceCall.AccountName));
                 fileContent = GetReplacePattern("clientConstructorCall").Replace(fileContent, $"new {CodeModel.Name}(this.Credentials)");
                 fileContent = GetReplacePattern("recordedRequest").Replace(fileContent, $"File.ReadAllText({Utilities.EscapeString(recordingFilePathRequest)}, Encoding.UTF8)");
                 if (recordingFilePathResponse != null)

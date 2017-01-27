@@ -54,16 +54,18 @@ namespace /*<*/Dummy/*></clientNamespace>*/.Tests
             return body;
         }
 
-        public TestBase(string rawRequest, string rawResponse)
+        public TestBase(string rawRequest, string rawResponse, string accountName)
         {
             this.RawRequest = rawRequest;
             this.RawResponse = rawResponse;
+            this.AccountName = accountName;
         }
 
         public ServiceClientCredentials Credentials => new TokenCredentials("TOKEN", Guid.NewGuid().ToString());
 
         protected string RawRequest { get; }
         protected string RawResponse { get; }
+        protected string AccountName { get; }
 
         protected string RawRequestBody => GetHttpBody(RawRequest);
 
