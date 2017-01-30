@@ -3,18 +3,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp1.0</TargetFramework>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)Razor.targets" />
   <ItemGroup>
     <DotnetRazor Include="**/*.cshtml" />
   </ItemGroup>
-
-  <Target Name="DotnetRazor" BeforeTargets="CoreGenerateAssemblyInfo">
-    <PropertyGroup>
-      <RazorCommand>&quot;$(SolutionDir)..\RazorCompiler\RazorCompiler\bin\Debug\rzc.exe&quot;</RazorCommand>
-    </PropertyGroup>
-    <Exec Command="$(RazorCommand) @(DotnetRazor) obj\Razor" ConsoleToMSBuild="true">
-      <Output TaskParameter="ConsoleOutput" ItemName="Compile" />
-      <Output TaskParameter="ConsoleOutput" ItemName="FileWrites" />
-    </Exec>
-  </Target>
-
 </Project>
