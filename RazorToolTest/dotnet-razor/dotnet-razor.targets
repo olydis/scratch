@@ -4,7 +4,7 @@
   </ItemGroup>
   <Target Name="DotnetRazor" BeforeTargets="CoreGenerateAssemblyInfo">
     <PropertyGroup>
-      <RazorCommand>dotnet run --project $(MSBuildThisFileDirectory)dotnet-razor.csproj --</RazorCommand>
+      <RazorCommand>dotnet razor</RazorCommand>
     </PropertyGroup>
     <Exec Command="$(RazorCommand) @(DotnetRazor) obj\Razor $(RootNamespace)" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" ItemName="Compile" />
