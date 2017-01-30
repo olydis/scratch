@@ -3,8 +3,8 @@
 
 using System;
 using System.IO;
-using Microsoft.AspNet.Razor;
-using Microsoft.AspNet.Razor.Generator;
+using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.CodeGenerators;
 
 namespace Microsoft.Rest.RazorCompiler
 {
@@ -38,13 +38,23 @@ namespace Microsoft.Rest.RazorCompiler
         public void Compile(string cshtmlFilePath)
         {
             var basePath = Path.GetDirectoryName(cshtmlFilePath);
+
+            if (Path.IsPathRooted(basePath))
+            {
+                throw new ArgumentException(".cshtml path must be relative");
+            }
+            if (basePath.Contains("."))
+            {
+                throw new ArgumentException(".cshtml path must not contain '.'");
+            }
+
             var fileName = Path.GetFileName(cshtmlFilePath);
             var fileNameNoExtension = Path.GetFileNameWithoutExtension(fileName);
             var targetFileName = Path.Combine(TargetDirectory, $"{cshtmlFilePath}.cs");
             System.Console.WriteLine(targetFileName);
+            var fullNamespace = $"Namespace.{basePath.Replace('/', '.').Replace('\\', '.')}";
 
-            // shortcuts
-            if (new FileInfo(cshtmlFilePath).LastWriteTimeUtc >= new FileInfo(targetFileName).LastWriteTimeUtc)
+            if (File.Exists(targetFileName) && File.GetLastWriteTimeUtc(targetFileName) >= File.GetLastWriteTimeUtc(cshtmlFilePath))
             {
                 return;
             }
@@ -62,15 +72,18 @@ namespace Microsoft.Rest.RazorCompiler
                 generatedTagHelperContext: new GeneratedTagHelperContext());
             var engine = new RazorTemplateEngine(host);
 
-            using (var fileStream = File.OpenText(cshtmlFilePath))
+            var file = File.ReadAllText(cshtmlFilePath);
+            file = file.Replace("<exception", "«exception");
+            using (var fileStream = new StringReader(file))
             {
                 var code = engine.GenerateCode(
                     input: fileStream,
                     className: fileNameNoExtension,
-                    rootNamespace: Namespace,
+                    rootNamespace: fullNamespace,
                     sourceFileName: fileName);
 
                 var source = code.GeneratedCode;
+                source = source.Replace("«exception", "<exception");
                 source = CopyrightHeader + "\r\n\r\n" + source;
                 var startIndex = 0;
                 while (startIndex < source.Length)
@@ -97,6 +110,12 @@ namespace Microsoft.Rest.RazorCompiler
                     source = source.Substring(0, startIndex) + replacement +
                              source.Substring(endIndex + endMatch.Length);
                     startIndex = startIndex + replacement.Length;
+                }
+                if( File.Exists(targetFileName) ) { 
+                    var oldFile = File.ReadAllText(targetFileName);    
+                    if( oldFile == source ) {
+                        return;
+                    }
                 }
                 Directory.CreateDirectory(Path.GetDirectoryName(targetFileName));
                 File.WriteAllText(targetFileName, source);

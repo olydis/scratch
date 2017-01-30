@@ -18,11 +18,11 @@ Usage: rzc.exe <semicolon-separated file list> [<target directory> [<namespace>]
             {
                 var compiler = new Compiler();
                 var files = args[0].Split(';');
-                if (args.Length == 2)
+                if (args.Length >= 2)
                 {
                     compiler.TargetDirectory = args[1];
                 }
-                if (args.Length == 3)
+                if (args.Length >= 3)
                 {
                     compiler.Namespace = args[2];
                 }
