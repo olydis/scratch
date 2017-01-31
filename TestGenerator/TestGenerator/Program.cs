@@ -29,8 +29,8 @@ namespace TestGenerator
             var testFolder = @"E:\BlobStorageTests\rawErr";
             //var testFolder = @"E:\BlobStorageTests\Recordings1\rawPayloads";
             // var testFolder = @"E:\BlobStorageTests\Recordings2\tmp";
-            var targetFolder = @"E:\BlobStorageTests\TestsErr";
-            var autoRestExe = @"C:\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.exe";
+            var targetFolder = @"E:\BlobStorageTests\TestsTEMP";
+            var autoRestExe = @"C:\work\autorestx\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.exe";
             var urlFilter = new Regex(@"(http://localhost:1000./.*)|(http://.*\.blob\.core\.windows\.net/.*)");
 
             // create folders
@@ -51,7 +51,7 @@ namespace TestGenerator
                 var testGenerator = new TestCaseGenerator(codeModel, urlFilter);
 
                 // generate
-                //GenerateProject(targetFolder, testGenerator);
+                GenerateProject(targetFolder, testGenerator);
                 GenerateClient(targetFolderClient, swaggerPath, codeGen, autoRestExe);
                 GenerateTests(targetFolderTests, testGenerator, testFolder);
 

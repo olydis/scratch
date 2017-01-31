@@ -15,10 +15,6 @@ namespace TestGenerator.Generator
     {
         private static bool TryAddParameterValue(string name, string value, ParameterLocation location, Method method, Dictionary<string, string> args)
         {
-            //// SPECIAL DOOHICKEY for Blob Storage: Date/x-ms-date are usable (we modeled Date, so parse towards that)
-            //if (name == "x-ms-date")
-            //    name = "Date";
-
             // param exists? and matches value in case it is a constant?
             var param = method.Parameters.FirstOrDefault(p => p.Location == location && p.SerializedName == name);
             if (param == null || (param.IsConstant && param.DefaultValue != value))
