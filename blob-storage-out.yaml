@@ -291,7 +291,7 @@ x-ms-paths:
               - blob
               x-ms-enum:
                 name: PublicAccessType
-                modelAsString: false
+                modelAsString: true
         default:
           $ref: '#/responses/Error'
     delete:
@@ -320,7 +320,7 @@ x-ms-paths:
       enum:
       - container
   /{container}?restype=container&comp=metadata:
-    head:
+    get:
       tags:
       - container
       operationId: Container_GetMetadata
@@ -434,7 +434,7 @@ x-ms-paths:
               - blob
               x-ms-enum:
                 name: PublicAccessType
-                modelAsString: false
+                modelAsString: true
             ETag:
               type: string
               description: The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes.
@@ -1316,7 +1316,7 @@ x-ms-paths:
       enum:
       - properties
   /{container}/{blob}?comp=metadata:
-    head:
+    get:
       tags:
       - blobs
       operationId: Blobs_GetMetadata
@@ -2104,7 +2104,7 @@ definitions:
     - blob
     x-ms-enum:
       name: PublicAccessType
-      modelAsString: false
+      modelAsString: true
   CopyStatus:
     type: string
     enum:
@@ -2555,7 +2555,7 @@ parameters:
     - blob
     x-ms-enum:
       name: PublicAccessType
-      modelAsString: false
+      modelAsString: true
   BlobContentDisposition:
     name: x-ms-blob-content-disposition
     in: header

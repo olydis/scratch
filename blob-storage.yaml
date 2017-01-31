@@ -208,7 +208,7 @@ x-ms-paths:
       $inc: '#/stuff/common-operation'
 
   '/{container}?restype=container&comp=metadata':
-    head: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-container-metadata
+    get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-container-metadata
       tags: 
         - container
       operationId: Container_GetMetadata
@@ -656,7 +656,7 @@ x-ms-paths:
       $inc: '#/stuff/common-operation'
 
   '/{container}/{blob}?comp=metadata':
-    head: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-blob-metadata
+    get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-blob-metadata
       tags:
       - blobs
       operationId: Blobs_GetMetadata
@@ -1102,11 +1102,6 @@ x-ms-paths:
       $inc: '#/stuff/common-operation'
 
 
-  
-
-
-
-
 
 #
 # Model Definitions
@@ -1140,7 +1135,7 @@ definitions:
       - blob
     x-ms-enum:
       name: PublicAccessType
-      modelAsString: false
+      modelAsString: true # backwards compatibility (had a "true" once)
 
   CopyStatus:
     type: string
@@ -2186,7 +2181,7 @@ headers:
     description: Returns the date and time the container was last modified. 
       Any operation that modifies the blob, including an update of the blob's 
       metadata or properties, changes the last-modified time of the blob.
-  Vary: 
+  Vary:
     type: string
     description: Returned with the value of the Origin header when CORS rules are specified
   x-ms-blob-append-offset:
