@@ -8,7 +8,7 @@
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="Exists('$(VSToolsPath)\DotNet\Microsoft.DotNet.Props')" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>784d4b45-f12a-4b8f-a86c-35a080814a19</ProjectGuid>
-    <RootNamespace>AutoRest.CSharp.Tests</RootNamespace>
+    <RootNamespace><!--TestClientNamespace--></RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
   </PropertyGroup>
