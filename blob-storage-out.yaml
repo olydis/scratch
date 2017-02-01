@@ -2373,6 +2373,23 @@ definitions:
         description: The maximum amount time that a browser should cache the preflight OPTIONS request.
         type: integer
         minimum: 0
+  Error:
+    type: object
+    required:
+    - Code
+    - Message
+    properties:
+      Code:
+        type: string
+      Message:
+        type: string
+      ExceptionDetails:
+        type: object
+        properties:
+          ExceptionMessage:
+            type: string
+          StackTrace:
+            type: string
   GeoReplication:
     type: object
     properties:
@@ -2702,7 +2719,6 @@ parameters:
     in: path
     required: true
     type: string
-    pattern: ^(?!.*--)^(?!.*\-$)(^[a-z0-9][a-z0-9-]{3,63}$)
     x-ms-parameter-location: method
     description: The container name.
   CopySource:
@@ -3010,4 +3026,6 @@ parameters:
 responses:
   Error:
     description: Error.
+    schema:
+      $ref: '#/definitions/Error'
 ...
