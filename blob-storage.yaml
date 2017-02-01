@@ -265,7 +265,7 @@ x-ms-paths:
     get: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/get-container-acl
       tags:
         - container
-      operationId: Container_GetContainerAcl
+      operationId: Container_GetAcl
       description: 
       parameters:
         # path parameters
@@ -293,7 +293,7 @@ x-ms-paths:
     put: # https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/set-container-acl
       tags:
         - container
-      operationId: Container_SetContainerAcl
+      operationId: Container_SetAcl
       description: 
       parameters:
         # path parameters
@@ -1608,6 +1608,7 @@ parameters:
     in: path
     required: true
     type: string
+    pattern: ^(?!.*\/$)^[\s\S]{1,1024}$
     x-ms-parameter-location: method
     description: The blob name.
 
@@ -1803,6 +1804,7 @@ parameters:
     in: path
     required: true
     type: string
+    pattern: ^(?!.*--)^(?!.*\-$)(^[a-z0-9][a-z0-9-]{3,63}$)
     x-ms-parameter-location: method
     description: The container name.
 
@@ -1984,6 +1986,7 @@ parameters:
     in: header
     required: false
     type: string
+    pattern: ^(?:((?!\d)\w+(?:\.(?!\d)\w+)*)\.)?((?!\d)\w+)$
     x-ms-parameter-location: method
     description: Optional. Specifies a user-defined name-value pair associated with the blob. If no name-value pairs are specified, the operation will copy the metadata from the source blob or file to the destination blob. If one or more name-value pairs are specified, the destination blob is created with the specified metadata, and metadata is not copied from the source blob or file. 
       Note that beginning with version 2009-09-19, metadata names must adhere to the naming rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more information.

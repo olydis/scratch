@@ -413,7 +413,7 @@ x-ms-paths:
     get:
       tags:
       - container
-      operationId: Container_GetContainerAcl
+      operationId: Container_GetAcl
       description: ''
       parameters:
       - $ref: '#/parameters/Container'
@@ -460,7 +460,7 @@ x-ms-paths:
     put:
       tags:
       - container
-      operationId: Container_SetContainerAcl
+      operationId: Container_SetAcl
       description: ''
       parameters:
       - $ref: '#/parameters/Container'
@@ -2517,6 +2517,7 @@ parameters:
     in: path
     required: true
     type: string
+    pattern: ^(?!.*\/$)^[\s\S]{1,1024}$
     x-ms-parameter-location: method
     description: The blob name.
   BlobCacheControl:
@@ -2702,6 +2703,7 @@ parameters:
     in: path
     required: true
     type: string
+    pattern: ^(?!.*--)^(?!.*\-$)(^[a-z0-9][a-z0-9-]{3,63}$)
     x-ms-parameter-location: method
     description: The container name.
   CopySource:
@@ -2866,6 +2868,7 @@ parameters:
     in: header
     required: false
     type: string
+    pattern: ^(?:((?!\d)\w+(?:\.(?!\d)\w+)*)\.)?((?!\d)\w+)$
     x-ms-parameter-location: method
     description: Optional. Specifies a user-defined name-value pair associated with the blob. If no name-value pairs are specified, the operation will copy the metadata from the source blob or file to the destination blob. If one or more name-value pairs are specified, the destination blob is created with the specified metadata, and metadata is not copied from the source blob or file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more information.
     x-ms-header-collection-prefix: x-ms-meta-
