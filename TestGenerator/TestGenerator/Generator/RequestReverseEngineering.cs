@@ -51,7 +51,7 @@ namespace TestGenerator.Generator
             // match local path
             var pathPattern = Regex.Replace(method.Url.Value.TrimEnd('/'), @"\{(?<key>[^}]*)\}", "(?<${key}>[^/]+)");
             var pathRegex = new Regex($"^{pathPrefixRegex}{pathPattern}$");
-            var pathMatch = pathRegex.Match(url.LocalPath);
+            var pathMatch = pathRegex.Match(url.LocalPath.TrimEnd('/'));
             if (!pathMatch.Success)
             {
                 return null;
