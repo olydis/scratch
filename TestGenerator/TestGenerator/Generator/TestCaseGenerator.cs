@@ -123,8 +123,8 @@ namespace TestGenerator.Generator
                         touched.Add(fileName, fileWriter);
                         // generate stub
                         var fileContent = File.ReadAllText(templatePathTestFile);
-                        fileContent = GetReplacePattern("clientNamespace").Replace(fileContent, CodeModel.Namespace);
-                        fileContent = GetReplacePattern("clientNamespaceModels").Replace(fileContent, $"{CodeModel.Namespace}.Models");
+                        fileContent = GetReplacePattern("clientNamespace").Replace(fileContent, $"{CodeModel.Namespace}.Client");
+                        fileContent = GetReplacePattern("clientNamespaceModels").Replace(fileContent, $"{CodeModel.Namespace}.Client.Models");
                         fileContent = GetReplacePattern("clientNamespaceTests").Replace(fileContent, $"{CodeModel.Namespace}.Tests");
                         fileWriter.Write(fileContent);
                     }
