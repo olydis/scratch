@@ -104,29 +104,26 @@ namespace TestGenerator.Generator
             // match
             var candids = serviceModel.Methods
                 .OfType<MethodCs>()
-                .Select(m => new ServiceCallInfo { Method = m, Params = MatchMethodAgainstRequest(m, method, url, headers) })
+                .SelectMany(m => method == "get" || method == "head"
+                    ? new[]
+                    {   // SPECIAL DOOHICKEY for Blob Storage: HEAD/GET both allowed on some operations
+                        new ServiceCallInfo { Method = m, Params = MatchMethodAgainstRequest(m, "get", url, headers) },
+                        new ServiceCallInfo { Method = m, Params = MatchMethodAgainstRequest(m, "head", url, headers) }
+                    }
+                    : new[]
+                    {
+                        new ServiceCallInfo { Method = m, Params = MatchMethodAgainstRequest(m, method, url, headers) }
+                    })
                 .Where(x => x.Params != null)
                 .ToList();
-            
-            // SPECIAL DOOHICKEY for Blob Storage: HEAD/GET both allowed on some operations
-            if (candids.Count() == 0)
-            {
-                if (method == "get") method = "head";
-                if (method == "head") method = "get";
-                candids = serviceModel.Methods
-                    .OfType<MethodCs>()
-                    .Select(m => new ServiceCallInfo { Method = m, Params = MatchMethodAgainstRequest(m, method, url, headers) })
-                    .Where(x => x.Params != null)
-                    .ToList();
-            }
 
             // select candidate service call
-            if (candids.Count() == 0)
+            if (candids.Count == 0)
             {
                 Logger.Instance.Log(Category.Error, $"{testId}: Could not determine method for `{method} {url}`");
                 return null;
             }
-            if (candids.Count() > 1)
+            if (candids.Count > 1)
             {
                 candids = candids.OrderByDescending(x => x.Method.Parameters.Count(p => p.Location == ParameterLocation.Query && p.IsRequired)).ToList();
                 Logger.Instance.Log(Category.Warning, $"{testId}: Found multiple candidates, will choose first (most required query params): `{string.Join(", ", candids.Select(x => x.Method.Group + "_" + x.Method.Name))}`");

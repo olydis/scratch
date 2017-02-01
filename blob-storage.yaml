@@ -1315,7 +1315,7 @@ definitions:
       Blobs:
         xml:
           wrapped: true
-        type: array # weird thingy with BlogPrefix
+        type: array # weird thingy with BlobPrefix
         items:
           $ref: '#/definitions/Blob'
           xml:
@@ -1416,7 +1416,7 @@ definitions:
       Containers:
         xml:
           wrapped: true
-        type: array # weird thingy with BlogPrefix
+        type: array
         items:
           $ref: '#/definitions/Container'
           xml:
