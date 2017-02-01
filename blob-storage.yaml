@@ -1938,7 +1938,7 @@ parameters:
     name: x-ms-lease-break-period
     x-ms-client-name: breakPeriod
     in: header
-    required: true
+    required: false
     type: integer
     x-ms-parameter-location: method
     description: For a break operation, proposed duration the lease should continue before it is broken, in seconds, between 0 and 60. This break period is only used if it is shorter than the time remaining on the lease. If longer, the time remaining on the lease is used. A new lease will not be available before the break period has expired, but the lease may be held for longer than the break period. If this header does not appear with a break operation, a fixed-duration lease breaks after the remaining lease period elapses, and an infinite lease breaks immediately.
@@ -1947,7 +1947,7 @@ parameters:
     name: x-ms-lease-duration
     x-ms-client-name: duration
     in: header
-    required: true
+    required: false
     type: integer
     x-ms-parameter-location: method
     description: Specifies the duration of the lease, in seconds, or negative one (-1) for a lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease duration cannot be changed using renew or change.
