@@ -19,7 +19,7 @@ namespace BlobStorageTest.Client
     /// <summary>
     /// PageBlobsOperations operations.
     /// </summary>
-    internal partial class PageBlobsOperations : IServiceOperations<AzureStorageClient>, IPageBlobsOperations
+    internal partial class PageBlobsOperations : IServiceOperations<AzureBlobStorageClient>, IPageBlobsOperations
     {
         /// <summary>
         /// Initializes a new instance of the PageBlobsOperations class.
@@ -30,7 +30,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="System.ArgumentNullException">
         /// Thrown when a required parameter is null
         /// </exception>
-        internal PageBlobsOperations(AzureStorageClient client)
+        internal PageBlobsOperations(AzureBlobStorageClient client)
         {
             if (client == null)
             {
@@ -42,7 +42,7 @@ namespace BlobStorageTest.Client
         /// <summary>
         /// Gets a reference to the AzureStorageClient
         /// </summary>
-        public AzureStorageClient Client { get; private set; }
+        public AzureBlobStorageClient Client { get; private set; }
 
         /// <summary>
         /// The Put Page operation writes a range of pages to a page blob

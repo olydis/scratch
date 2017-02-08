@@ -19,7 +19,7 @@ namespace BlobStorageTest.Client
     /// <summary>
     /// ServiceOperations operations.
     /// </summary>
-    internal partial class ServiceOperations : IServiceOperations<AzureStorageClient>, IServiceOperations
+    internal partial class ServiceOperations : IServiceOperations<AzureBlobStorageClient>, IServiceOperations
     {
         /// <summary>
         /// Initializes a new instance of the ServiceOperations class.
@@ -30,7 +30,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="System.ArgumentNullException">
         /// Thrown when a required parameter is null
         /// </exception>
-        internal ServiceOperations(AzureStorageClient client)
+        internal ServiceOperations(AzureBlobStorageClient client)
         {
             if (client == null)
             {
@@ -42,7 +42,7 @@ namespace BlobStorageTest.Client
         /// <summary>
         /// Gets a reference to the AzureStorageClient
         /// </summary>
-        public AzureStorageClient Client { get; private set; }
+        public AzureBlobStorageClient Client { get; private set; }
 
         /// <summary>
         /// Sets properties for a storage account's Blob service endpoint, including

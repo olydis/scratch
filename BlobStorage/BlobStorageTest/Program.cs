@@ -18,12 +18,12 @@ namespace BlobStorageTest
         private static void Main(string[] args)
         {
             var credentials = new StorageCredentials(accountName, key);
-            var client = new AzureStorageClient(credentials);
+            var client = new AzureBlobStorageClient(credentials);
             
             ScenarioSample(client).GetAwaiter().GetResult();
         }
 
-        private static async Task ScenarioSample(AzureStorageClient client)
+        private static async Task ScenarioSample(AzureBlobStorageClient client)
         {
             var containerName = "mycontainer";
             var blobName1 = "myblob1";
