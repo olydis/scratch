@@ -22,7 +22,7 @@ securityDefinitions:
     in: header
     x-ms-algorithm: _StorageSharedKey
 schemes:
-- http
+- https
 consumes:
 - application/xml
 - application/octet-stream
@@ -2462,7 +2462,7 @@ definitions:
         description: Indicates the number of days that metrics or logging data should be retained. All data older than this value will be deleted
         type: integer
         minimum: 1
-        maximim: 365
+        maximum: 365
   SignedIdentifier:
     description: signed identifier
     type: object
