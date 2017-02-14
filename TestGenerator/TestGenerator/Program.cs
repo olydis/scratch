@@ -19,23 +19,25 @@ namespace TestGenerator
 {
     class Program
     {
-        internal static readonly string TestClientNamespace = "TestedClient";
+        internal static readonly string TestClientNamespace = "BlobStorageTest";
 
         static void Main(string[] args)
         {
             var swaggerPath = @"C:\Users\jobader\Documents\GitHub\scratch\blob-storage-out.yaml";
             var codeGen = "Azure.CSharp";
             //var testFolder = @"E:\BlobStorageTests\ALL";
+            //var testFolder = @"E:\BlobStorageTests\rawCpy";
             var testFolder = @"E:\BlobStorageTests\rawErr";
             //var testFolder = @"E:\BlobStorageTests\Recordings1\rawPayloads";
             // var testFolder = @"E:\BlobStorageTests\Recordings2\tmp";
-            var targetFolder = @"E:\BlobStorageTests\TestsErr";
+            //var targetFolder = @"E:\BlobStorageTests\TestsErr";
+            var targetFolder = @"E:\BlobStorageTests\BlobStorageTest";
             var autoRestExe = @"C:\work\autorest\src\core\AutoRest\bin\Debug\net451\win7-x64\AutoRest.exe";
             var urlFilter = new Regex(@"(http://localhost:1000./.*)|(http://.*\.blob\.core\.windows\.net/.*)");
 
             // create folders
-            var targetFolderClient = Path.Combine(targetFolder, "client");
-            var targetFolderTests = Path.Combine(targetFolder, "tests");
+            var targetFolderClient = Path.Combine(targetFolder, "Client");
+            var targetFolderTests = Path.Combine(targetFolder, "Tests");
             Directory.CreateDirectory(targetFolderClient);
             Directory.CreateDirectory(targetFolderTests);
 
@@ -53,7 +55,7 @@ namespace TestGenerator
                 // generate
                 //GenerateProject(targetFolder, testGenerator);
                 GenerateClient(targetFolderClient, swaggerPath, codeGen, autoRestExe);
-                GenerateTests(targetFolderTests, testGenerator, testFolder);
+                //GenerateTests(targetFolderTests, testGenerator, testFolder);
 
                 // coverage
                 Console.WriteLine(testGenerator.CoverageReport);
@@ -63,7 +65,7 @@ namespace TestGenerator
         static void GenerateClient(string targetFolder, string swaggerPath, string codeGen, string autoRestExe)
         {
             var proc = Process.Start(autoRestExe,
-                $"-Input \"{swaggerPath}\" -CodeGenerator {codeGen} -OutputDirectory \"{targetFolder}\" -Namespace {TestClientNamespace}");
+                $"-Input \"{swaggerPath}\" -CodeGenerator {codeGen} -OutputDirectory \"{targetFolder}\" -Namespace {TestClientNamespace}.Client");
             proc.WaitForExit();
             if (proc.ExitCode != 0)
                 throw new Exception("AutoRest failed!");
