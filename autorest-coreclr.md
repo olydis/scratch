@@ -2,7 +2,7 @@
 
 ## Running AutoRest
 - [NodeJS](https://nodejs.org/en/) (`>= 6.9.5`) with gulp (`npm install -g gulp`)
-- [latest dotnet-cli toolset](https://github.com/dotnet/cli#installers-and-binaries)
+- [latest dotnet-cli toolset](https://github.com/dotnet/cli#installers-and-binaries) (`>= 1.0.0-rc4-004812`)
 - build AutoRest (`npm install; gulp build`)
 - run AutoRest (`gulp autorest ...`)
 
@@ -22,4 +22,5 @@
 |Run Tests             | `gulp test`               |
 |Regenerate Test Files | `gulp regenerate`         |
 |Run                   | `gulp autorest "<args>"`  |
+|Reset Dotnet Cache    | `gulp reset-dotnet-cache` |
 
