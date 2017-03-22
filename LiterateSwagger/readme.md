@@ -39,7 +39,7 @@ csharp:
 use `-enable-ruby` on the cmdline. 
 
 
-``` yaml           
+``` yaml enabled=$(enable-ruby) 
 # enabled=$(enable-ruby) 
 ruby:
   output-folder: $(output-folder)/ruby
