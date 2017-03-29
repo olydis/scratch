@@ -62,10 +62,9 @@ directive:
 
 ### Special directives for debugging...
 
-Only do this when `-debug` is specified in the cmdline.
+Only do this when `--debug` is specified in the cmdline.
 
-``` yaml
-# enabled=$(debug)
+``` yaml $(debug)
 directive:
   - generate-trace-information: true
 
