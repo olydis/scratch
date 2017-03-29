@@ -38,9 +38,7 @@ csharp:
 
 use `--ruby` on the cmdline. 
 
-
 ``` yaml $(ruby) 
-# enabled=$(enable-ruby) 
 ruby:
   output-folder: $(output-folder)/ruby
   namespace: Azure::Example
