@@ -36,10 +36,10 @@ csharp:
 
 ### Ruby generation is still experimental. Off by default.
 
-use `-enable-ruby` on the cmdline. 
+use `--ruby` on the cmdline. 
 
 
-``` yaml enabled=$(enable-ruby) 
+``` yaml $(ruby) 
 # enabled=$(enable-ruby) 
 ruby:
   output-folder: $(output-folder)/ruby
