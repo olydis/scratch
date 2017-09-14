@@ -14,6 +14,7 @@ x-ms-parameterized-host:
     required: true
     type: string
     in: path
+    x-ms-parameter-location: method
     x-ms-skip-url-encoding: true
 securityDefinitions:
   blob_shared_key:
@@ -3028,4 +3029,4 @@ responses:
     description: Error.
     schema:
       $ref: '#/definitions/Error'
-...
+
