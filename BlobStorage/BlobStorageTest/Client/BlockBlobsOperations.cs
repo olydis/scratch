@@ -58,9 +58,6 @@ namespace BlobStorageTest.Client
         /// The Put Block operation creates a new block to be committed as part of a
         /// blob
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -104,11 +101,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<BlockBlobsPutBlockHeaders>> PutBlockWithHttpMessagesAsync(string accountName, string container, string blob, string blockId, Stream body, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<BlockBlobsPutBlockHeaders>> PutBlockWithHttpMessagesAsync(string container, string blob, string blockId, Stream body, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -145,7 +142,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("blockId", blockId);
@@ -159,7 +155,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -334,9 +330,6 @@ namespace BlobStorageTest.Client
         /// commit the most recently uploaded version of the block, whichever list it
         /// may belong to.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -421,11 +414,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<BlockBlobsPutBlockListHeaders>> PutBlockListWithHttpMessagesAsync(string accountName, string container, string blob, IList<string> blocks, int? timeout = default(int?), string xMsBlobCacheControl = default(string), string xMsBlobContentType = default(string), string xMsBlobContentEncoding = default(string), string xMsBlobContentLanguage = default(string), string xMsBlobContentMd5 = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string leaseId = default(string), string xMsBlobContentDisposition = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<BlockBlobsPutBlockListHeaders>> PutBlockListWithHttpMessagesAsync(string container, string blob, IList<string> blocks, int? timeout = default(int?), string xMsBlobCacheControl = default(string), string xMsBlobContentType = default(string), string xMsBlobContentEncoding = default(string), string xMsBlobContentLanguage = default(string), string xMsBlobContentMd5 = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string leaseId = default(string), string xMsBlobContentDisposition = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -465,7 +458,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("timeout", timeout);
@@ -489,7 +481,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -742,9 +734,6 @@ namespace BlobStorageTest.Client
         /// The Get Block List operation retrieves the list of blocks that have been
         /// uploaded as part of a block blob
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -794,11 +783,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationResponse<BlockList,BlockBlobsGetBlockListHeaders>> GetBlockListWithHttpMessagesAsync(string accountName, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), BlockListType? listType = default(BlockListType?), int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationResponse<BlockList,BlockBlobsGetBlockListHeaders>> GetBlockListWithHttpMessagesAsync(string container, string blob, System.DateTime? snapshot = default(System.DateTime?), BlockListType? listType = default(BlockListType?), int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -827,7 +816,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("snapshot", snapshot);
@@ -841,7 +829,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();

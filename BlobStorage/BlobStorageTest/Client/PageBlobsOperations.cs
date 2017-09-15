@@ -55,9 +55,6 @@ namespace BlobStorageTest.Client
         /// <summary>
         /// The Put Page operation writes a range of pages to a page blob
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -134,11 +131,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<PageBlobsPutPageHeaders>> PutPageWithHttpMessagesAsync(string accountName, string container, string blob, PageWrite pageWrite, Stream body, int? timeout = default(int?), string range = default(string), string leaseId = default(string), int? ifSequenceNumberLessThanOrEqualTo = default(int?), int? ifSequenceNumberLessThan = default(int?), int? ifSequenceNumberEqualTo = default(int?), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<PageBlobsPutPageHeaders>> PutPageWithHttpMessagesAsync(string container, string blob, PageWrite pageWrite, Stream body, int? timeout = default(int?), string range = default(string), string leaseId = default(string), int? ifSequenceNumberLessThanOrEqualTo = default(int?), int? ifSequenceNumberLessThan = default(int?), int? ifSequenceNumberEqualTo = default(int?), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -171,7 +168,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("timeout", timeout);
@@ -193,7 +189,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -426,9 +422,6 @@ namespace BlobStorageTest.Client
         /// The Get Page Ranges operation returns the list of valid page ranges for a
         /// page blob or snapshot of a page blob
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -499,11 +492,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationResponse<object,PageBlobsGetPageRangesHeaders>> GetPageRangesWithHttpMessagesAsync(string accountName, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), System.DateTime? prevsnapshot = default(System.DateTime?), string range = default(string), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationResponse<object,PageBlobsGetPageRangesHeaders>> GetPageRangesWithHttpMessagesAsync(string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), System.DateTime? prevsnapshot = default(System.DateTime?), string range = default(string), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -532,7 +525,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("snapshot", snapshot);
@@ -551,7 +543,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -785,9 +777,6 @@ namespace BlobStorageTest.Client
         /// original snapshot and can be read or copied from as usual. This API is
         /// supported since REST version 2016-05-31.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -848,11 +837,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<PageBlobsIncrementalCopyHeaders>> IncrementalCopyWithHttpMessagesAsync(string accountName, string container, string blob, string copySource, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<PageBlobsIncrementalCopyHeaders>> IncrementalCopyWithHttpMessagesAsync(string container, string blob, string copySource, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -892,7 +881,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("timeout", timeout);
@@ -909,7 +897,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();

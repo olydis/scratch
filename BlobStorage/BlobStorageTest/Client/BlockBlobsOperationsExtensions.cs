@@ -31,9 +31,6 @@ namespace BlobStorageTest.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
-            /// </param>
             /// <param name='container'>
             /// The container name.
             /// </param>
@@ -59,9 +56,9 @@ namespace BlobStorageTest.Client
             /// If specified, the operation only succeeds if the container's lease is
             /// active and matches this ID.
             /// </param>
-            public static BlockBlobsPutBlockHeaders PutBlock(this IBlockBlobsOperations operations, string accountName, string container, string blob, string blockId, Stream body, int? timeout = default(int?), string leaseId = default(string))
+            public static BlockBlobsPutBlockHeaders PutBlock(this IBlockBlobsOperations operations, string container, string blob, string blockId, Stream body, int? timeout = default(int?), string leaseId = default(string))
             {
-                return operations.PutBlockAsync(accountName, container, blob, blockId, body, timeout, leaseId).GetAwaiter().GetResult();
+                return operations.PutBlockAsync(container, blob, blockId, body, timeout, leaseId).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -71,9 +68,6 @@ namespace BlobStorageTest.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
-            /// </param>
             /// <param name='container'>
             /// The container name.
             /// </param>
@@ -102,9 +96,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<BlockBlobsPutBlockHeaders> PutBlockAsync(this IBlockBlobsOperations operations, string accountName, string container, string blob, string blockId, Stream body, int? timeout = default(int?), string leaseId = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<BlockBlobsPutBlockHeaders> PutBlockAsync(this IBlockBlobsOperations operations, string container, string blob, string blockId, Stream body, int? timeout = default(int?), string leaseId = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.PutBlockWithHttpMessagesAsync(accountName, container, blob, blockId, body, timeout, leaseId, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.PutBlockWithHttpMessagesAsync(container, blob, blockId, body, timeout, leaseId, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Headers;
                 }
@@ -123,9 +117,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -193,9 +184,9 @@ namespace BlobStorageTest.Client
             /// <param name='ifNoneMatch'>
             /// Specify an ETag value to operate only on blobs without a matching value.
             /// </param>
-            public static BlockBlobsPutBlockListHeaders PutBlockList(this IBlockBlobsOperations operations, string accountName, string container, string blob, IList<string> blocks, int? timeout = default(int?), string xMsBlobCacheControl = default(string), string xMsBlobContentType = default(string), string xMsBlobContentEncoding = default(string), string xMsBlobContentLanguage = default(string), string xMsBlobContentMd5 = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string leaseId = default(string), string xMsBlobContentDisposition = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string))
+            public static BlockBlobsPutBlockListHeaders PutBlockList(this IBlockBlobsOperations operations, string container, string blob, IList<string> blocks, int? timeout = default(int?), string xMsBlobCacheControl = default(string), string xMsBlobContentType = default(string), string xMsBlobContentEncoding = default(string), string xMsBlobContentLanguage = default(string), string xMsBlobContentMd5 = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string leaseId = default(string), string xMsBlobContentDisposition = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string))
             {
-                return operations.PutBlockListAsync(accountName, container, blob, blocks, timeout, xMsBlobCacheControl, xMsBlobContentType, xMsBlobContentEncoding, xMsBlobContentLanguage, xMsBlobContentMd5, xMsMeta, leaseId, xMsBlobContentDisposition, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch).GetAwaiter().GetResult();
+                return operations.PutBlockListAsync(container, blob, blocks, timeout, xMsBlobCacheControl, xMsBlobContentType, xMsBlobContentEncoding, xMsBlobContentLanguage, xMsBlobContentMd5, xMsMeta, leaseId, xMsBlobContentDisposition, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -211,9 +202,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -284,9 +272,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<BlockBlobsPutBlockListHeaders> PutBlockListAsync(this IBlockBlobsOperations operations, string accountName, string container, string blob, IList<string> blocks, int? timeout = default(int?), string xMsBlobCacheControl = default(string), string xMsBlobContentType = default(string), string xMsBlobContentEncoding = default(string), string xMsBlobContentLanguage = default(string), string xMsBlobContentMd5 = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string leaseId = default(string), string xMsBlobContentDisposition = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<BlockBlobsPutBlockListHeaders> PutBlockListAsync(this IBlockBlobsOperations operations, string container, string blob, IList<string> blocks, int? timeout = default(int?), string xMsBlobCacheControl = default(string), string xMsBlobContentType = default(string), string xMsBlobContentEncoding = default(string), string xMsBlobContentLanguage = default(string), string xMsBlobContentMd5 = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string leaseId = default(string), string xMsBlobContentDisposition = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.PutBlockListWithHttpMessagesAsync(accountName, container, blob, blocks, timeout, xMsBlobCacheControl, xMsBlobContentType, xMsBlobContentEncoding, xMsBlobContentLanguage, xMsBlobContentMd5, xMsMeta, leaseId, xMsBlobContentDisposition, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.PutBlockListWithHttpMessagesAsync(container, blob, blocks, timeout, xMsBlobCacheControl, xMsBlobContentType, xMsBlobContentEncoding, xMsBlobContentLanguage, xMsBlobContentMd5, xMsMeta, leaseId, xMsBlobContentDisposition, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Headers;
                 }
@@ -298,9 +286,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -330,9 +315,9 @@ namespace BlobStorageTest.Client
             /// If specified, the operation only succeeds if the container's lease is
             /// active and matches this ID.
             /// </param>
-            public static BlockList GetBlockList(this IBlockBlobsOperations operations, string accountName, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), BlockListType? listType = default(BlockListType?), int? timeout = default(int?), string leaseId = default(string))
+            public static BlockList GetBlockList(this IBlockBlobsOperations operations, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), BlockListType? listType = default(BlockListType?), int? timeout = default(int?), string leaseId = default(string))
             {
-                return operations.GetBlockListAsync(accountName, container, blob, snapshot, listType, timeout, leaseId).GetAwaiter().GetResult();
+                return operations.GetBlockListAsync(container, blob, snapshot, listType, timeout, leaseId).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -341,9 +326,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -376,9 +358,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<BlockList> GetBlockListAsync(this IBlockBlobsOperations operations, string accountName, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), BlockListType? listType = default(BlockListType?), int? timeout = default(int?), string leaseId = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<BlockList> GetBlockListAsync(this IBlockBlobsOperations operations, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), BlockListType? listType = default(BlockListType?), int? timeout = default(int?), string leaseId = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.GetBlockListWithHttpMessagesAsync(accountName, container, blob, snapshot, listType, timeout, leaseId, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.GetBlockListWithHttpMessagesAsync(container, blob, snapshot, listType, timeout, leaseId, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }

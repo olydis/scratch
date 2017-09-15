@@ -28,9 +28,6 @@ namespace BlobStorageTest.Client
         /// The Put Block operation creates a new block to be committed as part
         /// of a blob
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -68,7 +65,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationHeaderResponse<BlockBlobsPutBlockHeaders>> PutBlockWithHttpMessagesAsync(string accountName, string container, string blob, string blockId, Stream body, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<AzureOperationHeaderResponse<BlockBlobsPutBlockHeaders>> PutBlockWithHttpMessagesAsync(string container, string blob, string blockId, Stream body, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// The Put Block List operation writes a blob by specifying the list
         /// of block IDs that make up the blob. In order to be written as part
@@ -81,9 +78,6 @@ namespace BlobStorageTest.Client
         /// most recently uploaded version of the block, whichever list it may
         /// belong to.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -165,14 +159,11 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationHeaderResponse<BlockBlobsPutBlockListHeaders>> PutBlockListWithHttpMessagesAsync(string accountName, string container, string blob, IList<string> blocks, int? timeout = default(int?), string xMsBlobCacheControl = default(string), string xMsBlobContentType = default(string), string xMsBlobContentEncoding = default(string), string xMsBlobContentLanguage = default(string), string xMsBlobContentMd5 = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string leaseId = default(string), string xMsBlobContentDisposition = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<AzureOperationHeaderResponse<BlockBlobsPutBlockListHeaders>> PutBlockListWithHttpMessagesAsync(string container, string blob, IList<string> blocks, int? timeout = default(int?), string xMsBlobCacheControl = default(string), string xMsBlobContentType = default(string), string xMsBlobContentEncoding = default(string), string xMsBlobContentLanguage = default(string), string xMsBlobContentMd5 = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string leaseId = default(string), string xMsBlobContentDisposition = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// The Get Block List operation retrieves the list of blocks that have
         /// been uploaded as part of a block blob
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -216,6 +207,6 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationResponse<BlockList,BlockBlobsGetBlockListHeaders>> GetBlockListWithHttpMessagesAsync(string accountName, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), BlockListType? listType = default(BlockListType?), int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<AzureOperationResponse<BlockList,BlockBlobsGetBlockListHeaders>> GetBlockListWithHttpMessagesAsync(string container, string blob, System.DateTime? snapshot = default(System.DateTime?), BlockListType? listType = default(BlockListType?), int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

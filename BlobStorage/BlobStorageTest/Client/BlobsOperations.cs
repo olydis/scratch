@@ -56,9 +56,6 @@ namespace BlobStorageTest.Client
         /// The Get Blob operation reads or downloads a blob from the system, including
         /// its metadata and properties. You can also call Get Blob to read a snapshot.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -130,11 +127,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationResponse<Stream,BlobsGetHeaders>> GetWithHttpMessagesAsync(string accountName, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), string range = default(string), string leaseId = default(string), bool? xMsRangeGetContentMd5 = default(bool?), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationResponse<Stream,BlobsGetHeaders>> GetWithHttpMessagesAsync(string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), string range = default(string), string leaseId = default(string), bool? xMsRangeGetContentMd5 = default(bool?), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -162,7 +159,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("snapshot", snapshot);
@@ -181,7 +177,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -411,9 +407,6 @@ namespace BlobStorageTest.Client
         /// standard HTTP properties, and system properties for the blob. It does not
         /// return the content of the blob.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -469,11 +462,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<BlobsGetPropertiesHeaders>> GetPropertiesWithHttpMessagesAsync(string accountName, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<BlobsGetPropertiesHeaders>> GetPropertiesWithHttpMessagesAsync(string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -501,7 +494,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("snapshot", snapshot);
@@ -517,7 +509,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -714,9 +706,6 @@ namespace BlobStorageTest.Client
         /// order to delete a blob, you must delete all of its snapshots. You can
         /// delete both at the same time with the Delete Blob operation.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -778,11 +767,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<BlobsDeleteHeaders>> DeleteWithHttpMessagesAsync(string accountName, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), string leaseId = default(string), DeleteSnapshotsOption? deleteSnapshots = default(DeleteSnapshotsOption?), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<BlobsDeleteHeaders>> DeleteWithHttpMessagesAsync(string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), string leaseId = default(string), DeleteSnapshotsOption? deleteSnapshots = default(DeleteSnapshotsOption?), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -810,7 +799,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("snapshot", snapshot);
@@ -827,7 +815,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -1026,9 +1014,6 @@ namespace BlobStorageTest.Client
         /// with the content of the new blob. To perform a partial update of the
         /// content of a block blob, use the Put Block List operation.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -1135,11 +1120,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<BlobsPutHeaders>> PutWithHttpMessagesAsync(string accountName, string container, string blob, BlobType blobType, Stream body, int? timeout = default(int?), string cacheControl = default(string), string xMsBlobContentType = default(string), string xMsBlobContentEncoding = default(string), string xMsBlobContentLanguage = default(string), string xMsBlobContentMd5 = default(string), string xMsBlobCacheControl = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string leaseId = default(string), string xMsBlobContentDisposition = default(string), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), long? xMsBlobContentLength = default(long?), long? blobSequenceNumber = 0, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<BlobsPutHeaders>> PutWithHttpMessagesAsync(string container, string blob, BlobType blobType, Stream body, int? timeout = default(int?), string cacheControl = default(string), string xMsBlobContentType = default(string), string xMsBlobContentEncoding = default(string), string xMsBlobContentLanguage = default(string), string xMsBlobContentMd5 = default(string), string xMsBlobCacheControl = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string leaseId = default(string), string xMsBlobContentDisposition = default(string), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), long? xMsBlobContentLength = default(long?), long? blobSequenceNumber = 0, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -1178,7 +1163,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("timeout", timeout);
@@ -1206,7 +1190,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -1494,9 +1478,6 @@ namespace BlobStorageTest.Client
         /// <summary>
         /// The Set Blob Properties operation sets system properties on the blob
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -1575,11 +1556,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<BlobsSetPropertiesHeaders>> SetPropertiesWithHttpMessagesAsync(string accountName, string container, string blob, int? timeout = default(int?), string xMsBlobCacheControl = default(string), string xMsBlobContentType = default(string), string xMsBlobContentMd5 = default(string), string xMsBlobContentEncoding = default(string), string xMsBlobContentLanguage = default(string), string leaseId = default(string), string xMsBlobContentDisposition = default(string), string origin = default(string), long? xMsBlobContentLength = default(long?), SequenceNumberAction? sequenceNumberAction = default(SequenceNumberAction?), long? blobSequenceNumber = 0, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<BlobsSetPropertiesHeaders>> SetPropertiesWithHttpMessagesAsync(string container, string blob, int? timeout = default(int?), string xMsBlobCacheControl = default(string), string xMsBlobContentType = default(string), string xMsBlobContentMd5 = default(string), string xMsBlobContentEncoding = default(string), string xMsBlobContentLanguage = default(string), string leaseId = default(string), string xMsBlobContentDisposition = default(string), string origin = default(string), long? xMsBlobContentLength = default(long?), SequenceNumberAction? sequenceNumberAction = default(SequenceNumberAction?), long? blobSequenceNumber = 0, Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -1608,7 +1589,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("timeout", timeout);
@@ -1630,7 +1610,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -1865,9 +1845,6 @@ namespace BlobStorageTest.Client
         /// The Get Blob Metadata operation returns all user-defined metadata for the
         /// specified blob or snapshot
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -1923,11 +1900,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<BlobsGetMetadataHeaders>> GetMetadataWithHttpMessagesAsync(string accountName, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<BlobsGetMetadataHeaders>> GetMetadataWithHttpMessagesAsync(string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -1956,7 +1933,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("snapshot", snapshot);
@@ -1973,7 +1949,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -2172,9 +2148,6 @@ namespace BlobStorageTest.Client
         /// The Set Blob Metadata operation sets user-defined metadata for the
         /// specified blob as one or more name-value pairs
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -2219,11 +2192,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<BlobsSetMetadataHeaders>> SetMetadataWithHttpMessagesAsync(string accountName, string container, string blob, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<BlobsSetMetadataHeaders>> SetMetadataWithHttpMessagesAsync(string container, string blob, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -2259,7 +2232,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("timeout", timeout);
@@ -2272,7 +2244,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -2439,9 +2411,6 @@ namespace BlobStorageTest.Client
         /// The Lease Blob operation establishes and manages a lock on a blob for write
         /// and delete operations
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -2519,11 +2488,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<BlobsLeaseHeaders>> LeaseWithHttpMessagesAsync(string accountName, string container, string blob, string action, int? timeout = default(int?), string leaseId = default(string), int? breakPeriod = default(int?), int? duration = default(int?), string proposedLeaseId = default(string), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<BlobsLeaseHeaders>> LeaseWithHttpMessagesAsync(string container, string blob, string action, int? timeout = default(int?), string leaseId = default(string), int? breakPeriod = default(int?), int? duration = default(int?), string proposedLeaseId = default(string), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -2556,7 +2525,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("timeout", timeout);
@@ -2577,7 +2545,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -2803,9 +2771,6 @@ namespace BlobStorageTest.Client
         /// <summary>
         /// The Snapshot Blob operation creates a read-only snapshot of a blob
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -2864,11 +2829,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<BlobsTakeSnapshotHeaders>> TakeSnapshotWithHttpMessagesAsync(string accountName, string container, string blob, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<BlobsTakeSnapshotHeaders>> TakeSnapshotWithHttpMessagesAsync(string container, string blob, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -2904,7 +2869,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("timeout", timeout);
@@ -2921,7 +2885,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -3120,9 +3084,6 @@ namespace BlobStorageTest.Client
         /// The Copy Blob operation copies a blob to a destination within the storage
         /// account.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -3205,11 +3166,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<BlobsCopyHeaders>> CopyWithHttpMessagesAsync(string accountName, string container, string blob, string copySource, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? sourceIfModifiedSince = default(System.DateTime?), System.DateTime? sourceIfUnmodifiedSince = default(System.DateTime?), string sourceIfMatches = default(string), string sourceIfNoneMatch = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), string leaseId = default(string), string sourceLeaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<BlobsCopyHeaders>> CopyWithHttpMessagesAsync(string container, string blob, string copySource, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? sourceIfModifiedSince = default(System.DateTime?), System.DateTime? sourceIfUnmodifiedSince = default(System.DateTime?), string sourceIfMatches = default(string), string sourceIfNoneMatch = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), string leaseId = default(string), string sourceLeaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -3248,7 +3209,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("timeout", timeout);
@@ -3270,7 +3230,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -3513,9 +3473,6 @@ namespace BlobStorageTest.Client
         /// The Abort Copy Blob operation aborts a pending Copy Blob operation, and
         /// leaves a destination blob with zero length and full metadata.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -3554,11 +3511,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<BlobsAbortCopyHeaders>> AbortCopyWithHttpMessagesAsync(string accountName, string container, string blob, string copyId, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<BlobsAbortCopyHeaders>> AbortCopyWithHttpMessagesAsync(string container, string blob, string copyId, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -3592,7 +3549,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("copyId", copyId);
@@ -3606,7 +3562,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();
@@ -3775,9 +3731,6 @@ namespace BlobStorageTest.Client
         /// blob was created with x-ms-blob-type set to AppendBlob. Append Block is
         /// supported only on version 2015-02-21 version or later.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -3843,11 +3796,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<BlobsAppendBlockHeaders>> AppendBlockWithHttpMessagesAsync(string accountName, string container, string blob, Stream body, int? timeout = default(int?), string leaseId = default(string), int? maxSize = default(int?), int? appendPosition = default(int?), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<BlobsAppendBlockHeaders>> AppendBlockWithHttpMessagesAsync(string container, string blob, Stream body, int? timeout = default(int?), string leaseId = default(string), int? maxSize = default(int?), int? appendPosition = default(int?), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (container == null)
             {
@@ -3880,7 +3833,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("container", container);
                 tracingParameters.Add("blob", blob);
                 tracingParameters.Add("timeout", timeout);
@@ -3899,7 +3851,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             _url = _url.Replace("{container}", System.Uri.EscapeDataString(container));
             _url = _url.Replace("{blob}", System.Uri.EscapeDataString(blob));
             List<string> _queryParameters = new List<string>();

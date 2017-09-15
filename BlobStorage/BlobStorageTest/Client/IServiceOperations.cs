@@ -28,9 +28,6 @@ namespace BlobStorageTest.Client
         /// including properties for Storage Analytics and CORS (Cross-Origin
         /// Resource Sharing) rules
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='storageServiceProperties'>
         /// The StorageService properties.
         /// </param>
@@ -52,15 +49,12 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationHeaderResponse<ServiceSetPropertiesHeaders>> SetPropertiesWithHttpMessagesAsync(string accountName, StorageServiceProperties storageServiceProperties, int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<AzureOperationHeaderResponse<ServiceSetPropertiesHeaders>> SetPropertiesWithHttpMessagesAsync(StorageServiceProperties storageServiceProperties, int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// gets the properties of a storage account's Blob service, including
         /// properties for Storage Analytics and CORS (Cross-Origin Resource
         /// Sharing) rules.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='timeout'>
         /// The timeout parameter is expressed in seconds. For more
         /// information, see &lt;a
@@ -82,16 +76,13 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationResponse<StorageServiceProperties,ServiceGetPropertiesHeaders>> GetPropertiesWithHttpMessagesAsync(string accountName, int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<AzureOperationResponse<StorageServiceProperties,ServiceGetPropertiesHeaders>> GetPropertiesWithHttpMessagesAsync(int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// Retrieves statistics related to replication for the Blob service.
         /// It is only available on the secondary location endpoint when
         /// read-access geo-redundant replication is enabled for the storage
         /// account.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='timeout'>
         /// The timeout parameter is expressed in seconds. For more
         /// information, see &lt;a
@@ -113,14 +104,11 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationResponse<StorageServiceStats,ServiceGetStatsHeaders>> GetStatsWithHttpMessagesAsync(string accountName, int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<AzureOperationResponse<StorageServiceStats,ServiceGetStatsHeaders>> GetStatsWithHttpMessagesAsync(int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// The List Containers operation returns a list of the containers
         /// under the specified account
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='prefix'>
         /// Filters the results to return only containers whose name begins
         /// with the specified prefix.
@@ -171,6 +159,6 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationResponse<ContainerEnumerationResults,ServiceListContainersHeaders>> ListContainersWithHttpMessagesAsync(string accountName, string prefix = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<AzureOperationResponse<ContainerEnumerationResults,ServiceListContainersHeaders>> ListContainersWithHttpMessagesAsync(string prefix = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

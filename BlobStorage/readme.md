@@ -17,3 +17,9 @@ csharp:
   clear-output-folder: true
   enable-xml: true
 ```
+
+
+
+``` yaml
+use: C:\work\oneautorest\autorest.csharp\
+```

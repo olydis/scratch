@@ -27,9 +27,6 @@ namespace BlobStorageTest.Client
         /// <summary>
         /// The Put Page operation writes a range of pages to a page blob
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -103,14 +100,11 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationHeaderResponse<PageBlobsPutPageHeaders>> PutPageWithHttpMessagesAsync(string accountName, string container, string blob, PageWrite pageWrite, Stream body, int? timeout = default(int?), string range = default(string), string leaseId = default(string), int? ifSequenceNumberLessThanOrEqualTo = default(int?), int? ifSequenceNumberLessThan = default(int?), int? ifSequenceNumberEqualTo = default(int?), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<AzureOperationHeaderResponse<PageBlobsPutPageHeaders>> PutPageWithHttpMessagesAsync(string container, string blob, PageWrite pageWrite, Stream body, int? timeout = default(int?), string range = default(string), string leaseId = default(string), int? ifSequenceNumberLessThanOrEqualTo = default(int?), int? ifSequenceNumberLessThan = default(int?), int? ifSequenceNumberEqualTo = default(int?), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// The Get Page Ranges operation returns the list of valid page ranges
         /// for a page blob or snapshot of a page blob
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -178,7 +172,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationResponse<object,PageBlobsGetPageRangesHeaders>> GetPageRangesWithHttpMessagesAsync(string accountName, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), System.DateTime? prevsnapshot = default(System.DateTime?), string range = default(string), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<AzureOperationResponse<object,PageBlobsGetPageRangesHeaders>> GetPageRangesWithHttpMessagesAsync(string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), System.DateTime? prevsnapshot = default(System.DateTime?), string range = default(string), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// The Incremental Copy Blob operation copies a snapshot of the source
         /// page blob to a destination page blob. The snapshot is copied such
@@ -188,9 +182,6 @@ namespace BlobStorageTest.Client
         /// copied from as usual. This API is supported since REST version
         /// 2016-05-31.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -249,6 +240,6 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationHeaderResponse<PageBlobsIncrementalCopyHeaders>> IncrementalCopyWithHttpMessagesAsync(string accountName, string container, string blob, string copySource, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<AzureOperationHeaderResponse<PageBlobsIncrementalCopyHeaders>> IncrementalCopyWithHttpMessagesAsync(string container, string blob, string copySource, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

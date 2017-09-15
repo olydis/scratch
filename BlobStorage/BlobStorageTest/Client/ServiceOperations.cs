@@ -57,9 +57,6 @@ namespace BlobStorageTest.Client
         /// properties for Storage Analytics and CORS (Cross-Origin Resource Sharing)
         /// rules
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='storageServiceProperties'>
         /// The StorageService properties.
         /// </param>
@@ -87,11 +84,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<ServiceSetPropertiesHeaders>> SetPropertiesWithHttpMessagesAsync(string accountName, StorageServiceProperties storageServiceProperties, int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationHeaderResponse<ServiceSetPropertiesHeaders>> SetPropertiesWithHttpMessagesAsync(StorageServiceProperties storageServiceProperties, int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (storageServiceProperties == null)
             {
@@ -114,7 +111,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("storageServiceProperties", storageServiceProperties);
                 tracingParameters.Add("timeout", timeout);
                 tracingParameters.Add("restype", restype);
@@ -125,7 +121,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             List<string> _queryParameters = new List<string>();
             if (timeout != null)
             {
@@ -282,9 +278,6 @@ namespace BlobStorageTest.Client
         /// properties for Storage Analytics and CORS (Cross-Origin Resource Sharing)
         /// rules.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='timeout'>
         /// The timeout parameter is expressed in seconds. For more information, see
         /// &lt;a
@@ -312,11 +305,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationResponse<StorageServiceProperties,ServiceGetPropertiesHeaders>> GetPropertiesWithHttpMessagesAsync(string accountName, int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationResponse<StorageServiceProperties,ServiceGetPropertiesHeaders>> GetPropertiesWithHttpMessagesAsync(int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (timeout < 0)
             {
@@ -331,7 +324,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("timeout", timeout);
                 tracingParameters.Add("restype", restype);
                 tracingParameters.Add("comp", comp);
@@ -341,7 +333,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             List<string> _queryParameters = new List<string>();
             if (timeout != null)
             {
@@ -518,9 +510,6 @@ namespace BlobStorageTest.Client
         /// only available on the secondary location endpoint when read-access
         /// geo-redundant replication is enabled for the storage account.
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='timeout'>
         /// The timeout parameter is expressed in seconds. For more information, see
         /// &lt;a
@@ -548,11 +537,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationResponse<StorageServiceStats,ServiceGetStatsHeaders>> GetStatsWithHttpMessagesAsync(string accountName, int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationResponse<StorageServiceStats,ServiceGetStatsHeaders>> GetStatsWithHttpMessagesAsync(int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (timeout < 0)
             {
@@ -567,7 +556,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("timeout", timeout);
                 tracingParameters.Add("restype", restype);
                 tracingParameters.Add("comp", comp);
@@ -577,7 +565,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             List<string> _queryParameters = new List<string>();
             if (timeout != null)
             {
@@ -753,9 +741,6 @@ namespace BlobStorageTest.Client
         /// The List Containers operation returns a list of the containers under the
         /// specified account
         /// </summary>
-        /// <param name='accountName'>
-        /// The Azure storage account to use.
-        /// </param>
         /// <param name='prefix'>
         /// Filters the results to return only containers whose name begins with the
         /// specified prefix.
@@ -809,11 +794,11 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationResponse<ContainerEnumerationResults,ServiceListContainersHeaders>> ListContainersWithHttpMessagesAsync(string accountName, string prefix = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<AzureOperationResponse<ContainerEnumerationResults,ServiceListContainersHeaders>> ListContainersWithHttpMessagesAsync(string prefix = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (accountName == null)
+            if (Client.AccountName == null)
             {
-                throw new ValidationException(ValidationRules.CannotBeNull, "accountName");
+                throw new ValidationException(ValidationRules.CannotBeNull, "this.Client.AccountName");
             }
             if (maxresults < 0)
             {
@@ -831,7 +816,6 @@ namespace BlobStorageTest.Client
             {
                 _invocationId = ServiceClientTracing.NextInvocationId.ToString();
                 Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("accountName", accountName);
                 tracingParameters.Add("prefix", prefix);
                 tracingParameters.Add("marker", marker);
                 tracingParameters.Add("maxresults", maxresults);
@@ -844,7 +828,7 @@ namespace BlobStorageTest.Client
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "";
-            _url = _url.Replace("{accountName}", accountName);
+            _url = _url.Replace("{accountName}", Client.AccountName);
             List<string> _queryParameters = new List<string>();
             if (prefix != null)
             {

@@ -39,6 +39,11 @@ namespace BlobStorageTest.Client
         ServiceClientCredentials Credentials { get; }
 
         /// <summary>
+        /// The Azure storage account to use.
+        /// </summary>
+        string AccountName { get; set; }
+
+        /// <summary>
         /// Specifies the version of the operation to use for this request.
         /// </summary>
         string Version { get; set; }

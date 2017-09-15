@@ -30,9 +30,6 @@ namespace BlobStorageTest.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
-            /// </param>
             /// <param name='container'>
             /// The container name.
             /// </param>
@@ -56,9 +53,9 @@ namespace BlobStorageTest.Client
             /// Specifies whether data in the container may be accessed publicly and the
             /// level of access. Possible values include: 'container', 'blob'
             /// </param>
-            public static ContainerCreateHeaders Create(this IContainerOperations operations, string accountName, string container, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string access = default(string))
+            public static ContainerCreateHeaders Create(this IContainerOperations operations, string container, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string access = default(string))
             {
-                return operations.CreateAsync(accountName, container, timeout, xMsMeta, access).GetAwaiter().GetResult();
+                return operations.CreateAsync(container, timeout, xMsMeta, access).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -68,9 +65,6 @@ namespace BlobStorageTest.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
-            /// </param>
             /// <param name='container'>
             /// The container name.
             /// </param>
@@ -97,9 +91,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ContainerCreateHeaders> CreateAsync(this IContainerOperations operations, string accountName, string container, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string access = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ContainerCreateHeaders> CreateAsync(this IContainerOperations operations, string container, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string access = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.CreateWithHttpMessagesAsync(accountName, container, timeout, xMsMeta, access, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.CreateWithHttpMessagesAsync(container, timeout, xMsMeta, access, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Headers;
                 }
@@ -111,9 +105,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -128,9 +119,9 @@ namespace BlobStorageTest.Client
             /// If specified, the operation only succeeds if the container's lease is
             /// active and matches this ID.
             /// </param>
-            public static ContainerGetPropertiesHeaders GetProperties(this IContainerOperations operations, string accountName, string container, int? timeout = default(int?), string leaseId = default(string))
+            public static ContainerGetPropertiesHeaders GetProperties(this IContainerOperations operations, string container, int? timeout = default(int?), string leaseId = default(string))
             {
-                return operations.GetPropertiesAsync(accountName, container, timeout, leaseId).GetAwaiter().GetResult();
+                return operations.GetPropertiesAsync(container, timeout, leaseId).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -139,9 +130,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -159,9 +147,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ContainerGetPropertiesHeaders> GetPropertiesAsync(this IContainerOperations operations, string accountName, string container, int? timeout = default(int?), string leaseId = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ContainerGetPropertiesHeaders> GetPropertiesAsync(this IContainerOperations operations, string container, int? timeout = default(int?), string leaseId = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.GetPropertiesWithHttpMessagesAsync(accountName, container, timeout, leaseId, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.GetPropertiesWithHttpMessagesAsync(container, timeout, leaseId, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Headers;
                 }
@@ -173,9 +161,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -198,9 +183,9 @@ namespace BlobStorageTest.Client
             /// Specify this header value to operate only on a blob if it has not been
             /// modified since the specified date/time.
             /// </param>
-            public static void Delete(this IContainerOperations operations, string accountName, string container, int? timeout = default(int?), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?))
+            public static void Delete(this IContainerOperations operations, string container, int? timeout = default(int?), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?))
             {
-                operations.DeleteAsync(accountName, container, timeout, leaseId, ifModifiedSince, ifUnmodifiedSince).GetAwaiter().GetResult();
+                operations.DeleteAsync(container, timeout, leaseId, ifModifiedSince, ifUnmodifiedSince).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -209,9 +194,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -237,9 +219,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task DeleteAsync(this IContainerOperations operations, string accountName, string container, int? timeout = default(int?), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task DeleteAsync(this IContainerOperations operations, string container, int? timeout = default(int?), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), CancellationToken cancellationToken = default(CancellationToken))
             {
-                (await operations.DeleteWithHttpMessagesAsync(accountName, container, timeout, leaseId, ifModifiedSince, ifUnmodifiedSince, null, cancellationToken).ConfigureAwait(false)).Dispose();
+                (await operations.DeleteWithHttpMessagesAsync(container, timeout, leaseId, ifModifiedSince, ifUnmodifiedSince, null, cancellationToken).ConfigureAwait(false)).Dispose();
             }
 
             /// <summary>
@@ -247,9 +229,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -264,9 +243,9 @@ namespace BlobStorageTest.Client
             /// If specified, the operation only succeeds if the container's lease is
             /// active and matches this ID.
             /// </param>
-            public static ContainerGetMetadataHeaders GetMetadata(this IContainerOperations operations, string accountName, string container, int? timeout = default(int?), string leaseId = default(string))
+            public static ContainerGetMetadataHeaders GetMetadata(this IContainerOperations operations, string container, int? timeout = default(int?), string leaseId = default(string))
             {
-                return operations.GetMetadataAsync(accountName, container, timeout, leaseId).GetAwaiter().GetResult();
+                return operations.GetMetadataAsync(container, timeout, leaseId).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -274,9 +253,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -294,9 +270,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ContainerGetMetadataHeaders> GetMetadataAsync(this IContainerOperations operations, string accountName, string container, int? timeout = default(int?), string leaseId = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ContainerGetMetadataHeaders> GetMetadataAsync(this IContainerOperations operations, string container, int? timeout = default(int?), string leaseId = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.GetMetadataWithHttpMessagesAsync(accountName, container, timeout, leaseId, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.GetMetadataWithHttpMessagesAsync(container, timeout, leaseId, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Headers;
                 }
@@ -308,9 +284,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -339,9 +312,9 @@ namespace BlobStorageTest.Client
             /// Specify this header value to operate only on a blob if it has been modified
             /// since the specified date/time.
             /// </param>
-            public static ContainerSetMetadataHeaders SetMetadata(this IContainerOperations operations, string accountName, string container, int? timeout = default(int?), string leaseId = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?))
+            public static ContainerSetMetadataHeaders SetMetadata(this IContainerOperations operations, string container, int? timeout = default(int?), string leaseId = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?))
             {
-                return operations.SetMetadataAsync(accountName, container, timeout, leaseId, xMsMeta, ifModifiedSince).GetAwaiter().GetResult();
+                return operations.SetMetadataAsync(container, timeout, leaseId, xMsMeta, ifModifiedSince).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -350,9 +323,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -384,9 +354,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ContainerSetMetadataHeaders> SetMetadataAsync(this IContainerOperations operations, string accountName, string container, int? timeout = default(int?), string leaseId = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ContainerSetMetadataHeaders> SetMetadataAsync(this IContainerOperations operations, string container, int? timeout = default(int?), string leaseId = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.SetMetadataWithHttpMessagesAsync(accountName, container, timeout, leaseId, xMsMeta, ifModifiedSince, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.SetMetadataWithHttpMessagesAsync(container, timeout, leaseId, xMsMeta, ifModifiedSince, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Headers;
                 }
@@ -394,9 +364,6 @@ namespace BlobStorageTest.Client
 
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -411,16 +378,13 @@ namespace BlobStorageTest.Client
             /// If specified, the operation only succeeds if the container's lease is
             /// active and matches this ID.
             /// </param>
-            public static IList<SignedIdentifier> GetAcl(this IContainerOperations operations, string accountName, string container, int? timeout = default(int?), string leaseId = default(string))
+            public static IList<SignedIdentifier> GetAcl(this IContainerOperations operations, string container, int? timeout = default(int?), string leaseId = default(string))
             {
-                return operations.GetAclAsync(accountName, container, timeout, leaseId).GetAwaiter().GetResult();
+                return operations.GetAclAsync(container, timeout, leaseId).GetAwaiter().GetResult();
             }
 
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -438,9 +402,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<IList<SignedIdentifier>> GetAclAsync(this IContainerOperations operations, string accountName, string container, int? timeout = default(int?), string leaseId = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<IList<SignedIdentifier>> GetAclAsync(this IContainerOperations operations, string container, int? timeout = default(int?), string leaseId = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.GetAclWithHttpMessagesAsync(accountName, container, timeout, leaseId, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.GetAclWithHttpMessagesAsync(container, timeout, leaseId, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }
@@ -449,9 +413,6 @@ namespace BlobStorageTest.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
-            /// </param>
             /// <param name='container'>
             /// The container name.
             /// </param>
@@ -480,16 +441,13 @@ namespace BlobStorageTest.Client
             /// Specify this header value to operate only on a blob if it has not been
             /// modified since the specified date/time.
             /// </param>
-            public static ContainerSetAclHeaders SetAcl(this IContainerOperations operations, string accountName, string container, IList<SignedIdentifier> containerAcl = default(IList<SignedIdentifier>), int? timeout = default(int?), string leaseId = default(string), string access = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?))
+            public static ContainerSetAclHeaders SetAcl(this IContainerOperations operations, string container, IList<SignedIdentifier> containerAcl = default(IList<SignedIdentifier>), int? timeout = default(int?), string leaseId = default(string), string access = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?))
             {
-                return operations.SetAclAsync(accountName, container, containerAcl, timeout, leaseId, access, ifModifiedSince, ifUnmodifiedSince).GetAwaiter().GetResult();
+                return operations.SetAclAsync(container, containerAcl, timeout, leaseId, access, ifModifiedSince, ifUnmodifiedSince).GetAwaiter().GetResult();
             }
 
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -522,9 +480,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ContainerSetAclHeaders> SetAclAsync(this IContainerOperations operations, string accountName, string container, IList<SignedIdentifier> containerAcl = default(IList<SignedIdentifier>), int? timeout = default(int?), string leaseId = default(string), string access = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ContainerSetAclHeaders> SetAclAsync(this IContainerOperations operations, string container, IList<SignedIdentifier> containerAcl = default(IList<SignedIdentifier>), int? timeout = default(int?), string leaseId = default(string), string access = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.SetAclWithHttpMessagesAsync(accountName, container, containerAcl, timeout, leaseId, access, ifModifiedSince, ifUnmodifiedSince, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.SetAclWithHttpMessagesAsync(container, containerAcl, timeout, leaseId, access, ifModifiedSince, ifUnmodifiedSince, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Headers;
                 }
@@ -536,9 +494,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -590,9 +545,9 @@ namespace BlobStorageTest.Client
             /// Specify this header value to operate only on a blob if it has not been
             /// modified since the specified date/time.
             /// </param>
-            public static ContainerLeaseHeaders Lease(this IContainerOperations operations, string accountName, string container, string action, int? timeout = default(int?), string leaseId = default(string), int? breakPeriod = default(int?), int? duration = default(int?), string proposedLeaseId = default(string), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?))
+            public static ContainerLeaseHeaders Lease(this IContainerOperations operations, string container, string action, int? timeout = default(int?), string leaseId = default(string), int? breakPeriod = default(int?), int? duration = default(int?), string proposedLeaseId = default(string), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?))
             {
-                return operations.LeaseAsync(accountName, container, action, timeout, leaseId, breakPeriod, duration, proposedLeaseId, origin, ifModifiedSince, ifUnmodifiedSince).GetAwaiter().GetResult();
+                return operations.LeaseAsync(container, action, timeout, leaseId, breakPeriod, duration, proposedLeaseId, origin, ifModifiedSince, ifUnmodifiedSince).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -601,9 +556,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -658,9 +610,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ContainerLeaseHeaders> LeaseAsync(this IContainerOperations operations, string accountName, string container, string action, int? timeout = default(int?), string leaseId = default(string), int? breakPeriod = default(int?), int? duration = default(int?), string proposedLeaseId = default(string), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ContainerLeaseHeaders> LeaseAsync(this IContainerOperations operations, string container, string action, int? timeout = default(int?), string leaseId = default(string), int? breakPeriod = default(int?), int? duration = default(int?), string proposedLeaseId = default(string), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.LeaseWithHttpMessagesAsync(accountName, container, action, timeout, leaseId, breakPeriod, duration, proposedLeaseId, origin, ifModifiedSince, ifUnmodifiedSince, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.LeaseWithHttpMessagesAsync(container, action, timeout, leaseId, breakPeriod, duration, proposedLeaseId, origin, ifModifiedSince, ifUnmodifiedSince, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Headers;
                 }
@@ -672,9 +624,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -717,9 +666,9 @@ namespace BlobStorageTest.Client
             /// href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations"&gt;Setting
             /// Timeouts for Blob Service Operations.&lt;/a&gt;
             /// </param>
-            public static BlobEnumerationResults ListBlobs(this IContainerOperations operations, string accountName, string container, string prefix = default(string), string delimiter = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?))
+            public static BlobEnumerationResults ListBlobs(this IContainerOperations operations, string container, string prefix = default(string), string delimiter = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?))
             {
-                return operations.ListBlobsAsync(accountName, container, prefix, delimiter, marker, maxresults, include, timeout).GetAwaiter().GetResult();
+                return operations.ListBlobsAsync(container, prefix, delimiter, marker, maxresults, include, timeout).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -728,9 +677,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -776,9 +722,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<BlobEnumerationResults> ListBlobsAsync(this IContainerOperations operations, string accountName, string container, string prefix = default(string), string delimiter = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<BlobEnumerationResults> ListBlobsAsync(this IContainerOperations operations, string container, string prefix = default(string), string delimiter = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.ListBlobsWithHttpMessagesAsync(accountName, container, prefix, delimiter, marker, maxresults, include, timeout, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.ListBlobsWithHttpMessagesAsync(container, prefix, delimiter, marker, maxresults, include, timeout, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }

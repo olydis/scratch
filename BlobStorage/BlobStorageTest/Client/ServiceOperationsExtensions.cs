@@ -29,9 +29,6 @@ namespace BlobStorageTest.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
-            /// </param>
             /// <param name='storageServiceProperties'>
             /// The StorageService properties.
             /// </param>
@@ -41,9 +38,9 @@ namespace BlobStorageTest.Client
             /// href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations"&gt;Setting
             /// Timeouts for Blob Service Operations.&lt;/a&gt;
             /// </param>
-            public static ServiceSetPropertiesHeaders SetProperties(this IServiceOperations operations, string accountName, StorageServiceProperties storageServiceProperties, int? timeout = default(int?))
+            public static ServiceSetPropertiesHeaders SetProperties(this IServiceOperations operations, StorageServiceProperties storageServiceProperties, int? timeout = default(int?))
             {
-                return operations.SetPropertiesAsync(accountName, storageServiceProperties, timeout).GetAwaiter().GetResult();
+                return operations.SetPropertiesAsync(storageServiceProperties, timeout).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -53,9 +50,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='storageServiceProperties'>
             /// The StorageService properties.
@@ -69,9 +63,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ServiceSetPropertiesHeaders> SetPropertiesAsync(this IServiceOperations operations, string accountName, StorageServiceProperties storageServiceProperties, int? timeout = default(int?), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ServiceSetPropertiesHeaders> SetPropertiesAsync(this IServiceOperations operations, StorageServiceProperties storageServiceProperties, int? timeout = default(int?), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.SetPropertiesWithHttpMessagesAsync(accountName, storageServiceProperties, timeout, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.SetPropertiesWithHttpMessagesAsync(storageServiceProperties, timeout, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Headers;
                 }
@@ -85,18 +79,15 @@ namespace BlobStorageTest.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
-            /// </param>
             /// <param name='timeout'>
             /// The timeout parameter is expressed in seconds. For more information, see
             /// &lt;a
             /// href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations"&gt;Setting
             /// Timeouts for Blob Service Operations.&lt;/a&gt;
             /// </param>
-            public static StorageServiceProperties GetProperties(this IServiceOperations operations, string accountName, int? timeout = default(int?))
+            public static StorageServiceProperties GetProperties(this IServiceOperations operations, int? timeout = default(int?))
             {
-                return operations.GetPropertiesAsync(accountName, timeout).GetAwaiter().GetResult();
+                return operations.GetPropertiesAsync(timeout).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -107,9 +98,6 @@ namespace BlobStorageTest.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
-            /// </param>
             /// <param name='timeout'>
             /// The timeout parameter is expressed in seconds. For more information, see
             /// &lt;a
@@ -119,9 +107,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<StorageServiceProperties> GetPropertiesAsync(this IServiceOperations operations, string accountName, int? timeout = default(int?), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<StorageServiceProperties> GetPropertiesAsync(this IServiceOperations operations, int? timeout = default(int?), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.GetPropertiesWithHttpMessagesAsync(accountName, timeout, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.GetPropertiesWithHttpMessagesAsync(timeout, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }
@@ -135,18 +123,15 @@ namespace BlobStorageTest.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
-            /// </param>
             /// <param name='timeout'>
             /// The timeout parameter is expressed in seconds. For more information, see
             /// &lt;a
             /// href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations"&gt;Setting
             /// Timeouts for Blob Service Operations.&lt;/a&gt;
             /// </param>
-            public static StorageServiceStats GetStats(this IServiceOperations operations, string accountName, int? timeout = default(int?))
+            public static StorageServiceStats GetStats(this IServiceOperations operations, int? timeout = default(int?))
             {
-                return operations.GetStatsAsync(accountName, timeout).GetAwaiter().GetResult();
+                return operations.GetStatsAsync(timeout).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -157,9 +142,6 @@ namespace BlobStorageTest.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
-            /// </param>
             /// <param name='timeout'>
             /// The timeout parameter is expressed in seconds. For more information, see
             /// &lt;a
@@ -169,9 +151,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<StorageServiceStats> GetStatsAsync(this IServiceOperations operations, string accountName, int? timeout = default(int?), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<StorageServiceStats> GetStatsAsync(this IServiceOperations operations, int? timeout = default(int?), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.GetStatsWithHttpMessagesAsync(accountName, timeout, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.GetStatsWithHttpMessagesAsync(timeout, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }
@@ -183,9 +165,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='prefix'>
             /// Filters the results to return only containers whose name begins with the
@@ -219,9 +198,9 @@ namespace BlobStorageTest.Client
             /// href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations"&gt;Setting
             /// Timeouts for Blob Service Operations.&lt;/a&gt;
             /// </param>
-            public static ContainerEnumerationResults ListContainers(this IServiceOperations operations, string accountName, string prefix = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?))
+            public static ContainerEnumerationResults ListContainers(this IServiceOperations operations, string prefix = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?))
             {
-                return operations.ListContainersAsync(accountName, prefix, marker, maxresults, include, timeout).GetAwaiter().GetResult();
+                return operations.ListContainersAsync(prefix, marker, maxresults, include, timeout).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -230,9 +209,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='prefix'>
             /// Filters the results to return only containers whose name begins with the
@@ -269,9 +245,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<ContainerEnumerationResults> ListContainersAsync(this IServiceOperations operations, string accountName, string prefix = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<ContainerEnumerationResults> ListContainersAsync(this IServiceOperations operations, string prefix = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.ListContainersWithHttpMessagesAsync(accountName, prefix, marker, maxresults, include, timeout, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.ListContainersWithHttpMessagesAsync(prefix, marker, maxresults, include, timeout, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }

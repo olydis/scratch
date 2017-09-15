@@ -30,9 +30,6 @@ namespace BlobStorageTest.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
-            /// </param>
             /// <param name='container'>
             /// The container name.
             /// </param>
@@ -91,9 +88,9 @@ namespace BlobStorageTest.Client
             /// <param name='ifNoneMatch'>
             /// Specify an ETag value to operate only on blobs without a matching value.
             /// </param>
-            public static PageBlobsPutPageHeaders PutPage(this IPageBlobsOperations operations, string accountName, string container, string blob, PageWrite pageWrite, Stream body, int? timeout = default(int?), string range = default(string), string leaseId = default(string), int? ifSequenceNumberLessThanOrEqualTo = default(int?), int? ifSequenceNumberLessThan = default(int?), int? ifSequenceNumberEqualTo = default(int?), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string))
+            public static PageBlobsPutPageHeaders PutPage(this IPageBlobsOperations operations, string container, string blob, PageWrite pageWrite, Stream body, int? timeout = default(int?), string range = default(string), string leaseId = default(string), int? ifSequenceNumberLessThanOrEqualTo = default(int?), int? ifSequenceNumberLessThan = default(int?), int? ifSequenceNumberEqualTo = default(int?), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string))
             {
-                return operations.PutPageAsync(accountName, container, blob, pageWrite, body, timeout, range, leaseId, ifSequenceNumberLessThanOrEqualTo, ifSequenceNumberLessThan, ifSequenceNumberEqualTo, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch).GetAwaiter().GetResult();
+                return operations.PutPageAsync(container, blob, pageWrite, body, timeout, range, leaseId, ifSequenceNumberLessThanOrEqualTo, ifSequenceNumberLessThan, ifSequenceNumberEqualTo, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -101,9 +98,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -166,9 +160,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<PageBlobsPutPageHeaders> PutPageAsync(this IPageBlobsOperations operations, string accountName, string container, string blob, PageWrite pageWrite, Stream body, int? timeout = default(int?), string range = default(string), string leaseId = default(string), int? ifSequenceNumberLessThanOrEqualTo = default(int?), int? ifSequenceNumberLessThan = default(int?), int? ifSequenceNumberEqualTo = default(int?), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<PageBlobsPutPageHeaders> PutPageAsync(this IPageBlobsOperations operations, string container, string blob, PageWrite pageWrite, Stream body, int? timeout = default(int?), string range = default(string), string leaseId = default(string), int? ifSequenceNumberLessThanOrEqualTo = default(int?), int? ifSequenceNumberLessThan = default(int?), int? ifSequenceNumberEqualTo = default(int?), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.PutPageWithHttpMessagesAsync(accountName, container, blob, pageWrite, body, timeout, range, leaseId, ifSequenceNumberLessThanOrEqualTo, ifSequenceNumberLessThan, ifSequenceNumberEqualTo, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.PutPageWithHttpMessagesAsync(container, blob, pageWrite, body, timeout, range, leaseId, ifSequenceNumberLessThanOrEqualTo, ifSequenceNumberLessThan, ifSequenceNumberEqualTo, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Headers;
                 }
@@ -181,9 +175,6 @@ namespace BlobStorageTest.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
-            /// </param>
             /// <param name='container'>
             /// The container name.
             /// </param>
@@ -233,9 +224,9 @@ namespace BlobStorageTest.Client
             /// <param name='ifNoneMatch'>
             /// Specify an ETag value to operate only on blobs without a matching value.
             /// </param>
-            public static object GetPageRanges(this IPageBlobsOperations operations, string accountName, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), System.DateTime? prevsnapshot = default(System.DateTime?), string range = default(string), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string))
+            public static object GetPageRanges(this IPageBlobsOperations operations, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), System.DateTime? prevsnapshot = default(System.DateTime?), string range = default(string), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string))
             {
-                return operations.GetPageRangesAsync(accountName, container, blob, snapshot, timeout, prevsnapshot, range, leaseId, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch).GetAwaiter().GetResult();
+                return operations.GetPageRangesAsync(container, blob, snapshot, timeout, prevsnapshot, range, leaseId, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -244,9 +235,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -300,9 +288,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<object> GetPageRangesAsync(this IPageBlobsOperations operations, string accountName, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), System.DateTime? prevsnapshot = default(System.DateTime?), string range = default(string), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<object> GetPageRangesAsync(this IPageBlobsOperations operations, string container, string blob, System.DateTime? snapshot = default(System.DateTime?), int? timeout = default(int?), System.DateTime? prevsnapshot = default(System.DateTime?), string range = default(string), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.GetPageRangesWithHttpMessagesAsync(accountName, container, blob, snapshot, timeout, prevsnapshot, range, leaseId, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.GetPageRangesWithHttpMessagesAsync(container, blob, snapshot, timeout, prevsnapshot, range, leaseId, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Body;
                 }
@@ -319,9 +307,6 @@ namespace BlobStorageTest.Client
             /// <param name='operations'>
             /// The operations group for this extension method.
             /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
-            /// </param>
             /// <param name='container'>
             /// The container name.
             /// </param>
@@ -364,9 +349,9 @@ namespace BlobStorageTest.Client
             /// <param name='ifNoneMatch'>
             /// Specify an ETag value to operate only on blobs without a matching value.
             /// </param>
-            public static PageBlobsIncrementalCopyHeaders IncrementalCopy(this IPageBlobsOperations operations, string accountName, string container, string blob, string copySource, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string))
+            public static PageBlobsIncrementalCopyHeaders IncrementalCopy(this IPageBlobsOperations operations, string container, string blob, string copySource, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string))
             {
-                return operations.IncrementalCopyAsync(accountName, container, blob, copySource, timeout, xMsMeta, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch).GetAwaiter().GetResult();
+                return operations.IncrementalCopyAsync(container, blob, copySource, timeout, xMsMeta, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch).GetAwaiter().GetResult();
             }
 
             /// <summary>
@@ -379,9 +364,6 @@ namespace BlobStorageTest.Client
             /// </summary>
             /// <param name='operations'>
             /// The operations group for this extension method.
-            /// </param>
-            /// <param name='accountName'>
-            /// The Azure storage account to use.
             /// </param>
             /// <param name='container'>
             /// The container name.
@@ -428,9 +410,9 @@ namespace BlobStorageTest.Client
             /// <param name='cancellationToken'>
             /// The cancellation token.
             /// </param>
-            public static async Task<PageBlobsIncrementalCopyHeaders> IncrementalCopyAsync(this IPageBlobsOperations operations, string accountName, string container, string blob, string copySource, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), CancellationToken cancellationToken = default(CancellationToken))
+            public static async Task<PageBlobsIncrementalCopyHeaders> IncrementalCopyAsync(this IPageBlobsOperations operations, string container, string blob, string copySource, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), string ifMatches = default(string), string ifNoneMatch = default(string), CancellationToken cancellationToken = default(CancellationToken))
             {
-                using (var _result = await operations.IncrementalCopyWithHttpMessagesAsync(accountName, container, blob, copySource, timeout, xMsMeta, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch, null, cancellationToken).ConfigureAwait(false))
+                using (var _result = await operations.IncrementalCopyWithHttpMessagesAsync(container, blob, copySource, timeout, xMsMeta, ifModifiedSince, ifUnmodifiedSince, ifMatches, ifNoneMatch, null, cancellationToken).ConfigureAwait(false))
                 {
                     return _result.Headers;
                 }
