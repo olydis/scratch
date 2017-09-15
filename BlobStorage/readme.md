@@ -15,4 +15,5 @@ csharp:
   namespace: BlobStorageTest.Client
   output-folder: ./BlobStorageTest/Client
   clear-output-folder: true
+  enable-xml: true
 ```
