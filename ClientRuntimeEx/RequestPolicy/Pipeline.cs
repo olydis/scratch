@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.Rest.ClientRuntime.RequestPolicy
@@ -15,7 +16,7 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
     // THen, Do sends the Context and Request through all the Policy objects. The final Policy object sends the request over the network
     // (via the HTTPSender object passed to NewPipeline) and the response is returned backwards through all the Policy objects.
     // Since Pipeline and Factory objects are immutable, you typically create 1 Pipeline object and reuse it to make many HTTP requests.
-    public class Pipeline
+    public class Pipeline : IHttpSender
     {
         public IEnumerable<IFactory> Factories { get; private set; }
         public IHttpSender Sender { get; private set; }
@@ -39,6 +40,9 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
             // defer request.close()   ... so Dispose request afterwards? not sure that's expected by C# people but maybe required for "determinism" of GC work?
             return NewPolicies(methodFactory).SendAsync(ctx, request);
         }
+
+        public Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            => SendAsync(new Context(cancellationToken), null, request);
 
         private IPolicy NewPolicies(IFactory methodFactory)
         {

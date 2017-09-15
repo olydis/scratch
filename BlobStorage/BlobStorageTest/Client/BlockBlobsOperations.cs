@@ -29,7 +29,7 @@ namespace BlobStorageTest.Client
     /// <summary>
     /// BlockBlobsOperations operations.
     /// </summary>
-    internal partial class BlockBlobsOperations : IServiceOperations<AzureBlobStorageClient>, IBlockBlobsOperations
+    internal partial class BlockBlobsOperations : IServiceOperationsX<AzureBlobStorageClient>, IBlockBlobsOperations
     {
         /// <summary>
         /// Initializes a new instance of the BlockBlobsOperations class.

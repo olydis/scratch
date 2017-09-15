@@ -21,7 +21,7 @@ namespace BlobStorageTest.Client
     using System.Net;
     using System.Net.Http;
 
-    public partial class AzureBlobStorageClient : ServiceClient<AzureBlobStorageClient>, IAzureBlobStorageClient, IAzureClient
+    public partial class AzureBlobStorageClient : ServiceClientX<AzureBlobStorageClient>, IAzureBlobStorageClient
     {
         /// <summary>
         /// The base URI of the service.
@@ -148,7 +148,7 @@ namespace BlobStorageTest.Client
             Credentials = credentials;
             if (Credentials != null)
             {
-                Credentials.InitializeServiceClient(this);
+                // Credentials.InitializeServiceClient(this);
             }
         }
 
@@ -176,7 +176,7 @@ namespace BlobStorageTest.Client
             Credentials = credentials;
             if (Credentials != null)
             {
-                Credentials.InitializeServiceClient(this);
+                // Credentials.InitializeServiceClient(this);
             }
         }
 

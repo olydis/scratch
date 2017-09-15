@@ -27,7 +27,7 @@ namespace BlobStorageTest.Client
     /// <summary>
     /// BlobsOperations operations.
     /// </summary>
-    internal partial class BlobsOperations : IServiceOperations<AzureBlobStorageClient>, IBlobsOperations
+    internal partial class BlobsOperations : IServiceOperationsX<AzureBlobStorageClient>, IBlobsOperations
     {
         /// <summary>
         /// Initializes a new instance of the BlobsOperations class.
@@ -319,7 +319,7 @@ namespace BlobStorageTest.Client
                 ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
             }
             cancellationToken.ThrowIfCancellationRequested();
-            _httpResponse = await Client.HttpClient.SendAsync(_httpRequest, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+            _httpResponse = await Client.HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
             if (_shouldTrace)
             {
                 ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
@@ -627,7 +627,7 @@ namespace BlobStorageTest.Client
                 ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
             }
             cancellationToken.ThrowIfCancellationRequested();
-            _httpResponse = await Client.HttpClient.SendAsync(_httpRequest, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+            _httpResponse = await Client.HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
             if (_shouldTrace)
             {
                 ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
