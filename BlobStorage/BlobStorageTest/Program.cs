@@ -21,10 +21,12 @@ namespace BlobStorageTest
             accountName = args[0];
             var key = args[1]; 
             var credentials = new StorageCredentials(accountName, key);
-            var client = new AzureBlobStorageClient(credentials);
+            // var client = new AzureBlobStorageClient(credentials);
+            var client = new AzureBlobStorageClient(null);
             client.AccountName = accountName;
             client.Pipeline = new IFactory[]
             {
+                new CredentialPolicyFactory(credentials),
                 new TelemetryPolicyFactory("0.0.1-test", new TelemetryOptions("prefex")),
                 new RetryPolicyFactory(new RetryOptions(
                     RetryPolicy.Linear,

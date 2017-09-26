@@ -18,8 +18,6 @@ csharp:
   enable-xml: true
 ```
 
-
-
 ``` yaml
 use: C:\work\oneautorest\autorest.csharp\
 
@@ -32,5 +30,6 @@ directive:
             .replace(" : ServiceClient", " : ServiceClientX")
             .replace(" : IServiceOperations", " : IServiceOperationsX")
             .replace(/Credentials\.InitializeServiceClient\(this\);/g, "// Credentials.InitializeServiceClient(this);")
+            .replace(/throw new System.ArgumentNullException\("credentials"\);/g, `// throw new System.ArgumentNullException("credentials");`)
             .replace(/System\.Net\.Http\.HttpCompletionOption\.ResponseHeadersRead, /g, "")
 ```

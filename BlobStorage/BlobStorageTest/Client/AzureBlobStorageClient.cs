@@ -143,7 +143,7 @@ namespace BlobStorageTest.Client
         {
             if (credentials == null)
             {
-                throw new System.ArgumentNullException("credentials");
+                // throw new System.ArgumentNullException("credentials");
             }
             Credentials = credentials;
             if (Credentials != null)
@@ -171,7 +171,7 @@ namespace BlobStorageTest.Client
         {
             if (credentials == null)
             {
-                throw new System.ArgumentNullException("credentials");
+                // throw new System.ArgumentNullException("credentials");
             }
             Credentials = credentials;
             if (Credentials != null)

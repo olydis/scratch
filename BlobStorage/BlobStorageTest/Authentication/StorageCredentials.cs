@@ -327,8 +327,6 @@ namespace Microsoft.WindowsAzure.Storage.Auth
 
         public override Task ProcessHttpRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            System.Console.WriteLine(Environment.StackTrace);
-
             if (request.Headers.Date == null)
             {
                 request.Headers.Date = DateTimeOffset.UtcNow;
