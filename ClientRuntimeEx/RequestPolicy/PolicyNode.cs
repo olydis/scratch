@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Microsoft.Rest.ClientRuntime.RequestPolicy
@@ -23,6 +24,30 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
         public Task<HttpResponseMessage> SendAsync(Context ctx, HttpRequestMessage request)
         {
             return this.Next.SendAsync(ctx, request);
+        }
+
+        // Log logs a string to the Pipeline's Logger.
+        public void Log(LogSeverity severity, string format, params object[] v)
+        {
+            if (severity > Pipeline.Options.Log.MaxSeverity) {
+                return; // Short circuit message formatting if we're not logging it
+            }
+            string msg = string.Format(format, v);
+            if (!msg.EndsWith("\n"))
+            {
+                msg += "\n";
+            }
+            // defaultLog(severity, msg) // TODO: WAT?
+            Pipeline.Options.Log.Log(severity, msg);
+            // If logger doesn't handle fatal/panic, we'll do it here.
+            if (severity == LogSeverity.Fatal)
+            {
+                Environment.Exit(1); // TODO: really?
+            } 
+            else if (severity == LogSeverity.Panic)
+            {
+                // panic(msg); // WAT
+            }
         }
     }
 }

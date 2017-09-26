@@ -18,17 +18,49 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
     // Since Pipeline and Factory objects are immutable, you typically create 1 Pipeline object and reuse it to make many HTTP requests.
     public class Pipeline : IHttpSender
     {
-        public IEnumerable<IFactory> Factories { get; private set; }
-        public IHttpSender Sender { get; private set; }
+        private class DefaultHttpClientFactory : IFactory
+        {
+            private sealed class DefaultHttpClientPolicy : IPolicy
+            {
+                public PolicyNode Node { get; private set; }
+                public IHttpSender Sender { get; private set; }
 
-        public Pipeline(IEnumerable<IFactory> factories) : this(factories, new HttpClientSender()) { }
+                public DefaultHttpClientPolicy(PolicyNode node)
+                {
+                    this.Node = node;
+                    this.Sender = new HttpClientSender();
+                }
+
+                public async Task<HttpResponseMessage> SendAsync(Context ctx, HttpRequestMessage request)
+                {
+                    // request.Request = request.WithContext(ctx)
+
+                    return await Sender.SendAsync(request, ctx.CancellationToken);
+                }
+            }
+
+            public IPolicy Create(PolicyNode node)
+                => new DefaultHttpClientPolicy(node);
+        }
+
+        public IEnumerable<IFactory> Factories { get; private set; }
+        public PipelineOptions Options { get; private set; }
+
+        public Pipeline(IEnumerable<IFactory> factories)
+            : this(
+                factories,
+                new PipelineOptions(
+                    new DefaultHttpClientFactory(),
+                    new LogOptions((level, message) => {}, LogSeverity.None)
+                )
+            ) { }
 
         // NewPipeline creates a new immutable Pipeline object from the slice of Factory objects and the specified HTTPSender.
         // If sender is nil, then a default (zero-value) http.Client is created for this Pipeline object.
-        public Pipeline(IEnumerable<IFactory> factories, IHttpSender sender)
+        public Pipeline(IEnumerable<IFactory> factories, PipelineOptions options)
         {
             this.Factories = factories;
-            this.Sender = sender;
+            this.Options = options;
         }
 
         // SendAsync is called for each and every HTTP request. It tells each Factory to create its own (mutable) Policy object
@@ -46,8 +78,10 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
 
         private IPolicy NewPolicies(IFactory methodFactory)
         {
+            // The last Policy is the one that actually sends the request over the wire and gets the response.
+            // It is overridable via the Options' HTTPSender field.
             var node = new PolicyNode(this, null);
-            node.Next = new LastPolicy(node, Sender);
+            node.Next = Options.HttpSender.Create(node);
 
             // Walk over the slice of Factory objects
             int markers = 0;
@@ -81,32 +115,6 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
                 throw new Exception("Non-nil methodFactory requires MethodFactoryMarker in the pipeline");
             }
             return node.Next; // Return head of the Policy object linked-list
-        }
-
-        private sealed class LastPolicy : IPolicy
-        {
-            public PolicyNode Node { get; private set; }
-            public IHttpSender Sender { get; private set; }
-
-            public LastPolicy(PolicyNode node, IHttpSender sender)
-            {
-                this.Node = node;
-                this.Sender = sender;
-            }
-
-            public async Task<HttpResponseMessage> SendAsync(Context ctx, HttpRequestMessage request)
-            {
-                // seek to the beginning in case this is a retry
-                if (request.Content is StreamContent sc)
-                {
-                    // CAN/SHOULD WE DO THIS? how to "reset" an HttpContent?
-                    (await sc.ReadAsStreamAsync()).Seek(0, System.IO.SeekOrigin.Begin);
-                }
-
-                // request.Request = request.WithContext(ctx)
-
-                return await Sender.SendAsync(request, ctx.CancellationToken);
-            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 
 namespace Microsoft.Rest.ClientRuntime.RequestPolicy
 {
@@ -12,5 +13,12 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
 
         public Context WithCancellationToken(CancellationToken token)
             => new Context(CancellationTokenSource.CreateLinkedTokenSource(CancellationToken, token).Token);
+
+        public Context WithTimeout(TimeSpan timeout)
+        {
+            var tokenSource = new CancellationTokenSource();
+            tokenSource.CancelAfter(timeout);
+            return WithCancellationToken(tokenSource.Token);
+        }
     }
 }
