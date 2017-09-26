@@ -10,7 +10,6 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using BlobStorageTest.Client;
     using Newtonsoft.Json;
     using System.Linq;
     using System.Xml;
@@ -23,18 +22,6 @@ namespace BlobStorageTest.Client.Models
         /// </summary>
         public Block()
         {
-          CustomInit();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the Block class.
-        /// </summary>
-        /// <param name="name">The base64 encoded block ID</param>
-        /// <param name="size">The block size in bytes</param>
-        public Block(string name = default(string), int? size = default(int?))
-        {
-            Name = name;
-            Size = size;
             CustomInit();
         }
 

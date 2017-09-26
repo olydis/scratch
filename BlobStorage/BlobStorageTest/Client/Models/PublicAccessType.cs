@@ -10,7 +10,6 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using BlobStorageTest.Client;
 
     /// <summary>
     /// Defines values for PublicAccessType.

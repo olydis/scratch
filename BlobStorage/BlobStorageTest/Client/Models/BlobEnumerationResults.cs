@@ -10,7 +10,6 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using BlobStorageTest.Client;
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
@@ -28,22 +27,6 @@ namespace BlobStorageTest.Client.Models
         /// </summary>
         public BlobEnumerationResults()
         {
-          CustomInit();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the BlobEnumerationResults class.
-        /// </summary>
-        public BlobEnumerationResults(string serviceEndpoint = default(string), string containerName = default(string), string prefix = default(string), string marker = default(string), int? maxResults = default(int?), string delimiter = default(string), IList<Blob> blobs = default(IList<Blob>), string nextMarker = default(string))
-        {
-            ServiceEndpoint = serviceEndpoint;
-            ContainerName = containerName;
-            Prefix = prefix;
-            Marker = marker;
-            MaxResults = maxResults;
-            Delimiter = delimiter;
-            Blobs = blobs;
-            NextMarker = nextMarker;
             CustomInit();
         }
 

@@ -10,7 +10,6 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using BlobStorageTest.Client;
     using Microsoft.Rest;
     using Newtonsoft.Json;
     using System.Linq;
@@ -32,7 +31,7 @@ namespace BlobStorageTest.Client.Models
         /// </summary>
         public CorsRule()
         {
-          CustomInit();
+            CustomInit();
         }
 
         /// <summary>

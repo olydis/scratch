@@ -10,7 +10,6 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using BlobStorageTest.Client;
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
@@ -28,17 +27,6 @@ namespace BlobStorageTest.Client.Models
         /// </summary>
         public Container()
         {
-          CustomInit();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the Container class.
-        /// </summary>
-        public Container(string name = default(string), ContainerProperties properties = default(ContainerProperties), IDictionary<string, string> metadata = default(IDictionary<string, string>))
-        {
-            Name = name;
-            Properties = properties;
-            Metadata = metadata;
             CustomInit();
         }
 

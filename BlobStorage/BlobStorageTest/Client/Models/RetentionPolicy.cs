@@ -10,7 +10,6 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using BlobStorageTest.Client;
     using Microsoft.Rest;
     using Newtonsoft.Json;
     using System.Linq;
@@ -27,7 +26,7 @@ namespace BlobStorageTest.Client.Models
         /// </summary>
         public RetentionPolicy()
         {
-          CustomInit();
+            CustomInit();
         }
 
         /// <summary>
@@ -35,13 +34,9 @@ namespace BlobStorageTest.Client.Models
         /// </summary>
         /// <param name="enabled">Indicates whether a retention policy is
         /// enabled for the storage service</param>
-        /// <param name="days">Indicates the number of days that metrics or
-        /// logging data should be retained. All data older than this value
-        /// will be deleted</param>
-        public RetentionPolicy(bool enabled, int? days = default(int?))
+        public RetentionPolicy(bool enabled)
         {
             Enabled = enabled;
-            Days = days;
             CustomInit();
         }
 

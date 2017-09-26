@@ -310,7 +310,7 @@ namespace Microsoft.Rest
 
         public IEnumerable<IFactory> Pipeline { get; set; } = new IFactory[0];
 
-        public IHttpSender HttpClient => new Pipeline(Pipeline, new HttpClientSender(HttpClientSender));
+        public IHttpSender HttpClient => new Pipeline(Pipeline, HttpClientSender);
 
 
         // IEnumerable<IFactory> factories

@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using BlobStorageTest.Client;
 using BlobStorageTest.Client.Models;
+using Microsoft.Rest.ClientRuntime.RequestPolicy;
+using Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies;
 using Microsoft.WindowsAzure.Storage.Auth;
 
 namespace BlobStorageTest
@@ -21,6 +23,18 @@ namespace BlobStorageTest
             var credentials = new StorageCredentials(accountName, key);
             var client = new AzureBlobStorageClient(credentials);
             client.AccountName = accountName;
+            client.Pipeline = new IFactory[]
+            {
+                new TelemetryPolicyFactory("0.0.1-test", new TelemetryOptions("prefex")),
+                new RetryPolicyFactory(new RetryOptions(
+                    RetryPolicy.Linear,
+                    3,
+                    TimeSpan.Zero,
+                    TimeSpan.Zero,
+                    TimeSpan.Zero,
+                    TimeSpan.Zero,
+                    new Uri("https://bing.com/")))
+            };
             
             ScenarioSample(client).GetAwaiter().GetResult();
         }

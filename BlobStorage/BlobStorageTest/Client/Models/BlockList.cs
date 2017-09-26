@@ -10,7 +10,6 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using BlobStorageTest.Client;
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
@@ -25,16 +24,6 @@ namespace BlobStorageTest.Client.Models
         /// </summary>
         public BlockList()
         {
-          CustomInit();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the BlockList class.
-        /// </summary>
-        public BlockList(IList<Block> committedBlocks = default(IList<Block>), IList<Block> uncommittedBlocks = default(IList<Block>))
-        {
-            CommittedBlocks = committedBlocks;
-            UncommittedBlocks = uncommittedBlocks;
             CustomInit();
         }
 

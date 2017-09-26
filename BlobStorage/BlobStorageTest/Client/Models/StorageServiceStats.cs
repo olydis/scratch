@@ -10,7 +10,6 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using BlobStorageTest.Client;
     using Newtonsoft.Json;
     using System.Linq;
     using System.Xml;
@@ -26,17 +25,6 @@ namespace BlobStorageTest.Client.Models
         /// </summary>
         public StorageServiceStats()
         {
-          CustomInit();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the StorageServiceStats class.
-        /// </summary>
-        /// <param name="geoReplication">Geo-Replication information for the
-        /// Secondary Storage Service</param>
-        public StorageServiceStats(GeoReplication geoReplication = default(GeoReplication))
-        {
-            GeoReplication = geoReplication;
             CustomInit();
         }
 

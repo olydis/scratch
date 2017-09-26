@@ -61,9 +61,10 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies
 
     public enum RetryPolicy
     {
-	    // RetryPolicyExponential tells the pipeline to use an exponential back-off retry policy
+	    // tells the pipeline to use an exponential back-off retry policy
         Exponential = 0,
-	    // RetryPolicyLinear tells the pipeline to use a linear back-off retry policy
+
+	    // tells the pipeline to use a linear back-off retry policy
         Linear = 1
     }
 
@@ -77,14 +78,26 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies
         }
 
         public IPolicy Create(PolicyNode node)
-            => new ExponentialRetryPolicy(node, o);
+            => new RetryPolicyImpl(node, o);
 
-        private sealed class ExponentialRetryPolicy : IPolicy
+        private sealed class RetryPolicyImpl : IPolicy
         {
+            struct ActionSeverity
+            {
+                public ActionSeverity(string action, LogSeverity severity)
+                {
+                    this.Action = action;
+                    this.Severity = severity;
+                }
+
+                public readonly string Action;
+                public readonly LogSeverity Severity;
+            }
+
             PolicyNode node;
             RetryOptions o;
 
-            public ExponentialRetryPolicy(PolicyNode node, RetryOptions o)
+            public RetryPolicyImpl(PolicyNode node, RetryOptions o)
             {
                 this.node = node;
                 this.o = o;
@@ -100,7 +113,7 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies
                 Exception err = null;
 
                 // We only consider retring against a secondary if we have a read request (GET/HEAD) AND theis policy has a Secondary URL it can use
-                var considerSecondary = (request.Method == HttpMethod.Get || request.Method == HttpMethod.Head) && o.SecondaryURL.Host != "";
+                var considerSecondary = (request.Method == HttpMethod.Get || request.Method == HttpMethod.Head) && o.RetryReadsFromSecondaryURL.Host != "";
                 if (considerSecondary)
                 {
                     secondaryUrl = o.RetryReadsFromSecondaryURL;
@@ -168,13 +181,15 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies
                     await Task.Delay(delay, ctx.CancellationToken);
 
 		            // Set the server-side timeout query parameter
+                    // System.Console.WriteLine(request.RequestUri);
                     var queryToAppend = $"timeout={(int)o.TryTimeout.TotalSeconds}";
-                    var q = new UriBuilder(request.RequestUri.Query);
+                    var q = new UriBuilder(request.RequestUri);
                     if (q.Query != null && q.Query.Length > 1)
                         q.Query = q.Query.Substring(1) + "&" + queryToAppend;
                     else
                         q.Query = queryToAppend;
                     request.RequestUri = q.Uri;
+                    // System.Console.WriteLine(request.RequestUri);
                     
 		            // Seek to the beginning of the Body stream in case this is a retry
                     // TODO
@@ -186,18 +201,11 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies
                     //p.node.Log(pipeline.LogInfo, pipeline.FormatRequest(request.Request, fmt.Sprintf("(Try=%d/%d)", try+1, p.o.MaxTries)))
 
                     var tryStart = DateTime.UtcNow;
-                    var tryCtx = ctx.WithTimeout();
+                    var tryCtx = ctx.WithTimeout(o.TryTimeout, out var isTimeout).WithCancel(out var cancel);
                     HttpResponseMessage response = null;
-                    bool retry = false;
                     try
                     {
                         response = await node.SendAsync(ctx, request); // Make the request
-
-                        // Retry if we got a response and the code is >= 500 (InternalServerError) but not 501 (not implemented) or 505 (HTTPVersionNotSupported)
-                        retry = response != null &&
-                           response.StatusCode >= HttpStatusCode.InternalServerError /*500*/ &&
-                           response.StatusCode != HttpStatusCode.NotImplemented /* 501 */ &&
-                           response.StatusCode != HttpStatusCode.HttpVersionNotSupported; /* 505 */
                     }
                     catch (Exception e)
                     {
@@ -209,26 +217,63 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies
                         //    retry = nerr.Temporary() || nerr.Timeout()
                         //}
                     }
+                    cancel();
+                    var tryEnd = DateTime.UtcNow;
+                    var tryDuration = tryEnd - tryStart;
 
-                    if (!retry)
+                    var action = new ActionSeverity("NoRetry: ok/final", LogSeverity.Info); // Assume no retry
+                    if (isTimeout())
+                        action = new ActionSeverity("NoRetry: Op timeout", LogSeverity.Error);
+                    else if (err != null)
                     {
-                        // We're not going to retry, return what we have
-                        if (err != null)
+                        // if (nerr, /*ok := err.(net.Error); ok*/) {
+                        //     if nerr.Temporary() { // Returns true if HTTP response status code is 500 or 503
+                        //         action, severity = "Retry: Temporary", pipeline.LogWarning
+                        //     } else if nerr.Timeout() && tryCtx.Err() == context.DeadlineExceeded {
+                        //         action, severity = "Retry: Timeout", pipeline.LogWarning
+                        //     }
+                        // }
+                        // if action == "" && !tryingPrimary {
+                        //     // If attempt was against the secondary & it returned a StatusNotFound (404), then the
+                        //     // resource was not found. This may be due to replication delay. So, in this case,
+                        //     // we'll never try the secondary again for this operation.
+                        //     if resp := response.Response(); resp != nil && resp.StatusCode == http.StatusNotFound {
+                        //         considerSecondary = false
+                        //         action, severity = "Retry: Secondary URL 404", pipeline.LogError
+                        //     }
+                        // }
+                    }
+                    else if (!response.IsSuccessStatusCode)
+                    {
+                        if (response.StatusCode == HttpStatusCode.InternalServerError || 
+                            response.StatusCode == HttpStatusCode.ServiceUnavailable)
                         {
-                            throw err;
+                            action = new ActionSeverity("Retry: Op timeout", LogSeverity.Error);
                         }
+                        // TODO
+                    }
+
+                    // If we were going to log it as info, bump it up to warning if the duration exceeded the threshold
+                    if (action.Severity == LogSeverity.Info &&
+                        o.LogWarningIfTryOverThreshold != TimeSpan.Zero &&
+                        tryDuration > o.LogWarningIfTryOverThreshold) {
+                        action = new ActionSeverity(action.Action, LogSeverity.Warning);
+                    }
+                    action = new ActionSeverity(action.Action, LogSeverity.Error); // testing
+                    /* FIX:		p.node.Log(severity, pipeline.FormatResponse(
+                    response.Response(), err,
+                    fmt.Sprintf("(Try=%d/%d, TryDuration=%v, OpDuration=%v, Action=%s)",
+                        try+1, p.o.MaxTries, tryDuration, tryEnd.Sub(operationStart), action)))*/
+                    if (action.Action[0] == 'N') // If first letter of action is 'N' (as in NoRetry), return
+                    {
+                        if (err != null) throw err;
                         return response;
                     }
-
-                    // If we get here, we're going to retry.
-                    // If attempt was against the secondary & it returned a StatusNotFound (404), then the resource
-                    // was not found. This may be due to replication delay. In this case, never try the secondary again for this operation.
-                    if (!tryingPrimary && response?.StatusCode == HttpStatusCode.NotFound) /* 404 */
-                    {
-                        considerSecondary = false;
-                    }
                 }
-                throw err; // Too many attempts; return the last error
+                // If we get here, it's like a retry that we don't perform because we hit max tries
+                /* FIX: 	p.node.Log(pipeline.LogError,
+                pipeline.FormatRequest(request.Request, fmt.Sprintf("(Quitting after %d tries)", p.o.MaxTries)))*/
+                throw err; // Too many tries; return the last error
             }
 
             private static long Pow(long number, int exponent)

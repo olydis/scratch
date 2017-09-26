@@ -10,7 +10,6 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using BlobStorageTest.Client;
     using Newtonsoft.Json;
     using System.Linq;
     using System.Xml;
@@ -23,24 +22,6 @@ namespace BlobStorageTest.Client.Models
         /// </summary>
         public Metrics()
         {
-          CustomInit();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the Metrics class.
-        /// </summary>
-        /// <param name="version">The version of Storage Analytics to
-        /// configure.</param>
-        /// <param name="enabled">Indicates whether metrics are enabled for the
-        /// Blob service.</param>
-        /// <param name="includeAPIs">Indicates whether metrics should generate
-        /// summary statistics for called API operations.</param>
-        public Metrics(string version = default(string), bool? enabled = default(bool?), bool? includeAPIs = default(bool?), RetentionPolicy retentionPolicy = default(RetentionPolicy))
-        {
-            Version = version;
-            Enabled = enabled;
-            IncludeAPIs = includeAPIs;
-            RetentionPolicy = retentionPolicy;
             CustomInit();
         }
 

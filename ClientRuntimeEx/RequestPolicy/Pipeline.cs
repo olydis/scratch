@@ -20,12 +20,21 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
     {
         private class DefaultHttpClientFactory : IFactory
         {
+            private IHttpSender sender;
+
+            public DefaultHttpClientFactory(IHttpSender sender)
+            {
+                this.sender = sender;
+            }
+
+            public DefaultHttpClientFactory(): this(new HttpClientSender()) { }
+
             private sealed class DefaultHttpClientPolicy : IPolicy
             {
                 public PolicyNode Node { get; private set; }
                 public IHttpSender Sender { get; private set; }
 
-                public DefaultHttpClientPolicy(PolicyNode node)
+                public DefaultHttpClientPolicy(PolicyNode node, IHttpSender sender)
                 {
                     this.Node = node;
                     this.Sender = new HttpClientSender();
@@ -40,7 +49,7 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
             }
 
             public IPolicy Create(PolicyNode node)
-                => new DefaultHttpClientPolicy(node);
+                => new DefaultHttpClientPolicy(node, sender);
         }
 
         public IEnumerable<IFactory> Factories { get; private set; }
@@ -51,6 +60,15 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
                 factories,
                 new PipelineOptions(
                     new DefaultHttpClientFactory(),
+                    new LogOptions((level, message) => {}, LogSeverity.None)
+                )
+            ) { }
+
+        public Pipeline(IEnumerable<IFactory> factories, HttpClient client)
+            : this(
+                factories,
+                new PipelineOptions(
+                    new DefaultHttpClientFactory(new HttpClientSender(client)),
                     new LogOptions((level, message) => {}, LogSeverity.None)
                 )
             ) { }
@@ -81,7 +99,7 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
             // The last Policy is the one that actually sends the request over the wire and gets the response.
             // It is overridable via the Options' HTTPSender field.
             var node = new PolicyNode(this, null);
-            node.Next = Options.HttpSender.Create(node);
+            node = new PolicyNode(this, Options.HttpSender.Create(node));
 
             // Walk over the slice of Factory objects
             int markers = 0;
@@ -99,13 +117,13 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
                     if (methodFactory != null)
                     {
                         // Replace MethodFactoryMarker with passed-in methodFactory
-                        node.Next = methodFactory.Create(node);
+                        node = new PolicyNode(this, methodFactory.Create(node));
                     }
                 }
-                else 
+                else
                 {
                     // Use the slice's Factory to construct its Policy
-                    node.Next = factory.Create(node);
+                    node = new PolicyNode(this, factory.Create(node));
                 }
             }
 

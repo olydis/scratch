@@ -10,7 +10,6 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using BlobStorageTest.Client;
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
@@ -28,29 +27,6 @@ namespace BlobStorageTest.Client.Models
         /// </summary>
         public StorageServiceProperties()
         {
-          CustomInit();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the StorageServiceProperties class.
-        /// </summary>
-        /// <param name="logging">Azure Analytics Logging settings</param>
-        /// <param name="hourMetrics">A summary of request statistics grouped
-        /// by API in hourly aggregates for blobs</param>
-        /// <param name="minuteMetrics">a summary of request statistics grouped
-        /// by API in minute aggregates for blobs</param>
-        /// <param name="cors">The set of CORS rules.</param>
-        /// <param name="defaultServiceVersion">The default version to use for
-        /// requests to the Blob service if an incoming request's version is
-        /// not specified. Possible values include version 2008-10-27 and all
-        /// more recent versions</param>
-        public StorageServiceProperties(Logging logging = default(Logging), Metrics hourMetrics = default(Metrics), Metrics minuteMetrics = default(Metrics), IList<CorsRule> cors = default(IList<CorsRule>), string defaultServiceVersion = default(string))
-        {
-            Logging = logging;
-            HourMetrics = hourMetrics;
-            MinuteMetrics = minuteMetrics;
-            Cors = cors;
-            DefaultServiceVersion = defaultServiceVersion;
             CustomInit();
         }
 

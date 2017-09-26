@@ -10,7 +10,6 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using BlobStorageTest.Client;
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
@@ -28,18 +27,6 @@ namespace BlobStorageTest.Client.Models
         /// </summary>
         public Blob()
         {
-          CustomInit();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the Blob class.
-        /// </summary>
-        public Blob(string name = default(string), System.DateTime? snapshot = default(System.DateTime?), BlobProperties properties = default(BlobProperties), IDictionary<string, string> metadata = default(IDictionary<string, string>))
-        {
-            Name = name;
-            Snapshot = snapshot;
-            Properties = properties;
-            Metadata = metadata;
             CustomInit();
         }
 

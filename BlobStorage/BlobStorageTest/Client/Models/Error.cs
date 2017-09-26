@@ -10,7 +10,6 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using BlobStorageTest.Client;
     using Microsoft.Rest;
     using Newtonsoft.Json;
     using System.Linq;
@@ -24,17 +23,16 @@ namespace BlobStorageTest.Client.Models
         /// </summary>
         public Error()
         {
-          CustomInit();
+            CustomInit();
         }
 
         /// <summary>
         /// Initializes a new instance of the Error class.
         /// </summary>
-        public Error(string code, string message, ErrorExceptionDetails exceptionDetails = default(ErrorExceptionDetails))
+        public Error(string code, string message)
         {
             Code = code;
             Message = message;
-            ExceptionDetails = exceptionDetails;
             CustomInit();
         }
 
