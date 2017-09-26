@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies
 {
+    //
+    // NOTE: I've reused the existing "ServiceClientCredentials" infrastructure we already have rather than converting Go.
+    //
     public sealed class CredentialPolicyFactory : IFactory
     {
         ServiceClientCredentials credentials;
