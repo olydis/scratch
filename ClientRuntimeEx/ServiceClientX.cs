@@ -1,3 +1,10 @@
+//
+// Note: This is a slight deviation from "ServiceClient" which we have in the ClientRuntime already.
+//       So most stuff in here is irrelevant to request policies,
+//       I'm just trying to simulate what would/could be done to the ClientRuntime to add request policies. 
+//
+
+
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
