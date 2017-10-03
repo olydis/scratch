@@ -141,7 +141,7 @@ namespace BlobStorageTest.Client
             }
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
-            HttpResponseMessage _httpResponse = null;
+            
             _httpRequest.Method = new HttpMethod("PUT");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
@@ -190,65 +190,67 @@ namespace BlobStorageTest.Client
                 ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
             }
             cancellationToken.ThrowIfCancellationRequested();
-            _httpResponse = await Client.HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
-            }
-            HttpStatusCode _statusCode = _httpResponse.StatusCode;
-            cancellationToken.ThrowIfCancellationRequested();
-            string _responseContent = null;
-            if ((int)_statusCode != 202)
-            {
-                var ex = new ErrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                try
-                {
-                    _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    Error _errorBody =  Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
-                    if (_errorBody != null)
-                    {
-                        ex.Body = _errorBody;
-                    }
-                }
-                catch (JsonException)
-                {
-                    // Ignore the exception
-                }
-                ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
-                ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
+            var result = await Client.SendAsync<HttpOperationHeaderResponse<ServiceSetPropertiesHeaders>>(_httpRequest, async _httpResponse => {
                 if (_shouldTrace)
                 {
-                    ServiceClientTracing.Error(_invocationId, ex);
+                    ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
                 }
-                _httpRequest.Dispose();
-                if (_httpResponse != null)
+                HttpStatusCode _statusCode = _httpResponse.StatusCode;
+                cancellationToken.ThrowIfCancellationRequested();
+                string _responseContent = null;
+                if ((int)_statusCode != 202)
                 {
-                    _httpResponse.Dispose();
+                    var ex = new ErrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                    try
+                    {
+                        _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        Error _errorBody =  Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
+                        if (_errorBody != null)
+                        {
+                            ex.Body = _errorBody;
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                        // Ignore the exception
+                    }
+                    ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
+                    ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
+                    if (_shouldTrace)
+                    {
+                        ServiceClientTracing.Error(_invocationId, ex);
+                    }
+                    _httpRequest.Dispose();
+                    if (_httpResponse != null)
+                    {
+                        _httpResponse.Dispose();
+                    }
+                    throw ex;
                 }
-                throw ex;
-            }
-            // Create Result
-            var _result = new HttpOperationHeaderResponse<ServiceSetPropertiesHeaders>();
-            _result.Request = _httpRequest;
-            _result.Response = _httpResponse;
-            try
-            {
-                _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ServiceSetPropertiesHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
-            }
-            catch (JsonException ex)
-            {
-                _httpRequest.Dispose();
-                if (_httpResponse != null)
+                // Create Result
+                var _result = new HttpOperationHeaderResponse<ServiceSetPropertiesHeaders>();
+                _result.Request = _httpRequest;
+                _result.Response = _httpResponse;
+                try
                 {
-                    _httpResponse.Dispose();
+                    _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ServiceSetPropertiesHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
                 }
-                throw new SerializationException("Unable to deserialize the headers.", _httpResponse.GetHeadersAsJson().ToString(), ex);
-            }
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.Exit(_invocationId, _result);
-            }
-            return _result;
+                catch (JsonException ex)
+                {
+                    _httpRequest.Dispose();
+                    if (_httpResponse != null)
+                    {
+                        _httpResponse.Dispose();
+                    }
+                    throw new SerializationException("Unable to deserialize the headers.", _httpResponse.GetHeadersAsJson().ToString(), ex);
+                }
+                if (_shouldTrace)
+                {
+                    ServiceClientTracing.Exit(_invocationId, _result);
+                }
+                return _result;
+            }, cancellationToken).ConfigureAwait(false);
+            return (result.Content as ParsedHttpContent<HttpOperationHeaderResponse<ServiceSetPropertiesHeaders>>).ParsedObject;
         }
 
         /// <summary>
@@ -331,7 +333,7 @@ namespace BlobStorageTest.Client
             }
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
-            HttpResponseMessage _httpResponse = null;
+            
             _httpRequest.Method = new HttpMethod("GET");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
@@ -373,63 +375,77 @@ namespace BlobStorageTest.Client
                 ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
             }
             cancellationToken.ThrowIfCancellationRequested();
-            _httpResponse = await Client.HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
-            }
-            HttpStatusCode _statusCode = _httpResponse.StatusCode;
-            cancellationToken.ThrowIfCancellationRequested();
-            string _responseContent = null;
-            if ((int)_statusCode != 200)
-            {
-                var ex = new ErrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                try
-                {
-                    _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    Error _errorBody =  Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
-                    if (_errorBody != null)
-                    {
-                        ex.Body = _errorBody;
-                    }
-                }
-                catch (JsonException)
-                {
-                    // Ignore the exception
-                }
-                ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
-                ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
+            var result = await Client.SendAsync<HttpOperationResponse<StorageServiceProperties,ServiceGetPropertiesHeaders>>(_httpRequest, async _httpResponse => {
                 if (_shouldTrace)
                 {
-                    ServiceClientTracing.Error(_invocationId, ex);
+                    ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
                 }
-                _httpRequest.Dispose();
-                if (_httpResponse != null)
+                HttpStatusCode _statusCode = _httpResponse.StatusCode;
+                cancellationToken.ThrowIfCancellationRequested();
+                string _responseContent = null;
+                if ((int)_statusCode != 200)
                 {
-                    _httpResponse.Dispose();
+                    var ex = new ErrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                    try
+                    {
+                        _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        Error _errorBody =  Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
+                        if (_errorBody != null)
+                        {
+                            ex.Body = _errorBody;
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                        // Ignore the exception
+                    }
+                    ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
+                    ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
+                    if (_shouldTrace)
+                    {
+                        ServiceClientTracing.Error(_invocationId, ex);
+                    }
+                    _httpRequest.Dispose();
+                    if (_httpResponse != null)
+                    {
+                        _httpResponse.Dispose();
+                    }
+                    throw ex;
                 }
-                throw ex;
-            }
-            // Create Result
-            var _result = new HttpOperationResponse<StorageServiceProperties,ServiceGetPropertiesHeaders>();
-            _result.Request = _httpRequest;
-            _result.Response = _httpResponse;
-            // Deserialize Response
-            if ((int)_statusCode == 200)
-            {
-                _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                // Create Result
+                var _result = new HttpOperationResponse<StorageServiceProperties,ServiceGetPropertiesHeaders>();
+                _result.Request = _httpRequest;
+                _result.Response = _httpResponse;
+                // Deserialize Response
+                if ((int)_statusCode == 200)
+                {
+                    _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    try
+                    {
+                        StorageServiceProperties _tmp_ = null;
+                        if (_httpResponse.Content.Headers.ContentType.MediaType == "application/xml" &&
+                            XmlSerialization.Root(XmlSerialization.ToDeserializer(e => StorageServiceProperties.XmlDeserialize(e)))(XElement.Parse(_responseContent), out _tmp_))
+                        {
+                            _result.Body = _tmp_;
+                        }
+                        else
+                        {
+                            _result.Body = Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<StorageServiceProperties>(_responseContent, Client.DeserializationSettings);
+                        }
+                    }
+                    catch (JsonException ex)
+                    {
+                        _httpRequest.Dispose();
+                        if (_httpResponse != null)
+                        {
+                            _httpResponse.Dispose();
+                        }
+                        throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                    }
+                }
                 try
                 {
-                    StorageServiceProperties _tmp_ = null;
-                    if (_httpResponse.Content.Headers.ContentType.MediaType == "application/xml" &&
-                        XmlSerialization.Root(XmlSerialization.ToDeserializer(e => StorageServiceProperties.XmlDeserialize(e)))(XElement.Parse(_responseContent), out _tmp_))
-                    {
-                        _result.Body = _tmp_;
-                    }
-                    else
-                    {
-                        _result.Body = Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<StorageServiceProperties>(_responseContent, Client.DeserializationSettings);
-                    }
+                    _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ServiceGetPropertiesHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
                 }
                 catch (JsonException ex)
                 {
@@ -438,27 +454,15 @@ namespace BlobStorageTest.Client
                     {
                         _httpResponse.Dispose();
                     }
-                    throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                    throw new SerializationException("Unable to deserialize the headers.", _httpResponse.GetHeadersAsJson().ToString(), ex);
                 }
-            }
-            try
-            {
-                _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ServiceGetPropertiesHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
-            }
-            catch (JsonException ex)
-            {
-                _httpRequest.Dispose();
-                if (_httpResponse != null)
+                if (_shouldTrace)
                 {
-                    _httpResponse.Dispose();
+                    ServiceClientTracing.Exit(_invocationId, _result);
                 }
-                throw new SerializationException("Unable to deserialize the headers.", _httpResponse.GetHeadersAsJson().ToString(), ex);
-            }
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.Exit(_invocationId, _result);
-            }
-            return _result;
+                return _result;
+            }, cancellationToken).ConfigureAwait(false);
+            return (result.Content as ParsedHttpContent<HttpOperationResponse<StorageServiceProperties,ServiceGetPropertiesHeaders>>).ParsedObject;
         }
 
         /// <summary>
@@ -541,7 +545,7 @@ namespace BlobStorageTest.Client
             }
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
-            HttpResponseMessage _httpResponse = null;
+            
             _httpRequest.Method = new HttpMethod("GET");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
@@ -583,63 +587,77 @@ namespace BlobStorageTest.Client
                 ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
             }
             cancellationToken.ThrowIfCancellationRequested();
-            _httpResponse = await Client.HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
-            }
-            HttpStatusCode _statusCode = _httpResponse.StatusCode;
-            cancellationToken.ThrowIfCancellationRequested();
-            string _responseContent = null;
-            if ((int)_statusCode != 200)
-            {
-                var ex = new ErrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                try
-                {
-                    _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    Error _errorBody =  Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
-                    if (_errorBody != null)
-                    {
-                        ex.Body = _errorBody;
-                    }
-                }
-                catch (JsonException)
-                {
-                    // Ignore the exception
-                }
-                ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
-                ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
+            var result = await Client.SendAsync<HttpOperationResponse<StorageServiceStats,ServiceGetStatsHeaders>>(_httpRequest, async _httpResponse => {
                 if (_shouldTrace)
                 {
-                    ServiceClientTracing.Error(_invocationId, ex);
+                    ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
                 }
-                _httpRequest.Dispose();
-                if (_httpResponse != null)
+                HttpStatusCode _statusCode = _httpResponse.StatusCode;
+                cancellationToken.ThrowIfCancellationRequested();
+                string _responseContent = null;
+                if ((int)_statusCode != 200)
                 {
-                    _httpResponse.Dispose();
+                    var ex = new ErrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                    try
+                    {
+                        _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        Error _errorBody =  Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
+                        if (_errorBody != null)
+                        {
+                            ex.Body = _errorBody;
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                        // Ignore the exception
+                    }
+                    ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
+                    ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
+                    if (_shouldTrace)
+                    {
+                        ServiceClientTracing.Error(_invocationId, ex);
+                    }
+                    _httpRequest.Dispose();
+                    if (_httpResponse != null)
+                    {
+                        _httpResponse.Dispose();
+                    }
+                    throw ex;
                 }
-                throw ex;
-            }
-            // Create Result
-            var _result = new HttpOperationResponse<StorageServiceStats,ServiceGetStatsHeaders>();
-            _result.Request = _httpRequest;
-            _result.Response = _httpResponse;
-            // Deserialize Response
-            if ((int)_statusCode == 200)
-            {
-                _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                // Create Result
+                var _result = new HttpOperationResponse<StorageServiceStats,ServiceGetStatsHeaders>();
+                _result.Request = _httpRequest;
+                _result.Response = _httpResponse;
+                // Deserialize Response
+                if ((int)_statusCode == 200)
+                {
+                    _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    try
+                    {
+                        StorageServiceStats _tmp_ = null;
+                        if (_httpResponse.Content.Headers.ContentType.MediaType == "application/xml" &&
+                            XmlSerialization.Root(XmlSerialization.ToDeserializer(e => StorageServiceStats.XmlDeserialize(e)))(XElement.Parse(_responseContent), out _tmp_))
+                        {
+                            _result.Body = _tmp_;
+                        }
+                        else
+                        {
+                            _result.Body = Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<StorageServiceStats>(_responseContent, Client.DeserializationSettings);
+                        }
+                    }
+                    catch (JsonException ex)
+                    {
+                        _httpRequest.Dispose();
+                        if (_httpResponse != null)
+                        {
+                            _httpResponse.Dispose();
+                        }
+                        throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                    }
+                }
                 try
                 {
-                    StorageServiceStats _tmp_ = null;
-                    if (_httpResponse.Content.Headers.ContentType.MediaType == "application/xml" &&
-                        XmlSerialization.Root(XmlSerialization.ToDeserializer(e => StorageServiceStats.XmlDeserialize(e)))(XElement.Parse(_responseContent), out _tmp_))
-                    {
-                        _result.Body = _tmp_;
-                    }
-                    else
-                    {
-                        _result.Body = Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<StorageServiceStats>(_responseContent, Client.DeserializationSettings);
-                    }
+                    _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ServiceGetStatsHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
                 }
                 catch (JsonException ex)
                 {
@@ -648,27 +666,15 @@ namespace BlobStorageTest.Client
                     {
                         _httpResponse.Dispose();
                     }
-                    throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                    throw new SerializationException("Unable to deserialize the headers.", _httpResponse.GetHeadersAsJson().ToString(), ex);
                 }
-            }
-            try
-            {
-                _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ServiceGetStatsHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
-            }
-            catch (JsonException ex)
-            {
-                _httpRequest.Dispose();
-                if (_httpResponse != null)
+                if (_shouldTrace)
                 {
-                    _httpResponse.Dispose();
+                    ServiceClientTracing.Exit(_invocationId, _result);
                 }
-                throw new SerializationException("Unable to deserialize the headers.", _httpResponse.GetHeadersAsJson().ToString(), ex);
-            }
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.Exit(_invocationId, _result);
-            }
-            return _result;
+                return _result;
+            }, cancellationToken).ConfigureAwait(false);
+            return (result.Content as ParsedHttpContent<HttpOperationResponse<StorageServiceStats,ServiceGetStatsHeaders>>).ParsedObject;
         }
 
         /// <summary>
@@ -794,7 +800,7 @@ namespace BlobStorageTest.Client
             }
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
-            HttpResponseMessage _httpResponse = null;
+            
             _httpRequest.Method = new HttpMethod("GET");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
@@ -836,63 +842,77 @@ namespace BlobStorageTest.Client
                 ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
             }
             cancellationToken.ThrowIfCancellationRequested();
-            _httpResponse = await Client.HttpClient.SendAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
-            }
-            HttpStatusCode _statusCode = _httpResponse.StatusCode;
-            cancellationToken.ThrowIfCancellationRequested();
-            string _responseContent = null;
-            if ((int)_statusCode != 200)
-            {
-                var ex = new ErrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
-                try
-                {
-                    _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    Error _errorBody =  Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
-                    if (_errorBody != null)
-                    {
-                        ex.Body = _errorBody;
-                    }
-                }
-                catch (JsonException)
-                {
-                    // Ignore the exception
-                }
-                ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
-                ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
+            var result = await Client.SendAsync<HttpOperationResponse<ContainerEnumerationResults,ServiceListContainersHeaders>>(_httpRequest, async _httpResponse => {
                 if (_shouldTrace)
                 {
-                    ServiceClientTracing.Error(_invocationId, ex);
+                    ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
                 }
-                _httpRequest.Dispose();
-                if (_httpResponse != null)
+                HttpStatusCode _statusCode = _httpResponse.StatusCode;
+                cancellationToken.ThrowIfCancellationRequested();
+                string _responseContent = null;
+                if ((int)_statusCode != 200)
                 {
-                    _httpResponse.Dispose();
+                    var ex = new ErrorException(string.Format("Operation returned an invalid status code '{0}'", _statusCode));
+                    try
+                    {
+                        _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        Error _errorBody =  Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
+                        if (_errorBody != null)
+                        {
+                            ex.Body = _errorBody;
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                        // Ignore the exception
+                    }
+                    ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
+                    ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
+                    if (_shouldTrace)
+                    {
+                        ServiceClientTracing.Error(_invocationId, ex);
+                    }
+                    _httpRequest.Dispose();
+                    if (_httpResponse != null)
+                    {
+                        _httpResponse.Dispose();
+                    }
+                    throw ex;
                 }
-                throw ex;
-            }
-            // Create Result
-            var _result = new HttpOperationResponse<ContainerEnumerationResults,ServiceListContainersHeaders>();
-            _result.Request = _httpRequest;
-            _result.Response = _httpResponse;
-            // Deserialize Response
-            if ((int)_statusCode == 200)
-            {
-                _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                // Create Result
+                var _result = new HttpOperationResponse<ContainerEnumerationResults,ServiceListContainersHeaders>();
+                _result.Request = _httpRequest;
+                _result.Response = _httpResponse;
+                // Deserialize Response
+                if ((int)_statusCode == 200)
+                {
+                    _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    try
+                    {
+                        ContainerEnumerationResults _tmp_ = null;
+                        if (_httpResponse.Content.Headers.ContentType.MediaType == "application/xml" &&
+                            XmlSerialization.Root(XmlSerialization.ToDeserializer(e => ContainerEnumerationResults.XmlDeserialize(e)))(XElement.Parse(_responseContent), out _tmp_))
+                        {
+                            _result.Body = _tmp_;
+                        }
+                        else
+                        {
+                            _result.Body = Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<ContainerEnumerationResults>(_responseContent, Client.DeserializationSettings);
+                        }
+                    }
+                    catch (JsonException ex)
+                    {
+                        _httpRequest.Dispose();
+                        if (_httpResponse != null)
+                        {
+                            _httpResponse.Dispose();
+                        }
+                        throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                    }
+                }
                 try
                 {
-                    ContainerEnumerationResults _tmp_ = null;
-                    if (_httpResponse.Content.Headers.ContentType.MediaType == "application/xml" &&
-                        XmlSerialization.Root(XmlSerialization.ToDeserializer(e => ContainerEnumerationResults.XmlDeserialize(e)))(XElement.Parse(_responseContent), out _tmp_))
-                    {
-                        _result.Body = _tmp_;
-                    }
-                    else
-                    {
-                        _result.Body = Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<ContainerEnumerationResults>(_responseContent, Client.DeserializationSettings);
-                    }
+                    _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ServiceListContainersHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
                 }
                 catch (JsonException ex)
                 {
@@ -901,27 +921,15 @@ namespace BlobStorageTest.Client
                     {
                         _httpResponse.Dispose();
                     }
-                    throw new SerializationException("Unable to deserialize the response.", _responseContent, ex);
+                    throw new SerializationException("Unable to deserialize the headers.", _httpResponse.GetHeadersAsJson().ToString(), ex);
                 }
-            }
-            try
-            {
-                _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ServiceListContainersHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
-            }
-            catch (JsonException ex)
-            {
-                _httpRequest.Dispose();
-                if (_httpResponse != null)
+                if (_shouldTrace)
                 {
-                    _httpResponse.Dispose();
+                    ServiceClientTracing.Exit(_invocationId, _result);
                 }
-                throw new SerializationException("Unable to deserialize the headers.", _httpResponse.GetHeadersAsJson().ToString(), ex);
-            }
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.Exit(_invocationId, _result);
-            }
-            return _result;
+                return _result;
+            }, cancellationToken).ConfigureAwait(false);
+            return (result.Content as ParsedHttpContent<HttpOperationResponse<ContainerEnumerationResults,ServiceListContainersHeaders>>).ParsedObject;
         }
 
     }
