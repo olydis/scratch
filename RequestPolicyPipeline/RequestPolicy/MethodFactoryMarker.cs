@@ -12,7 +12,7 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
     // methodFactory parameter, then the MethodFactoryMarker is ignored as the linked-list of Policy objects is created.
     public sealed class MethodFactoryMarker : IFactory
     {
-        public MethodFactoryMarker Instance { get; private set; } = new MethodFactoryMarker();
+        public static MethodFactoryMarker Instance { get; private set; } = new MethodFactoryMarker();
 
         private MethodFactoryMarker() { }
 
