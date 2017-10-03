@@ -13,8 +13,6 @@ namespace Microsoft.Rest
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Rest.TransientFaultHandling;
-    using System.Text.RegularExpressions;
     using Microsoft.Rest.ClientRuntime.RequestPolicy;
 
     public class ParsedHttpContent<T> : HttpContent
