@@ -31,6 +31,45 @@ namespace BlobStorageTest.Client.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the BlobProperties class.
+        /// </summary>
+        /// <param name="contentLength">Size in bytes</param>
+        /// <param name="leaseStatus">Possible values include: 'locked',
+        /// 'unlocked'</param>
+        /// <param name="leaseState">Possible values include: 'available',
+        /// 'leased', 'expired', 'breaking', 'broken'</param>
+        /// <param name="leaseDuration">Possible values include: 'infinite',
+        /// 'fixed'</param>
+        /// <param name="copyStatus">Possible values include: 'pending',
+        /// 'success', 'aborted', 'failed'</param>
+        public BlobProperties(System.DateTime? lastModified = default(System.DateTime?), string etag = default(string), int? contentLength = default(int?), string contentType = default(string), string contentEncoding = default(string), string contentLanguage = default(string), string contentMD5 = default(string), string contentDisposition = default(string), string cacheControl = default(string), string xMsBlobSequenceNumber = default(string), string blobType = default(string), LeaseStatusType? leaseStatus = default(LeaseStatusType?), LeaseStateType? leaseState = default(LeaseStateType?), LeaseDurationType? leaseDuration = default(LeaseDurationType?), string copyId = default(string), CopyStatusType? copyStatus = default(CopyStatusType?), string copySource = default(string), string copyProgress = default(string), System.DateTime? copyCompletionTime = default(System.DateTime?), string copyStatusDescription = default(string), bool? serverEncrypted = default(bool?), bool? incrementalCopy = default(bool?))
+        {
+            LastModified = lastModified;
+            Etag = etag;
+            ContentLength = contentLength;
+            ContentType = contentType;
+            ContentEncoding = contentEncoding;
+            ContentLanguage = contentLanguage;
+            ContentMD5 = contentMD5;
+            ContentDisposition = contentDisposition;
+            CacheControl = cacheControl;
+            XMsBlobSequenceNumber = xMsBlobSequenceNumber;
+            BlobType = blobType;
+            LeaseStatus = leaseStatus;
+            LeaseState = leaseState;
+            LeaseDuration = leaseDuration;
+            CopyId = copyId;
+            CopyStatus = copyStatus;
+            CopySource = copySource;
+            CopyProgress = copyProgress;
+            CopyCompletionTime = copyCompletionTime;
+            CopyStatusDescription = copyStatusDescription;
+            ServerEncrypted = serverEncrypted;
+            IncrementalCopy = incrementalCopy;
+            CustomInit();
+        }
+
+        /// <summary>
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();

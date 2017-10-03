@@ -11,12 +11,12 @@
 namespace BlobStorageTest.Client
 {
     using Microsoft.Rest;
-    using Microsoft.Rest.Azure;
     using Microsoft.Rest.Serialization;
     using Models;
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
@@ -28,7 +28,7 @@ namespace BlobStorageTest.Client
     /// <summary>
     /// ContainerOperations operations.
     /// </summary>
-    internal partial class ContainerOperations : IServiceOperationsX<AzureBlobStorageClient>, IContainerOperations
+    public partial class ContainerOperations : IServiceOperationsX<AzureBlobStorageClient>, IContainerOperations
     {
         /// <summary>
         /// Initializes a new instance of the ContainerOperations class.
@@ -39,7 +39,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="System.ArgumentNullException">
         /// Thrown when a required parameter is null
         /// </exception>
-        internal ContainerOperations(AzureBlobStorageClient client)
+        public ContainerOperations(AzureBlobStorageClient client)
         {
             if (client == null)
             {
@@ -98,7 +98,7 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<ContainerCreateHeaders>> CreateWithHttpMessagesAsync(string container, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string access = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationHeaderResponse<ContainerCreateHeaders>> CreateWithHttpMessagesAsync(string container, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string access = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (Client.AccountName == null)
             {
@@ -151,7 +151,7 @@ namespace BlobStorageTest.Client
             }
             if (_queryParameters.Count > 0)
             {
-                _url += (_url.Contains("?") ? "&" : "?") + string.Join("&", _queryParameters);
+                _url += "?" + string.Join("&", _queryParameters);
             }
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
@@ -159,10 +159,6 @@ namespace BlobStorageTest.Client
             _httpRequest.Method = new HttpMethod("PUT");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
-            if (Client.GenerateClientRequestId != null && Client.GenerateClientRequestId.Value)
-            {
-                _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
-            }
             if (access != null)
             {
                 if (_httpRequest.Headers.Contains("x-ms-blob-public-access"))
@@ -186,14 +182,6 @@ namespace BlobStorageTest.Client
                     _httpRequest.Headers.Remove("x-ms-client-request-id");
                 }
                 _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", Client.RequestId);
-            }
-            if (Client.AcceptLanguage != null)
-            {
-                if (_httpRequest.Headers.Contains("accept-language"))
-                {
-                    _httpRequest.Headers.Remove("accept-language");
-                }
-                _httpRequest.Headers.TryAddWithoutValidation("accept-language", Client.AcceptLanguage);
             }
 
             if (xMsMeta != null)
@@ -223,12 +211,6 @@ namespace BlobStorageTest.Client
 
             // Serialize Request
             string _requestContent = null;
-            // Set Credentials
-            if (Client.Credentials != null)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            }
             // Send Request
             if (_shouldTrace)
             {
@@ -273,13 +255,9 @@ namespace BlobStorageTest.Client
                 throw ex;
             }
             // Create Result
-            var _result = new AzureOperationHeaderResponse<ContainerCreateHeaders>();
+            var _result = new HttpOperationHeaderResponse<ContainerCreateHeaders>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
-            if (_httpResponse.Headers.Contains("x-ms-request-id"))
-            {
-                _result.RequestId = _httpResponse.Headers.GetValues("x-ms-request-id").FirstOrDefault();
-            }
             try
             {
                 _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ContainerCreateHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
@@ -335,7 +313,7 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<ContainerGetPropertiesHeaders>> GetPropertiesWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationHeaderResponse<ContainerGetPropertiesHeaders>> GetPropertiesWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (Client.AccountName == null)
             {
@@ -380,7 +358,7 @@ namespace BlobStorageTest.Client
             }
             if (_queryParameters.Count > 0)
             {
-                _url += (_url.Contains("?") ? "&" : "?") + string.Join("&", _queryParameters);
+                _url += "?" + string.Join("&", _queryParameters);
             }
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
@@ -388,10 +366,6 @@ namespace BlobStorageTest.Client
             _httpRequest.Method = new HttpMethod("GET");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
-            if (Client.GenerateClientRequestId != null && Client.GenerateClientRequestId.Value)
-            {
-                _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
-            }
             if (leaseId != null)
             {
                 if (_httpRequest.Headers.Contains("x-ms-lease-id"))
@@ -416,14 +390,6 @@ namespace BlobStorageTest.Client
                 }
                 _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", Client.RequestId);
             }
-            if (Client.AcceptLanguage != null)
-            {
-                if (_httpRequest.Headers.Contains("accept-language"))
-                {
-                    _httpRequest.Headers.Remove("accept-language");
-                }
-                _httpRequest.Headers.TryAddWithoutValidation("accept-language", Client.AcceptLanguage);
-            }
 
 
             if (customHeaders != null)
@@ -440,12 +406,6 @@ namespace BlobStorageTest.Client
 
             // Serialize Request
             string _requestContent = null;
-            // Set Credentials
-            if (Client.Credentials != null)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            }
             // Send Request
             if (_shouldTrace)
             {
@@ -490,13 +450,9 @@ namespace BlobStorageTest.Client
                 throw ex;
             }
             // Create Result
-            var _result = new AzureOperationHeaderResponse<ContainerGetPropertiesHeaders>();
+            var _result = new HttpOperationHeaderResponse<ContainerGetPropertiesHeaders>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
-            if (_httpResponse.Headers.Contains("x-ms-request-id"))
-            {
-                _result.RequestId = _httpResponse.Headers.GetValues("x-ms-request-id").FirstOrDefault();
-            }
             try
             {
                 _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ContainerGetPropertiesHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
@@ -568,7 +524,7 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationResponse> DeleteWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse> DeleteWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (Client.AccountName == null)
             {
@@ -615,7 +571,7 @@ namespace BlobStorageTest.Client
             }
             if (_queryParameters.Count > 0)
             {
-                _url += (_url.Contains("?") ? "&" : "?") + string.Join("&", _queryParameters);
+                _url += "?" + string.Join("&", _queryParameters);
             }
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
@@ -623,10 +579,6 @@ namespace BlobStorageTest.Client
             _httpRequest.Method = new HttpMethod("DELETE");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
-            if (Client.GenerateClientRequestId != null && Client.GenerateClientRequestId.Value)
-            {
-                _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
-            }
             if (leaseId != null)
             {
                 if (_httpRequest.Headers.Contains("x-ms-lease-id"))
@@ -667,14 +619,6 @@ namespace BlobStorageTest.Client
                 }
                 _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", Client.RequestId);
             }
-            if (Client.AcceptLanguage != null)
-            {
-                if (_httpRequest.Headers.Contains("accept-language"))
-                {
-                    _httpRequest.Headers.Remove("accept-language");
-                }
-                _httpRequest.Headers.TryAddWithoutValidation("accept-language", Client.AcceptLanguage);
-            }
 
 
             if (customHeaders != null)
@@ -691,12 +635,6 @@ namespace BlobStorageTest.Client
 
             // Serialize Request
             string _requestContent = null;
-            // Set Credentials
-            if (Client.Credentials != null)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            }
             // Send Request
             if (_shouldTrace)
             {
@@ -741,13 +679,9 @@ namespace BlobStorageTest.Client
                 throw ex;
             }
             // Create Result
-            var _result = new AzureOperationResponse();
+            var _result = new HttpOperationResponse();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
-            if (_httpResponse.Headers.Contains("x-ms-request-id"))
-            {
-                _result.RequestId = _httpResponse.Headers.GetValues("x-ms-request-id").FirstOrDefault();
-            }
             if (_shouldTrace)
             {
                 ServiceClientTracing.Exit(_invocationId, _result);
@@ -789,7 +723,7 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<ContainerGetMetadataHeaders>> GetMetadataWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationHeaderResponse<ContainerGetMetadataHeaders>> GetMetadataWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (Client.AccountName == null)
             {
@@ -840,7 +774,7 @@ namespace BlobStorageTest.Client
             }
             if (_queryParameters.Count > 0)
             {
-                _url += (_url.Contains("?") ? "&" : "?") + string.Join("&", _queryParameters);
+                _url += "?" + string.Join("&", _queryParameters);
             }
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
@@ -848,10 +782,6 @@ namespace BlobStorageTest.Client
             _httpRequest.Method = new HttpMethod("GET");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
-            if (Client.GenerateClientRequestId != null && Client.GenerateClientRequestId.Value)
-            {
-                _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
-            }
             if (leaseId != null)
             {
                 if (_httpRequest.Headers.Contains("x-ms-lease-id"))
@@ -876,14 +806,6 @@ namespace BlobStorageTest.Client
                 }
                 _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", Client.RequestId);
             }
-            if (Client.AcceptLanguage != null)
-            {
-                if (_httpRequest.Headers.Contains("accept-language"))
-                {
-                    _httpRequest.Headers.Remove("accept-language");
-                }
-                _httpRequest.Headers.TryAddWithoutValidation("accept-language", Client.AcceptLanguage);
-            }
 
 
             if (customHeaders != null)
@@ -900,12 +822,6 @@ namespace BlobStorageTest.Client
 
             // Serialize Request
             string _requestContent = null;
-            // Set Credentials
-            if (Client.Credentials != null)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            }
             // Send Request
             if (_shouldTrace)
             {
@@ -950,13 +866,9 @@ namespace BlobStorageTest.Client
                 throw ex;
             }
             // Create Result
-            var _result = new AzureOperationHeaderResponse<ContainerGetMetadataHeaders>();
+            var _result = new HttpOperationHeaderResponse<ContainerGetMetadataHeaders>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
-            if (_httpResponse.Headers.Contains("x-ms-request-id"))
-            {
-                _result.RequestId = _httpResponse.Headers.GetValues("x-ms-request-id").FirstOrDefault();
-            }
             try
             {
                 _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ContainerGetMetadataHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
@@ -1034,7 +946,7 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<ContainerSetMetadataHeaders>> SetMetadataWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationHeaderResponse<ContainerSetMetadataHeaders>> SetMetadataWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (Client.AccountName == null)
             {
@@ -1094,7 +1006,7 @@ namespace BlobStorageTest.Client
             }
             if (_queryParameters.Count > 0)
             {
-                _url += (_url.Contains("?") ? "&" : "?") + string.Join("&", _queryParameters);
+                _url += "?" + string.Join("&", _queryParameters);
             }
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
@@ -1102,10 +1014,6 @@ namespace BlobStorageTest.Client
             _httpRequest.Method = new HttpMethod("PUT");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
-            if (Client.GenerateClientRequestId != null && Client.GenerateClientRequestId.Value)
-            {
-                _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
-            }
             if (leaseId != null)
             {
                 if (_httpRequest.Headers.Contains("x-ms-lease-id"))
@@ -1138,14 +1046,6 @@ namespace BlobStorageTest.Client
                 }
                 _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", Client.RequestId);
             }
-            if (Client.AcceptLanguage != null)
-            {
-                if (_httpRequest.Headers.Contains("accept-language"))
-                {
-                    _httpRequest.Headers.Remove("accept-language");
-                }
-                _httpRequest.Headers.TryAddWithoutValidation("accept-language", Client.AcceptLanguage);
-            }
 
             if (xMsMeta != null)
             {
@@ -1174,12 +1074,6 @@ namespace BlobStorageTest.Client
 
             // Serialize Request
             string _requestContent = null;
-            // Set Credentials
-            if (Client.Credentials != null)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            }
             // Send Request
             if (_shouldTrace)
             {
@@ -1224,13 +1118,9 @@ namespace BlobStorageTest.Client
                 throw ex;
             }
             // Create Result
-            var _result = new AzureOperationHeaderResponse<ContainerSetMetadataHeaders>();
+            var _result = new HttpOperationHeaderResponse<ContainerSetMetadataHeaders>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
-            if (_httpResponse.Headers.Contains("x-ms-request-id"))
-            {
-                _result.RequestId = _httpResponse.Headers.GetValues("x-ms-request-id").FirstOrDefault();
-            }
             try
             {
                 _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ContainerSetMetadataHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
@@ -1285,7 +1175,7 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationResponse<IList<SignedIdentifier>,ContainerGetAclHeaders>> GetAclWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse<IList<SignedIdentifier>,ContainerGetAclHeaders>> GetAclWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (Client.AccountName == null)
             {
@@ -1336,7 +1226,7 @@ namespace BlobStorageTest.Client
             }
             if (_queryParameters.Count > 0)
             {
-                _url += (_url.Contains("?") ? "&" : "?") + string.Join("&", _queryParameters);
+                _url += "?" + string.Join("&", _queryParameters);
             }
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
@@ -1344,10 +1234,6 @@ namespace BlobStorageTest.Client
             _httpRequest.Method = new HttpMethod("GET");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
-            if (Client.GenerateClientRequestId != null && Client.GenerateClientRequestId.Value)
-            {
-                _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
-            }
             if (leaseId != null)
             {
                 if (_httpRequest.Headers.Contains("x-ms-lease-id"))
@@ -1372,14 +1258,6 @@ namespace BlobStorageTest.Client
                 }
                 _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", Client.RequestId);
             }
-            if (Client.AcceptLanguage != null)
-            {
-                if (_httpRequest.Headers.Contains("accept-language"))
-                {
-                    _httpRequest.Headers.Remove("accept-language");
-                }
-                _httpRequest.Headers.TryAddWithoutValidation("accept-language", Client.AcceptLanguage);
-            }
 
 
             if (customHeaders != null)
@@ -1396,12 +1274,6 @@ namespace BlobStorageTest.Client
 
             // Serialize Request
             string _requestContent = null;
-            // Set Credentials
-            if (Client.Credentials != null)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            }
             // Send Request
             if (_shouldTrace)
             {
@@ -1446,13 +1318,9 @@ namespace BlobStorageTest.Client
                 throw ex;
             }
             // Create Result
-            var _result = new AzureOperationResponse<IList<SignedIdentifier>,ContainerGetAclHeaders>();
+            var _result = new HttpOperationResponse<IList<SignedIdentifier>,ContainerGetAclHeaders>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
-            if (_httpResponse.Headers.Contains("x-ms-request-id"))
-            {
-                _result.RequestId = _httpResponse.Headers.GetValues("x-ms-request-id").FirstOrDefault();
-            }
             // Deserialize Response
             if ((int)_statusCode == 200)
             {
@@ -1546,7 +1414,7 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<ContainerSetAclHeaders>> SetAclWithHttpMessagesAsync(string container, IList<SignedIdentifier> containerAcl = default(IList<SignedIdentifier>), int? timeout = default(int?), string leaseId = default(string), string access = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationHeaderResponse<ContainerSetAclHeaders>> SetAclWithHttpMessagesAsync(string container, IList<SignedIdentifier> containerAcl = default(IList<SignedIdentifier>), int? timeout = default(int?), string leaseId = default(string), string access = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (Client.AccountName == null)
             {
@@ -1611,7 +1479,7 @@ namespace BlobStorageTest.Client
             }
             if (_queryParameters.Count > 0)
             {
-                _url += (_url.Contains("?") ? "&" : "?") + string.Join("&", _queryParameters);
+                _url += "?" + string.Join("&", _queryParameters);
             }
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
@@ -1619,10 +1487,6 @@ namespace BlobStorageTest.Client
             _httpRequest.Method = new HttpMethod("PUT");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
-            if (Client.GenerateClientRequestId != null && Client.GenerateClientRequestId.Value)
-            {
-                _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
-            }
             if (leaseId != null)
             {
                 if (_httpRequest.Headers.Contains("x-ms-lease-id"))
@@ -1671,14 +1535,6 @@ namespace BlobStorageTest.Client
                 }
                 _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", Client.RequestId);
             }
-            if (Client.AcceptLanguage != null)
-            {
-                if (_httpRequest.Headers.Contains("accept-language"))
-                {
-                    _httpRequest.Headers.Remove("accept-language");
-                }
-                _httpRequest.Headers.TryAddWithoutValidation("accept-language", Client.AcceptLanguage);
-            }
 
 
             if (customHeaders != null)
@@ -1700,12 +1556,6 @@ namespace BlobStorageTest.Client
                 _requestContent = new XElement("SignedIdentifiers", System.Linq.Enumerable.Select(containerAcl, x => x.XmlSerialize(new XElement("SignedIdentifier")))).ToString();
                 _httpRequest.Content = new StringContent(_requestContent, System.Text.Encoding.UTF8);
                 _httpRequest.Content.Headers.ContentType =System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/xml; charset=utf-8");
-            }
-            // Set Credentials
-            if (Client.Credentials != null)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
             }
             // Send Request
             if (_shouldTrace)
@@ -1751,13 +1601,9 @@ namespace BlobStorageTest.Client
                 throw ex;
             }
             // Create Result
-            var _result = new AzureOperationHeaderResponse<ContainerSetAclHeaders>();
+            var _result = new HttpOperationHeaderResponse<ContainerSetAclHeaders>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
-            if (_httpResponse.Headers.Contains("x-ms-request-id"))
-            {
-                _result.RequestId = _httpResponse.Headers.GetValues("x-ms-request-id").FirstOrDefault();
-            }
             try
             {
                 _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ContainerSetAclHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
@@ -1850,7 +1696,7 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationHeaderResponse<ContainerLeaseHeaders>> LeaseWithHttpMessagesAsync(string container, string action, int? timeout = default(int?), string leaseId = default(string), int? breakPeriod = default(int?), int? duration = default(int?), string proposedLeaseId = default(string), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationHeaderResponse<ContainerLeaseHeaders>> LeaseWithHttpMessagesAsync(string container, string action, int? timeout = default(int?), string leaseId = default(string), int? breakPeriod = default(int?), int? duration = default(int?), string proposedLeaseId = default(string), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (Client.AccountName == null)
             {
@@ -1912,7 +1758,7 @@ namespace BlobStorageTest.Client
             }
             if (_queryParameters.Count > 0)
             {
-                _url += (_url.Contains("?") ? "&" : "?") + string.Join("&", _queryParameters);
+                _url += "?" + string.Join("&", _queryParameters);
             }
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
@@ -1920,10 +1766,6 @@ namespace BlobStorageTest.Client
             _httpRequest.Method = new HttpMethod("PUT");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
-            if (Client.GenerateClientRequestId != null && Client.GenerateClientRequestId.Value)
-            {
-                _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
-            }
             if (leaseId != null)
             {
                 if (_httpRequest.Headers.Contains("x-ms-lease-id"))
@@ -2004,14 +1846,6 @@ namespace BlobStorageTest.Client
                 }
                 _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", Client.RequestId);
             }
-            if (Client.AcceptLanguage != null)
-            {
-                if (_httpRequest.Headers.Contains("accept-language"))
-                {
-                    _httpRequest.Headers.Remove("accept-language");
-                }
-                _httpRequest.Headers.TryAddWithoutValidation("accept-language", Client.AcceptLanguage);
-            }
 
 
             if (customHeaders != null)
@@ -2028,12 +1862,6 @@ namespace BlobStorageTest.Client
 
             // Serialize Request
             string _requestContent = null;
-            // Set Credentials
-            if (Client.Credentials != null)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            }
             // Send Request
             if (_shouldTrace)
             {
@@ -2078,13 +1906,9 @@ namespace BlobStorageTest.Client
                 throw ex;
             }
             // Create Result
-            var _result = new AzureOperationHeaderResponse<ContainerLeaseHeaders>();
+            var _result = new HttpOperationHeaderResponse<ContainerLeaseHeaders>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
-            if (_httpResponse.Headers.Contains("x-ms-request-id"))
-            {
-                _result.RequestId = _httpResponse.Headers.GetValues("x-ms-request-id").FirstOrDefault();
-            }
             try
             {
                 _result.Headers = _httpResponse.GetHeadersAsJson().ToObject<ContainerLeaseHeaders>(JsonSerializer.Create(Client.DeserializationSettings));
@@ -2171,7 +1995,7 @@ namespace BlobStorageTest.Client
         /// <return>
         /// A response object containing the response body and response headers.
         /// </return>
-        public async Task<AzureOperationResponse<BlobEnumerationResults,ContainerListBlobsHeaders>> ListBlobsWithHttpMessagesAsync(string container, string prefix = default(string), string delimiter = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<HttpOperationResponse<BlobEnumerationResults,ContainerListBlobsHeaders>> ListBlobsWithHttpMessagesAsync(string container, string prefix = default(string), string delimiter = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (Client.AccountName == null)
             {
@@ -2250,7 +2074,7 @@ namespace BlobStorageTest.Client
             }
             if (_queryParameters.Count > 0)
             {
-                _url += (_url.Contains("?") ? "&" : "?") + string.Join("&", _queryParameters);
+                _url += "?" + string.Join("&", _queryParameters);
             }
             // Create HTTP transport objects
             var _httpRequest = new HttpRequestMessage();
@@ -2258,10 +2082,6 @@ namespace BlobStorageTest.Client
             _httpRequest.Method = new HttpMethod("GET");
             _httpRequest.RequestUri = new System.Uri(_url);
             // Set Headers
-            if (Client.GenerateClientRequestId != null && Client.GenerateClientRequestId.Value)
-            {
-                _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", System.Guid.NewGuid().ToString());
-            }
             if (Client.Version != null)
             {
                 if (_httpRequest.Headers.Contains("x-ms-version"))
@@ -2277,14 +2097,6 @@ namespace BlobStorageTest.Client
                     _httpRequest.Headers.Remove("x-ms-client-request-id");
                 }
                 _httpRequest.Headers.TryAddWithoutValidation("x-ms-client-request-id", Client.RequestId);
-            }
-            if (Client.AcceptLanguage != null)
-            {
-                if (_httpRequest.Headers.Contains("accept-language"))
-                {
-                    _httpRequest.Headers.Remove("accept-language");
-                }
-                _httpRequest.Headers.TryAddWithoutValidation("accept-language", Client.AcceptLanguage);
             }
 
 
@@ -2302,12 +2114,6 @@ namespace BlobStorageTest.Client
 
             // Serialize Request
             string _requestContent = null;
-            // Set Credentials
-            if (Client.Credentials != null)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                await Client.Credentials.ProcessHttpRequestAsync(_httpRequest, cancellationToken).ConfigureAwait(false);
-            }
             // Send Request
             if (_shouldTrace)
             {
@@ -2352,13 +2158,9 @@ namespace BlobStorageTest.Client
                 throw ex;
             }
             // Create Result
-            var _result = new AzureOperationResponse<BlobEnumerationResults,ContainerListBlobsHeaders>();
+            var _result = new HttpOperationResponse<BlobEnumerationResults,ContainerListBlobsHeaders>();
             _result.Request = _httpRequest;
             _result.Response = _httpResponse;
-            if (_httpResponse.Headers.Contains("x-ms-request-id"))
-            {
-                _result.RequestId = _httpResponse.Headers.GetValues("x-ms-request-id").FirstOrDefault();
-            }
             // Deserialize Response
             if ((int)_statusCode == 200)
             {

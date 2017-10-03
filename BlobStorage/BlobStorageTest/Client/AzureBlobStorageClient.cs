@@ -11,13 +11,11 @@
 namespace BlobStorageTest.Client
 {
     using Microsoft.Rest;
-    using Microsoft.Rest.Azure;
     using Microsoft.Rest.Serialization;
     using Models;
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Net;
     using System.Net.Http;
 
@@ -39,11 +37,6 @@ namespace BlobStorageTest.Client
         public JsonSerializerSettings DeserializationSettings { get; private set; }
 
         /// <summary>
-        /// Credentials needed for the client to connect to Azure.
-        /// </summary>
-        public ServiceClientCredentials Credentials { get; private set; }
-
-        /// <summary>
         /// The Azure storage account to use.
         /// </summary>
         public string AccountName { get; set; }
@@ -61,26 +54,9 @@ namespace BlobStorageTest.Client
         public string RequestId { get; set; }
 
         /// <summary>
-        /// Gets or sets the preferred language for the response.
+        /// Gets the IService.
         /// </summary>
-        public string AcceptLanguage { get; set; }
-
-        /// <summary>
-        /// Gets or sets the retry timeout in seconds for Long Running Operations.
-        /// Default value is 30.
-        /// </summary>
-        public int? LongRunningOperationRetryTimeout { get; set; }
-
-        /// <summary>
-        /// When set to true a unique x-ms-client-request-id value is generated and
-        /// included in each request. Default is true.
-        /// </summary>
-        public bool? GenerateClientRequestId { get; set; }
-
-        /// <summary>
-        /// Gets the IServiceOperations.
-        /// </summary>
-        public virtual IServiceOperations Service { get; private set; }
+        public virtual IService Service { get; private set; }
 
         /// <summary>
         /// Gets the IContainerOperations.
@@ -88,19 +64,19 @@ namespace BlobStorageTest.Client
         public virtual IContainerOperations Container { get; private set; }
 
         /// <summary>
-        /// Gets the IBlobsOperations.
+        /// Gets the IBlobs.
         /// </summary>
-        public virtual IBlobsOperations Blobs { get; private set; }
+        public virtual IBlobs Blobs { get; private set; }
 
         /// <summary>
-        /// Gets the IBlockBlobsOperations.
+        /// Gets the IBlockBlobs.
         /// </summary>
-        public virtual IBlockBlobsOperations BlockBlobs { get; private set; }
+        public virtual IBlockBlobs BlockBlobs { get; private set; }
 
         /// <summary>
-        /// Gets the IPageBlobsOperations.
+        /// Gets the IPageBlobs.
         /// </summary>
-        public virtual IPageBlobsOperations PageBlobs { get; private set; }
+        public virtual IPageBlobs PageBlobs { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the AzureBlobStorageClient class.
@@ -108,7 +84,7 @@ namespace BlobStorageTest.Client
         /// <param name='handlers'>
         /// Optional. The delegating handlers to add to the http client pipeline.
         /// </param>
-        protected AzureBlobStorageClient(params DelegatingHandler[] handlers) : base(handlers)
+        public AzureBlobStorageClient(params DelegatingHandler[] handlers) : base(handlers)
         {
             Initialize();
         }
@@ -122,83 +98,27 @@ namespace BlobStorageTest.Client
         /// <param name='handlers'>
         /// Optional. The delegating handlers to add to the http client pipeline.
         /// </param>
-        protected AzureBlobStorageClient(HttpClientHandler rootHandler, params DelegatingHandler[] handlers) : base(rootHandler, handlers)
+        public AzureBlobStorageClient(HttpClientHandler rootHandler, params DelegatingHandler[] handlers) : base(rootHandler, handlers)
         {
             Initialize();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the AzureBlobStorageClient class.
-        /// </summary>
-        /// <param name='credentials'>
-        /// Required. Credentials needed for the client to connect to Azure.
-        /// </param>
-        /// <param name='handlers'>
-        /// Optional. The delegating handlers to add to the http client pipeline.
-        /// </param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown when a required parameter is null
-        /// </exception>
-        public AzureBlobStorageClient(ServiceClientCredentials credentials, params DelegatingHandler[] handlers) : this(handlers)
-        {
-            if (credentials == null)
-            {
-                // throw new System.ArgumentNullException("credentials");
-            }
-            Credentials = credentials;
-            if (Credentials != null)
-            {
-                // Credentials.InitializeServiceClient(this);
-            }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the AzureBlobStorageClient class.
-        /// </summary>
-        /// <param name='credentials'>
-        /// Required. Credentials needed for the client to connect to Azure.
-        /// </param>
-        /// <param name='rootHandler'>
-        /// Optional. The http client handler used to handle http transport.
-        /// </param>
-        /// <param name='handlers'>
-        /// Optional. The delegating handlers to add to the http client pipeline.
-        /// </param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown when a required parameter is null
-        /// </exception>
-        public AzureBlobStorageClient(ServiceClientCredentials credentials, HttpClientHandler rootHandler, params DelegatingHandler[] handlers) : this(rootHandler, handlers)
-        {
-            if (credentials == null)
-            {
-                // throw new System.ArgumentNullException("credentials");
-            }
-            Credentials = credentials;
-            if (Credentials != null)
-            {
-                // Credentials.InitializeServiceClient(this);
-            }
         }
 
         /// <summary>
         /// An optional partial-method to perform custom initialization.
-        /// </summary>
+        ///</summary>
         partial void CustomInitialize();
         /// <summary>
         /// Initializes client properties.
         /// </summary>
         private void Initialize()
         {
-            Service = new ServiceOperations(this);
+            Service = new Service(this);
             Container = new ContainerOperations(this);
-            Blobs = new BlobsOperations(this);
-            BlockBlobs = new BlockBlobsOperations(this);
-            PageBlobs = new PageBlobsOperations(this);
+            Blobs = new Blobs(this);
+            BlockBlobs = new BlockBlobs(this);
+            PageBlobs = new PageBlobs(this);
             BaseUri = "https://{accountName}.blob.core.windows.net";
             Version = "2016-05-31";
-            AcceptLanguage = "en-US";
-            LongRunningOperationRetryTimeout = 30;
-            GenerateClientRequestId = true;
             SerializationSettings = new JsonSerializerSettings
             {
                 Formatting = Newtonsoft.Json.Formatting.Indented,
@@ -207,7 +127,7 @@ namespace BlobStorageTest.Client
                 NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore,
                 ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Serialize,
                 ContractResolver = new ReadOnlyJsonContractResolver(),
-                Converters = new List<JsonConverter>
+                Converters = new  List<JsonConverter>
                     {
                         new Iso8601TimeSpanConverter()
                     }
@@ -225,7 +145,6 @@ namespace BlobStorageTest.Client
                     }
             };
             CustomInitialize();
-            DeserializationSettings.Converters.Add(new CloudErrorJsonConverter());
         }
     }
 }

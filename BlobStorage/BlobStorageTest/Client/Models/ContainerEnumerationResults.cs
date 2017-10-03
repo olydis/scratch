@@ -32,6 +32,21 @@ namespace BlobStorageTest.Client.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the ContainerEnumerationResults
+        /// class.
+        /// </summary>
+        public ContainerEnumerationResults(string serviceEndpoint = default(string), string prefix = default(string), string marker = default(string), int? maxResults = default(int?), IList<Container> containers = default(IList<Container>), string nextMarker = default(string))
+        {
+            ServiceEndpoint = serviceEndpoint;
+            Prefix = prefix;
+            Marker = marker;
+            MaxResults = maxResults;
+            Containers = containers;
+            NextMarker = nextMarker;
+            CustomInit();
+        }
+
+        /// <summary>
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();

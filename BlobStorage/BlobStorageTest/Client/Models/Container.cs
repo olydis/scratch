@@ -31,6 +31,17 @@ namespace BlobStorageTest.Client.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the Container class.
+        /// </summary>
+        public Container(string name = default(string), ContainerProperties properties = default(ContainerProperties), IDictionary<string, string> metadata = default(IDictionary<string, string>))
+        {
+            Name = name;
+            Properties = properties;
+            Metadata = metadata;
+            CustomInit();
+        }
+
+        /// <summary>
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();

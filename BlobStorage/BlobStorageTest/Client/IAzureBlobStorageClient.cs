@@ -10,8 +10,6 @@
 
 namespace BlobStorageTest.Client
 {
-    using Microsoft.Rest;
-    using Microsoft.Rest.Azure;
     using Models;
     using Newtonsoft.Json;
 
@@ -34,11 +32,6 @@ namespace BlobStorageTest.Client
         JsonSerializerSettings DeserializationSettings { get; }
 
         /// <summary>
-        /// Credentials needed for the client to connect to Azure.
-        /// </summary>
-        ServiceClientCredentials Credentials { get; }
-
-        /// <summary>
         /// The Azure storage account to use.
         /// </summary>
         string AccountName { get; set; }
@@ -55,28 +48,11 @@ namespace BlobStorageTest.Client
         /// </summary>
         string RequestId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the preferred language for the response.
-        /// </summary>
-        string AcceptLanguage { get; set; }
 
         /// <summary>
-        /// Gets or sets the retry timeout in seconds for Long Running
-        /// Operations. Default value is 30.
+        /// Gets the IService.
         /// </summary>
-        int? LongRunningOperationRetryTimeout { get; set; }
-
-        /// <summary>
-        /// When set to true a unique x-ms-client-request-id value is generated
-        /// and included in each request. Default is true.
-        /// </summary>
-        bool? GenerateClientRequestId { get; set; }
-
-
-        /// <summary>
-        /// Gets the IServiceOperations.
-        /// </summary>
-        IServiceOperations Service { get; }
+        IService Service { get; }
 
         /// <summary>
         /// Gets the IContainerOperations.
@@ -84,19 +60,19 @@ namespace BlobStorageTest.Client
         IContainerOperations Container { get; }
 
         /// <summary>
-        /// Gets the IBlobsOperations.
+        /// Gets the IBlobs.
         /// </summary>
-        IBlobsOperations Blobs { get; }
+        IBlobs Blobs { get; }
 
         /// <summary>
-        /// Gets the IBlockBlobsOperations.
+        /// Gets the IBlockBlobs.
         /// </summary>
-        IBlockBlobsOperations BlockBlobs { get; }
+        IBlockBlobs BlockBlobs { get; }
 
         /// <summary>
-        /// Gets the IPageBlobsOperations.
+        /// Gets the IPageBlobs.
         /// </summary>
-        IPageBlobsOperations PageBlobs { get; }
+        IPageBlobs PageBlobs { get; }
 
     }
 }

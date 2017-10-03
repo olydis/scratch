@@ -31,6 +31,28 @@ namespace BlobStorageTest.Client.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the ContainerProperties class.
+        /// </summary>
+        /// <param name="leaseStatus">Possible values include: 'locked',
+        /// 'unlocked'</param>
+        /// <param name="leaseState">Possible values include: 'available',
+        /// 'leased', 'expired', 'breaking', 'broken'</param>
+        /// <param name="leaseDuration">Possible values include: 'infinite',
+        /// 'fixed'</param>
+        /// <param name="publicAccess">Possible values include: 'container',
+        /// 'blob'</param>
+        public ContainerProperties(System.DateTime? lastModified = default(System.DateTime?), string etag = default(string), LeaseStatusType? leaseStatus = default(LeaseStatusType?), LeaseStateType? leaseState = default(LeaseStateType?), LeaseDurationType? leaseDuration = default(LeaseDurationType?), string publicAccess = default(string))
+        {
+            LastModified = lastModified;
+            Etag = etag;
+            LeaseStatus = leaseStatus;
+            LeaseState = leaseState;
+            LeaseDuration = leaseDuration;
+            PublicAccess = publicAccess;
+            CustomInit();
+        }
+
+        /// <summary>
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();

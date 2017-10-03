@@ -10,8 +10,6 @@
 
 namespace BlobStorageTest.Client
 {
-    using Microsoft.Rest;
-    using Microsoft.Rest.Azure;
     using Models;
     using System.Collections;
     using System.Collections.Generic;

@@ -29,10 +29,11 @@ namespace BlobStorageTest.Client.Models
         /// <summary>
         /// Initializes a new instance of the Error class.
         /// </summary>
-        public Error(string code, string message)
+        public Error(string code, string message, ErrorExceptionDetails exceptionDetails = default(ErrorExceptionDetails))
         {
             Code = code;
             Message = message;
+            ExceptionDetails = exceptionDetails;
             CustomInit();
         }
 

@@ -33,6 +33,138 @@ namespace BlobStorageTest.Client.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the BlobsGetPropertiesHeaders class.
+        /// </summary>
+        /// <param name="lastModified">Returns the date and time the container
+        /// was last modified. Any operation that modifies the blob, including
+        /// an update of the blob's metadata or properties, changes the
+        /// last-modified time of the blob.</param>
+        /// <param name="blobType">The blob's type. Possible values include:
+        /// 'BlockBlob', 'PageBlob', 'AppendBlob'</param>
+        /// <param name="copyCompletionTime">Conclusion time of the last
+        /// attempted Copy Blob operation where this blob was the destination
+        /// blob. This value can specify the time of a completed, aborted, or
+        /// failed copy attempt. This header does not appear if a copy is
+        /// pending, if this blob has never been the destination in a Copy Blob
+        /// operation, or if this blob has been modified after a concluded Copy
+        /// Blob operation using Set Blob Properties, Put Blob, or Put Block
+        /// List.</param>
+        /// <param name="copyStatusDescription">Only appears when
+        /// x-ms-copy-status is failed or pending. Describes the cause of the
+        /// last fatal or non-fatal copy operation failure. This header does
+        /// not appear if this blob has never been the destination in a Copy
+        /// Blob operation, or if this blob has been modified after a concluded
+        /// Copy Blob operation using Set Blob Properties, Put Blob, or Put
+        /// Block List</param>
+        /// <param name="copyId">String identifier for this copy operation. Use
+        /// with Get Blob Properties to check the status of this copy
+        /// operation, or pass to Abort Copy Blob to abort a pending
+        /// copy.</param>
+        /// <param name="copyProgress">Contains the number of bytes copied and
+        /// the total bytes in the source in the last attempted Copy Blob
+        /// operation where this blob was the destination blob. Can show
+        /// between 0 and Content-Length bytes copied. This header does not
+        /// appear if this blob has never been the destination in a Copy Blob
+        /// operation, or if this blob has been modified after a concluded Copy
+        /// Blob operation using Set Blob Properties, Put Blob, or Put Block
+        /// List</param>
+        /// <param name="copySource">URL up to 2 KB in length that specifies
+        /// the source blob or file used in the last attempted Copy Blob
+        /// operation where this blob was the destination blob. This header
+        /// does not appear if this blob has never been the destination in a
+        /// Copy Blob operation, or if this blob has been modified after a
+        /// concluded Copy Blob operation using Set Blob Properties, Put Blob,
+        /// or Put Block List.</param>
+        /// <param name="copyStatus">State of the copy operation identified by
+        /// x-ms-copy-id. Possible values include: 'pending', 'success',
+        /// 'aborted', 'failed'</param>
+        /// <param name="isIncrementalCopy">Included if the blob is incremental
+        /// copy blob.</param>
+        /// <param name="leaseDuration">When a blob is leased, specifies
+        /// whether the lease is of infinite or fixed duration. Possible values
+        /// include: 'infinite', 'fixed'</param>
+        /// <param name="leaseState">Lease state of the blob. Possible values
+        /// include: 'available', 'leased', 'expired', 'breaking',
+        /// 'broken'</param>
+        /// <param name="leaseStatus">The current lease status of the blob.
+        /// Possible values include: 'locked', 'unlocked'</param>
+        /// <param name="contentLength">The number of bytes present in the
+        /// response body.</param>
+        /// <param name="contentType">The content type specified for the blob.
+        /// The default content type is 'application/octet-stream'</param>
+        /// <param name="eTag">The ETag contains a value that you can use to
+        /// perform operations conditionally. If the request version is
+        /// 2011-08-18 or newer, the ETag value will be in quotes.</param>
+        /// <param name="contentMD5">If the blob has an MD5 hash and this
+        /// operation is to read the full blob, this response header is
+        /// returned so that the client can check for message content
+        /// integrity.</param>
+        /// <param name="contentEncoding">This header returns the value that
+        /// was specified for the Content-Encoding request header</param>
+        /// <param name="contentDisposition">This header returns the value that
+        /// was specified for the 'x-ms-blob-content-disposition' header. The
+        /// Content-Disposition response header field conveys additional
+        /// information about how to process the response payload, and also can
+        /// be used to attach additional metadata. For example, if set to
+        /// attachment, it indicates that the user-agent should not display the
+        /// response, but instead show a Save As dialog with a filename other
+        /// than the blob name specified.</param>
+        /// <param name="cacheControl">This header is returned if it was
+        /// previously specified for the blob.</param>
+        /// <param name="blobSequenceNumber">The current sequence number for a
+        /// page blob. This header is not returned for block blobs or append
+        /// blobs</param>
+        /// <param name="requestId">This header uniquely identifies the request
+        /// that was made and can be used for troubleshooting the
+        /// request.</param>
+        /// <param name="version">Indicates the version of the Blob service
+        /// used to execute the request. This header is returned for requests
+        /// made against version 2009-09-19 and above.</param>
+        /// <param name="date">UTC date/time value generated by the service
+        /// that indicates the time at which the response was initiated</param>
+        /// <param name="acceptRanges">Indicates that the service supports
+        /// requests for partial blob content.</param>
+        /// <param name="blobCommittedBlockCount">The number of committed
+        /// blocks present in the blob. This header is returned only for append
+        /// blobs.</param>
+        /// <param name="isServerEncrypted">The value of this header is set to
+        /// true if the blob data and application metadata are completely
+        /// encrypted using the specified algorithm. Otherwise, the value is
+        /// set to false (when the blob is unencrypted, or if only parts of the
+        /// blob/application metadata are encrypted).</param>
+        public BlobsGetPropertiesHeaders(string lastModified = default(string), IDictionary<string, string> metadata = default(IDictionary<string, string>), BlobType? blobType = default(BlobType?), System.DateTime? copyCompletionTime = default(System.DateTime?), string copyStatusDescription = default(string), string copyId = default(string), string copyProgress = default(string), string copySource = default(string), CopyStatusType? copyStatus = default(CopyStatusType?), bool? isIncrementalCopy = default(bool?), LeaseDurationType? leaseDuration = default(LeaseDurationType?), LeaseStateType? leaseState = default(LeaseStateType?), LeaseStatusType? leaseStatus = default(LeaseStatusType?), int? contentLength = default(int?), string contentType = default(string), string eTag = default(string), string contentMD5 = default(string), string contentEncoding = default(string), string contentDisposition = default(string), string cacheControl = default(string), string blobSequenceNumber = default(string), string requestId = default(string), string version = default(string), System.DateTime? date = default(System.DateTime?), string acceptRanges = default(string), string blobCommittedBlockCount = default(string), bool? isServerEncrypted = default(bool?))
+        {
+            LastModified = lastModified;
+            Metadata = metadata;
+            BlobType = blobType;
+            CopyCompletionTime = copyCompletionTime;
+            CopyStatusDescription = copyStatusDescription;
+            CopyId = copyId;
+            CopyProgress = copyProgress;
+            CopySource = copySource;
+            CopyStatus = copyStatus;
+            IsIncrementalCopy = isIncrementalCopy;
+            LeaseDuration = leaseDuration;
+            LeaseState = leaseState;
+            LeaseStatus = leaseStatus;
+            ContentLength = contentLength;
+            ContentType = contentType;
+            ETag = eTag;
+            ContentMD5 = contentMD5;
+            ContentEncoding = contentEncoding;
+            ContentDisposition = contentDisposition;
+            CacheControl = cacheControl;
+            BlobSequenceNumber = blobSequenceNumber;
+            RequestId = requestId;
+            Version = version;
+            Date = date;
+            AcceptRanges = acceptRanges;
+            BlobCommittedBlockCount = blobCommittedBlockCount;
+            IsServerEncrypted = isServerEncrypted;
+            CustomInit();
+        }
+
+        /// <summary>
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();

@@ -29,6 +29,17 @@ namespace BlobStorageTest.Client.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the StorageServiceStats class.
+        /// </summary>
+        /// <param name="geoReplication">Geo-Replication information for the
+        /// Secondary Storage Service</param>
+        public StorageServiceStats(GeoReplication geoReplication = default(GeoReplication))
+        {
+            GeoReplication = geoReplication;
+            CustomInit();
+        }
+
+        /// <summary>
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();

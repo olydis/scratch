@@ -28,6 +28,16 @@ namespace BlobStorageTest.Client.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the BlockList class.
+        /// </summary>
+        public BlockList(IList<Block> committedBlocks = default(IList<Block>), IList<Block> uncommittedBlocks = default(IList<Block>))
+        {
+            CommittedBlocks = committedBlocks;
+            UncommittedBlocks = uncommittedBlocks;
+            CustomInit();
+        }
+
+        /// <summary>
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();

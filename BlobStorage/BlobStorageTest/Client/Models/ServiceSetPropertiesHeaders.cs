@@ -30,6 +30,23 @@ namespace BlobStorageTest.Client.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the ServiceSetPropertiesHeaders
+        /// class.
+        /// </summary>
+        /// <param name="requestId">This header uniquely identifies the request
+        /// that was made and can be used for troubleshooting the
+        /// request.</param>
+        /// <param name="version">Indicates the version of the Blob service
+        /// used to execute the request. This header is returned for requests
+        /// made against version 2009-09-19 and above.</param>
+        public ServiceSetPropertiesHeaders(string requestId = default(string), string version = default(string))
+        {
+            RequestId = requestId;
+            Version = version;
+            CustomInit();
+        }
+
+        /// <summary>
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();

@@ -31,6 +31,18 @@ namespace BlobStorageTest.Client.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the Blob class.
+        /// </summary>
+        public Blob(string name = default(string), System.DateTime? snapshot = default(System.DateTime?), BlobProperties properties = default(BlobProperties), IDictionary<string, string> metadata = default(IDictionary<string, string>))
+        {
+            Name = name;
+            Snapshot = snapshot;
+            Properties = properties;
+            Metadata = metadata;
+            CustomInit();
+        }
+
+        /// <summary>
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();

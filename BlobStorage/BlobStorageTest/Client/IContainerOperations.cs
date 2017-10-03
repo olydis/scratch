@@ -11,7 +11,6 @@
 namespace BlobStorageTest.Client
 {
     using Microsoft.Rest;
-    using Microsoft.Rest.Azure;
     using Models;
     using System.Collections;
     using System.Collections.Generic;
@@ -64,7 +63,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationHeaderResponse<ContainerCreateHeaders>> CreateWithHttpMessagesAsync(string container, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string access = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationHeaderResponse<ContainerCreateHeaders>> CreateWithHttpMessagesAsync(string container, int? timeout = default(int?), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), string access = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// returns all user-defined metadata and system properties for the
         /// specified container. The data returned does not include the
@@ -95,7 +94,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationHeaderResponse<ContainerGetPropertiesHeaders>> GetPropertiesWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationHeaderResponse<ContainerGetPropertiesHeaders>> GetPropertiesWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// operation marks the specified container for deletion. The container
         /// and any blobs contained within it are later deleted during garbage
@@ -134,7 +133,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationResponse> DeleteWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse> DeleteWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// returns all user-defined metadata for the container
         /// </summary>
@@ -163,7 +162,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationHeaderResponse<ContainerGetMetadataHeaders>> GetMetadataWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationHeaderResponse<ContainerGetMetadataHeaders>> GetMetadataWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// operation sets one or more user-defined name-value pairs for the
         /// specified container.
@@ -208,7 +207,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationHeaderResponse<ContainerSetMetadataHeaders>> SetMetadataWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationHeaderResponse<ContainerSetMetadataHeaders>> SetMetadataWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), IDictionary<string, string> xMsMeta = default(IDictionary<string, string>), System.DateTime? ifModifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -237,7 +236,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationResponse<IList<SignedIdentifier>,ContainerGetAclHeaders>> GetAclWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<IList<SignedIdentifier>,ContainerGetAclHeaders>> GetAclWithHttpMessagesAsync(string container, int? timeout = default(int?), string leaseId = default(string), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <param name='container'>
         /// The container name.
         /// </param>
@@ -279,7 +278,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationHeaderResponse<ContainerSetAclHeaders>> SetAclWithHttpMessagesAsync(string container, IList<SignedIdentifier> containerAcl = default(IList<SignedIdentifier>), int? timeout = default(int?), string leaseId = default(string), string access = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationHeaderResponse<ContainerSetAclHeaders>> SetAclWithHttpMessagesAsync(string container, IList<SignedIdentifier> containerAcl = default(IList<SignedIdentifier>), int? timeout = default(int?), string leaseId = default(string), string access = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// establishes and manages a lock on a container for delete
         /// operations. The lock duration can be 15 to 60 seconds, or can be
@@ -350,7 +349,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationHeaderResponse<ContainerLeaseHeaders>> LeaseWithHttpMessagesAsync(string container, string action, int? timeout = default(int?), string leaseId = default(string), int? breakPeriod = default(int?), int? duration = default(int?), string proposedLeaseId = default(string), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationHeaderResponse<ContainerLeaseHeaders>> LeaseWithHttpMessagesAsync(string container, string action, int? timeout = default(int?), string leaseId = default(string), int? breakPeriod = default(int?), int? duration = default(int?), string proposedLeaseId = default(string), string origin = default(string), System.DateTime? ifModifiedSince = default(System.DateTime?), System.DateTime? ifUnmodifiedSince = default(System.DateTime?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
         /// <summary>
         /// The List Blobs operation returns a list of the blobs under the
         /// specified container
@@ -415,6 +414,6 @@ namespace BlobStorageTest.Client
         /// <exception cref="Microsoft.Rest.ValidationException">
         /// Thrown when a required parameter is null
         /// </exception>
-        Task<AzureOperationResponse<BlobEnumerationResults,ContainerListBlobsHeaders>> ListBlobsWithHttpMessagesAsync(string container, string prefix = default(string), string delimiter = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<HttpOperationResponse<BlobEnumerationResults,ContainerListBlobsHeaders>> ListBlobsWithHttpMessagesAsync(string container, string prefix = default(string), string delimiter = default(string), string marker = default(string), int? maxresults = default(int?), string include = default(string), int? timeout = default(int?), Dictionary<string, List<string>> customHeaders = null, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

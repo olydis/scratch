@@ -28,6 +28,23 @@ namespace BlobStorageTest.Client.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the GeoReplication class.
+        /// </summary>
+        /// <param name="status">The status of the secondary location. Possible
+        /// values include: 'live', 'bootstrap', 'unavailable'</param>
+        /// <param name="lastSyncTime">A GMT date/time value, to the second.
+        /// All primary writes preceding this value are guaranteed to be
+        /// available for read operations at the secondary. Primary writes
+        /// after this point in time may or may not be available for
+        /// reads.</param>
+        public GeoReplication(GeoReplicationStatus? status = default(GeoReplicationStatus?), System.DateTime? lastSyncTime = default(System.DateTime?))
+        {
+            Status = status;
+            LastSyncTime = lastSyncTime;
+            CustomInit();
+        }
+
+        /// <summary>
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();

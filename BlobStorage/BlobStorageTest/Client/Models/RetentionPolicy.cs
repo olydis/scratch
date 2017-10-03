@@ -34,9 +34,13 @@ namespace BlobStorageTest.Client.Models
         /// </summary>
         /// <param name="enabled">Indicates whether a retention policy is
         /// enabled for the storage service</param>
-        public RetentionPolicy(bool enabled)
+        /// <param name="days">Indicates the number of days that metrics or
+        /// logging data should be retained. All data older than this value
+        /// will be deleted</param>
+        public RetentionPolicy(bool enabled, int? days = default(int?))
         {
             Enabled = enabled;
+            Days = days;
             CustomInit();
         }
 

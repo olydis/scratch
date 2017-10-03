@@ -10,8 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../ClientRuntimeEx/ClientRuntimeEx.csproj" />
-    <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.2" />
-    <PackageReference Include="Microsoft.Rest.ClientRuntime.Azure" Version="3.3.2" />
+    <ProjectReference Include="../../ClientRuntime/ClientRuntime/Microsoft.Rest.ClientRuntime.csproj" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.0.2" />

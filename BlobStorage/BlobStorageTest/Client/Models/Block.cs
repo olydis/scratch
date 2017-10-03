@@ -26,6 +26,18 @@ namespace BlobStorageTest.Client.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the Block class.
+        /// </summary>
+        /// <param name="name">The base64 encoded block ID</param>
+        /// <param name="size">The block size in bytes</param>
+        public Block(string name = default(string), int? size = default(int?))
+        {
+            Name = name;
+            Size = size;
+            CustomInit();
+        }
+
+        /// <summary>
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();

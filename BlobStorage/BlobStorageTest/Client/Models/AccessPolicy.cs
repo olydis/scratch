@@ -29,6 +29,20 @@ namespace BlobStorageTest.Client.Models
         }
 
         /// <summary>
+        /// Initializes a new instance of the AccessPolicy class.
+        /// </summary>
+        /// <param name="start">the date-time the policy is active</param>
+        /// <param name="expiry">the date-time the policy expires</param>
+        /// <param name="permission">the permissions for the acl policy</param>
+        public AccessPolicy(System.DateTime? start = default(System.DateTime?), System.DateTime? expiry = default(System.DateTime?), string permission = default(string))
+        {
+            Start = start;
+            Expiry = expiry;
+            Permission = permission;
+            CustomInit();
+        }
+
+        /// <summary>
         /// An initialization method that performs custom operations like setting defaults
         /// </summary>
         partial void CustomInit();

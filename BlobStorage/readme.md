@@ -10,7 +10,7 @@ openapi-type: data-plane
 input-file:
 - blob-storage-out.yaml
 csharp:
-  azure-arm: true
+  override-client-name: AzureBlobStorageClient
   license-header: MICROSOFT_MIT_NO_VERSION
   namespace: BlobStorageTest.Client
   output-folder: ./BlobStorageTest/Client
