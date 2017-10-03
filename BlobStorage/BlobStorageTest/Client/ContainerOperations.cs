@@ -28,7 +28,7 @@ namespace BlobStorageTest.Client
     /// <summary>
     /// ContainerOperations operations.
     /// </summary>
-    public partial class ContainerOperations : IServiceOperationsX<AzureBlobStorageClient>, IContainerOperations
+    public partial class ContainerOperations : IServiceOperations<AzureBlobStorageClient>, IContainerOperations
     {
         /// <summary>
         /// Initializes a new instance of the ContainerOperations class.

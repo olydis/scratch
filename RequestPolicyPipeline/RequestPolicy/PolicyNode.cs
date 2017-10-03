@@ -42,7 +42,7 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy
             // If logger doesn't handle fatal/panic, we'll do it here.
             if (severity == LogSeverity.Fatal)
             {
-                Environment.Exit(1); // TODO: really?
+                // Environment.Exit(1); // TODO: really?
             } 
             else if (severity == LogSeverity.Panic)
             {

@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../ClientRuntimeEx/ClientRuntimeEx.csproj" />
     <ProjectReference Include="../../ClientRuntime/ClientRuntime/Microsoft.Rest.ClientRuntime.csproj" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.0.2" />

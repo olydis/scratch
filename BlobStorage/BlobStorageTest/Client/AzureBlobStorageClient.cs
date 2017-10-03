@@ -19,7 +19,7 @@ namespace BlobStorageTest.Client
     using System.Net;
     using System.Net.Http;
 
-    public partial class AzureBlobStorageClient : ServiceClientX<AzureBlobStorageClient>, IAzureBlobStorageClient
+    public partial class AzureBlobStorageClient : ServiceClient<AzureBlobStorageClient>, IAzureBlobStorageClient
     {
         /// <summary>
         /// The base URI of the service.
@@ -81,24 +81,7 @@ namespace BlobStorageTest.Client
         /// <summary>
         /// Initializes a new instance of the AzureBlobStorageClient class.
         /// </summary>
-        /// <param name='handlers'>
-        /// Optional. The delegating handlers to add to the http client pipeline.
-        /// </param>
-        public AzureBlobStorageClient(params DelegatingHandler[] handlers) : base(handlers)
-        {
-            Initialize();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the AzureBlobStorageClient class.
-        /// </summary>
-        /// <param name='rootHandler'>
-        /// Optional. The http client handler used to handle http transport.
-        /// </param>
-        /// <param name='handlers'>
-        /// Optional. The delegating handlers to add to the http client pipeline.
-        /// </param>
-        public AzureBlobStorageClient(HttpClientHandler rootHandler, params DelegatingHandler[] handlers) : base(rootHandler, handlers)
+        public AzureBlobStorageClient() : base()
         {
             Initialize();
         }

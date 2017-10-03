@@ -50,7 +50,7 @@ namespace Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies
                 {
                     v += " ";
                 }
-                v += $"Azure-Storage/{Version.CommonLibVersion}-{factory.serviceVersion} {Environment.OSVersion}";
+                v += $"Azure-Storage/{Version.CommonLibVersion}-{factory.serviceVersion} {System.Runtime.InteropServices.RuntimeInformation.OSDescription}";
                 request.Headers.Add("User-Agent", v);
                 return node.SendAsync(ctx, request);
             }

@@ -72,11 +72,7 @@ namespace Microsoft.WindowsAzure.Storage.Core
         /// <returns>A <see cref="System.Uri"/> object with the new query parameter appended.</returns>
         public override Uri AddToUri(Uri uri)
         {
-#if WINDOWS_RT   || NETCORE
             if (this.RequireHttps && (string.CompareOrdinal(uri.Scheme, "https") != 0))
-#else
-            if (this.RequireHttps && (string.CompareOrdinal(uri.Scheme, Uri.UriSchemeHttps) != 0))
-#endif
             {
                 throw new ArgumentException("Cannot transform a Uri object using a StorageCredentials object that is marked HTTPS only.");
             }

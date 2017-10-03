@@ -26,7 +26,7 @@ namespace BlobStorageTest.Client
     /// <summary>
     /// PageBlobs operations.
     /// </summary>
-    public partial class PageBlobs : IServiceOperationsX<AzureBlobStorageClient>, IPageBlobs
+    public partial class PageBlobs : IServiceOperations<AzureBlobStorageClient>, IPageBlobs
     {
         /// <summary>
         /// Initializes a new instance of the PageBlobs class.

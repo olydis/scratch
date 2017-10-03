@@ -27,9 +27,12 @@ directive:
     transform: >-
         $ = $
             .replace(", IAzureClient", "")
-            .replace(" : ServiceClient", " : ServiceClientX")
-            .replace(" : IServiceOperations", " : IServiceOperationsX")
             .replace(/Credentials\.InitializeServiceClient\(this\);/g, "// Credentials.InitializeServiceClient(this);")
             .replace(/throw new System.ArgumentNullException\("credentials"\);/g, `// throw new System.ArgumentNullException("credentials");`)
             .replace(/System\.Net\.Http\.HttpCompletionOption\.ResponseHeadersRead, /g, "")
+        if ($.includes(" : ServiceClient<"))
+          $ = $
+            .replace("(params DelegatingHandler[] handlers) : base(handlers)", "() : base()")
+            .replace(/\/\/\/ <param name='handlers'>\s*\/\/\/.*\s*\/\/\/ <\/param>\s*/, "")
+            .replace(/(\s*\/\/\/.*)+\s*public .*params.*\s*.*\s*.*\s*\}/g, "")
 ```
