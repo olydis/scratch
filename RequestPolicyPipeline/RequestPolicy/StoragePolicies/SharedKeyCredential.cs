@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Auth;
 
-namespace Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies
+namespace Microsoft.Rest.RequestPolicy.StoragePolicies
 {
     //
     // NOTE: I've reused the "StorageCredentials" from some existing Storage SDK.

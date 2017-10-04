@@ -12,7 +12,7 @@ using Newtonsoft.Json.Serialization;
 //#endif
 
 
-namespace Microsoft.Rest.Serialization
+namespace Microsoft.Rest.ClientRuntime.Slim.Serialization
 {
     /// <summary>
     /// Helper class for JsonConverters.

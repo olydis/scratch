@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.Rest.ClientRuntime.RequestPolicy
+namespace Microsoft.Rest.RequestPolicy
 {
     // The HTTPSender interface represents an object that know how to send an HTTP request over the wire (returning an HTTP response).
     // Go's standard http.Client object satisfies this interface. But you can define your own type that implements this interface

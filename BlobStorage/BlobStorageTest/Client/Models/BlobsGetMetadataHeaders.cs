@@ -10,8 +10,8 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using Microsoft.Rest;
-    using Microsoft.Rest.Serialization;
+    using Microsoft.Rest.ClientRuntime.Slim;
+    using Microsoft.Rest.ClientRuntime.Slim.Serialization;
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;

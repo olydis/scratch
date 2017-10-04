@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 
-namespace Microsoft.Rest
+namespace Microsoft.Rest.ClientRuntime.Slim
 {
     /// <summary>
     /// Base class used to wrap HTTP requests and responses to preserve data after disposal of 

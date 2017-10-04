@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Microsoft.Rest.ClientRuntime.RequestPolicy
+namespace Microsoft.Rest.RequestPolicy
 {
     // The Policy interface represents a mutable Policy object created by a Factory. The object can mutate/process
     // the incoming HTTP reuqest and then forward it on to the next Policy object in the linked-list. The returned

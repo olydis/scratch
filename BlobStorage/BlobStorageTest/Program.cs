@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using BlobStorageTest.Client;
 using BlobStorageTest.Client.Models;
-using Microsoft.Rest.ClientRuntime.RequestPolicy;
-using Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies;
+using Microsoft.Rest.RequestPolicy;
+using Microsoft.Rest.RequestPolicy.StoragePolicies;
 using Microsoft.WindowsAzure.Storage.Auth;
 
 namespace BlobStorageTest

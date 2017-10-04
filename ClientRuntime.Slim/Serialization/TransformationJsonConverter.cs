@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
-namespace Microsoft.Rest.Serialization
+namespace Microsoft.Rest.ClientRuntime.Slim.Serialization
 {
     /// <summary>
     /// JsonConverter that provides serialization for with optional object transformation.

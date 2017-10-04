@@ -10,7 +10,7 @@
 
 namespace BlobStorageTest.Client
 {
-    using Microsoft.Rest;
+    using Microsoft.Rest.ClientRuntime.Slim;
     using Models;
     using Newtonsoft.Json;
     using System.Collections;
@@ -115,7 +115,7 @@ namespace BlobStorageTest.Client
             List<string> _queryParameters = new List<string>();
             if (timeout != null)
             {
-                _queryParameters.Add(string.Format("timeout={0}", System.Uri.EscapeDataString(Microsoft.Rest.Serialization.SafeJsonConvert.SerializeObject(timeout, Client.SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("timeout={0}", System.Uri.EscapeDataString(Microsoft.Rest.ClientRuntime.Slim.Serialization.SafeJsonConvert.SerializeObject(timeout, Client.SerializationSettings).Trim('"'))));
             }
             if (restype != null)
             {
@@ -188,7 +188,7 @@ namespace BlobStorageTest.Client
                     try
                     {
                         _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        Error _errorBody =  Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
+                        Error _errorBody =  Microsoft.Rest.ClientRuntime.Slim.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
                         if (_errorBody != null)
                         {
                             ex.Body = _errorBody;
@@ -286,7 +286,7 @@ namespace BlobStorageTest.Client
             List<string> _queryParameters = new List<string>();
             if (timeout != null)
             {
-                _queryParameters.Add(string.Format("timeout={0}", System.Uri.EscapeDataString(Microsoft.Rest.Serialization.SafeJsonConvert.SerializeObject(timeout, Client.SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("timeout={0}", System.Uri.EscapeDataString(Microsoft.Rest.ClientRuntime.Slim.Serialization.SafeJsonConvert.SerializeObject(timeout, Client.SerializationSettings).Trim('"'))));
             }
             if (restype != null)
             {
@@ -352,7 +352,7 @@ namespace BlobStorageTest.Client
                     try
                     {
                         _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        Error _errorBody =  Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
+                        Error _errorBody =  Microsoft.Rest.ClientRuntime.Slim.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
                         if (_errorBody != null)
                         {
                             ex.Body = _errorBody;
@@ -390,7 +390,7 @@ namespace BlobStorageTest.Client
                         }
                         else
                         {
-                            _result.Body = Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<StorageServiceProperties>(_responseContent, Client.DeserializationSettings);
+                            _result.Body = Microsoft.Rest.ClientRuntime.Slim.Serialization.SafeJsonConvert.DeserializeObject<StorageServiceProperties>(_responseContent, Client.DeserializationSettings);
                         }
                     }
                     catch (JsonException ex)
@@ -477,7 +477,7 @@ namespace BlobStorageTest.Client
             List<string> _queryParameters = new List<string>();
             if (timeout != null)
             {
-                _queryParameters.Add(string.Format("timeout={0}", System.Uri.EscapeDataString(Microsoft.Rest.Serialization.SafeJsonConvert.SerializeObject(timeout, Client.SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("timeout={0}", System.Uri.EscapeDataString(Microsoft.Rest.ClientRuntime.Slim.Serialization.SafeJsonConvert.SerializeObject(timeout, Client.SerializationSettings).Trim('"'))));
             }
             if (restype != null)
             {
@@ -543,7 +543,7 @@ namespace BlobStorageTest.Client
                     try
                     {
                         _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        Error _errorBody =  Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
+                        Error _errorBody =  Microsoft.Rest.ClientRuntime.Slim.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
                         if (_errorBody != null)
                         {
                             ex.Body = _errorBody;
@@ -581,7 +581,7 @@ namespace BlobStorageTest.Client
                         }
                         else
                         {
-                            _result.Body = Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<StorageServiceStats>(_responseContent, Client.DeserializationSettings);
+                            _result.Body = Microsoft.Rest.ClientRuntime.Slim.Serialization.SafeJsonConvert.DeserializeObject<StorageServiceStats>(_responseContent, Client.DeserializationSettings);
                         }
                     }
                     catch (JsonException ex)
@@ -704,7 +704,7 @@ namespace BlobStorageTest.Client
             }
             if (maxresults != null)
             {
-                _queryParameters.Add(string.Format("maxresults={0}", System.Uri.EscapeDataString(Microsoft.Rest.Serialization.SafeJsonConvert.SerializeObject(maxresults, Client.SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("maxresults={0}", System.Uri.EscapeDataString(Microsoft.Rest.ClientRuntime.Slim.Serialization.SafeJsonConvert.SerializeObject(maxresults, Client.SerializationSettings).Trim('"'))));
             }
             if (include != null)
             {
@@ -712,7 +712,7 @@ namespace BlobStorageTest.Client
             }
             if (timeout != null)
             {
-                _queryParameters.Add(string.Format("timeout={0}", System.Uri.EscapeDataString(Microsoft.Rest.Serialization.SafeJsonConvert.SerializeObject(timeout, Client.SerializationSettings).Trim('"'))));
+                _queryParameters.Add(string.Format("timeout={0}", System.Uri.EscapeDataString(Microsoft.Rest.ClientRuntime.Slim.Serialization.SafeJsonConvert.SerializeObject(timeout, Client.SerializationSettings).Trim('"'))));
             }
             if (comp != null)
             {
@@ -774,7 +774,7 @@ namespace BlobStorageTest.Client
                     try
                     {
                         _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        Error _errorBody =  Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
+                        Error _errorBody =  Microsoft.Rest.ClientRuntime.Slim.Serialization.SafeJsonConvert.DeserializeObject<Error>(_responseContent, Client.DeserializationSettings);
                         if (_errorBody != null)
                         {
                             ex.Body = _errorBody;
@@ -812,7 +812,7 @@ namespace BlobStorageTest.Client
                         }
                         else
                         {
-                            _result.Body = Microsoft.Rest.Serialization.SafeJsonConvert.DeserializeObject<ContainerEnumerationResults>(_responseContent, Client.DeserializationSettings);
+                            _result.Body = Microsoft.Rest.ClientRuntime.Slim.Serialization.SafeJsonConvert.DeserializeObject<ContainerEnumerationResults>(_responseContent, Client.DeserializationSettings);
                         }
                     }
                     catch (JsonException ex)

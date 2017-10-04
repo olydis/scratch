@@ -11,7 +11,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.Rest.ClientRuntime.Properties {
+namespace Microsoft.Rest.ClientRuntime.Slim.Properties {
     using System;
     using System.Reflection;
     

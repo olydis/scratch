@@ -1,6 +1,6 @@
 using System;
 
-namespace Microsoft.Rest.ClientRuntime.RequestPolicy
+namespace Microsoft.Rest.RequestPolicy
 {
     // LogOptions configures the pipeline's logging mechanism & severity filtering.
     public class LogOptions

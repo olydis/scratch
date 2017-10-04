@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.Rest.ClientRuntime.RequestPolicy
+namespace Microsoft.Rest.RequestPolicy
 {
     // The Pipeline interface represents an ordered list of Factory objects and an object implementing the HTTPSender interface.
     // You construct a Pipeline by calling the pipeline.NewPipeline function. To send an HTTP request, call pipeline.NewRequest

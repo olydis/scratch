@@ -10,7 +10,7 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using Microsoft.Rest;
+    using Microsoft.Rest.ClientRuntime.Slim;
     using Newtonsoft.Json;
     using System.Linq;
     using System.Xml;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Microsoft.Rest.ClientRuntime.RequestPolicy
+namespace Microsoft.Rest.RequestPolicy
 {
     public class Context
     {

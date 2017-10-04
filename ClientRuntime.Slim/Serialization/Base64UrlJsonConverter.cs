@@ -5,7 +5,7 @@ using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Microsoft.Rest.Serialization
+namespace Microsoft.Rest.ClientRuntime.Slim.Serialization
 {
     public class Base64UrlJsonConverter : JsonConverter
     {

@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Microsoft.Rest.ClientRuntime.RequestPolicy
+namespace Microsoft.Rest.RequestPolicy
 {
     // A PolicyNode represents a node in a linked-list of Policy objects. A PolicyNode is passed
     // to the Factory's New method which passes to the Policy object it creates. The Policy object

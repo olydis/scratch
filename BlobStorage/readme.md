@@ -27,7 +27,9 @@ directive:
     where: $
     transform: >-
         $ = $
-            .replace(", IAzureClient", "")
+            // namespace
+            .replace(/using Microsoft\.Rest;/g, "using Microsoft.Rest.ClientRuntime.Slim;")
+            .replace(/Microsoft\.Rest\.Serialization/g, "Microsoft.Rest.ClientRuntime.Slim.Serialization")
             // normalize SendAsync call (stream version specifies additional param)
             .replace(/System\.Net\.Http\.HttpCompletionOption\.ResponseHeadersRead, /g, "")
             // remove tracing

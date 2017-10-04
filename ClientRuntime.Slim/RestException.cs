@@ -4,7 +4,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Microsoft.Rest
+namespace Microsoft.Rest.ClientRuntime.Slim
 {
     /// <summary>
     /// Generic exception for Microsoft Rest Client. 

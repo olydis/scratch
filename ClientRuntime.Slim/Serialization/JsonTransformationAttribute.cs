@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.Rest.Serialization
+namespace Microsoft.Rest.ClientRuntime.Slim.Serialization
 {
     /// <summary>
     /// Instructs the Microsoft.Rest.Serialization.TransformationJsonConverter to 

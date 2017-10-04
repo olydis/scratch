@@ -1,5 +1,5 @@
 
-namespace Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies
+namespace Microsoft.Rest.RequestPolicy.StoragePolicies
 {
     public static class Version
     {

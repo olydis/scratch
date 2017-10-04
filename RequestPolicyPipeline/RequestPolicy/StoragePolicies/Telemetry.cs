@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies
+namespace Microsoft.Rest.RequestPolicy.StoragePolicies
 {
     // TelemetryOptions configures the telemetry policy's behavior.
     public class TelemetryOptions

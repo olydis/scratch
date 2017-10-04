@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace Microsoft.Rest.Serialization
+namespace Microsoft.Rest.ClientRuntime.Slim.Serialization
 {
     /// <summary>
     /// Provides an alternative to JSON.NET's JsonConvert that does not inherit any settings from

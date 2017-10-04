@@ -10,7 +10,7 @@
 
 namespace BlobStorageTest.Client.Models
 {
-    using Microsoft.Rest;
+    using Microsoft.Rest.ClientRuntime.Slim;
 
     /// <summary>
     /// Exception thrown for an invalid response with Error information.

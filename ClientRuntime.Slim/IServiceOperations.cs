@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-namespace Microsoft.Rest
+namespace Microsoft.Rest.ClientRuntime.Slim
 {
     /// <summary>
     /// Interface used to group operations of a ServiceClient.

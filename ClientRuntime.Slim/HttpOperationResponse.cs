@@ -4,7 +4,7 @@
 using System;
 using System.Net.Http;
 
-namespace Microsoft.Rest
+namespace Microsoft.Rest.ClientRuntime.Slim
 {
     /// <summary>
     /// Represents the base return type of all ServiceClient REST operations without response body.

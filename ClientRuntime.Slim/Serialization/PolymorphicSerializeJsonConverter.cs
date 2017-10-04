@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 
-namespace Microsoft.Rest.Serialization
+namespace Microsoft.Rest.ClientRuntime.Slim.Serialization
 {
     /// <summary>
     /// JsonConverter that handles serialization for polymorphic objects

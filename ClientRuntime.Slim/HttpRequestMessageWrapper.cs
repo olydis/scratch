@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace Microsoft.Rest
+namespace Microsoft.Rest.ClientRuntime.Slim
 {
     /// <summary>
     /// Wrapper around HttpRequestMessage type that copies properties of HttpRequestMessage so that

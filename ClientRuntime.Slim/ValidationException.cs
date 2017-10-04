@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 using System.Security.Permissions;
 #endif
 
-namespace Microsoft.Rest
+namespace Microsoft.Rest.ClientRuntime.Slim
 {
     /// <summary>
     /// Validation exception for Microsoft Rest Client. 

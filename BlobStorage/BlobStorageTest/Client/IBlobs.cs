@@ -10,7 +10,7 @@
 
 namespace BlobStorageTest.Client
 {
-    using Microsoft.Rest;
+    using Microsoft.Rest.ClientRuntime.Slim;
     using Models;
     using System.Collections;
     using System.Collections.Generic;
@@ -89,7 +89,7 @@ namespace BlobStorageTest.Client
         /// <exception cref="ErrorException">
         /// Thrown when the operation returned an invalid status code
         /// </exception>
-        /// <exception cref="Microsoft.Rest.SerializationException">
+        /// <exception cref="Microsoft.Rest.ClientRuntime.Slim.SerializationException">
         /// Thrown when unable to deserialize the response
         /// </exception>
         /// <exception cref="Microsoft.Rest.ValidationException">

@@ -9,7 +9,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json.Linq;
 
-namespace Microsoft.Rest
+namespace Microsoft.Rest.ClientRuntime.Slim
 {
     /// <summary>
     /// Extensions for manipulating HTTP request and response objects.

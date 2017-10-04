@@ -1,4 +1,4 @@
-namespace Microsoft.Rest.ClientRuntime.RequestPolicy
+namespace Microsoft.Rest.RequestPolicy
 {
     // Options configures a Pipeline's behavior.
     public class PipelineOptions

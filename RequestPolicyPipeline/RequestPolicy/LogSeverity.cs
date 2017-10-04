@@ -1,6 +1,6 @@
 using System;
 
-namespace Microsoft.Rest.ClientRuntime.RequestPolicy
+namespace Microsoft.Rest.RequestPolicy
 {
     // LogSeverity tells a logger the minimum severity to log. When code reports a log entry,
     // the LogSeverity indicates the severity of the log entry. The logger only records entries

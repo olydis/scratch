@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Microsoft.Rest.ClientRuntime.RequestPolicy.StoragePolicies
+namespace Microsoft.Rest.RequestPolicy.StoragePolicies
 {
     public sealed class RetryOptions
     {
