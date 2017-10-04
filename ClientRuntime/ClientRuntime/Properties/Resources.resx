@@ -117,51 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ArgumentCannotBeGreaterThanBaseline" xml:space="preserve">
-    <value>The specified argument {0} cannot be greater than its ceiling value of {1}.</value>
-  </data>
-  <data name="ArgumentCannotBeNegative" xml:space="preserve">
-    <value>The specified argument {0} cannot be initialized with a negative value.</value>
-  </data>
-  <data name="DefaultHttpOperationExceptionMessage" xml:space="preserve">
-    <value>Received unexpected Http response status code {0}</value>
-  </data>
-  <data name="DefaultRetryStrategyMappingNotFound" xml:space="preserve">
-    <value>Default retry strategy for technology {0}, named '{1}', is not defined.</value>
-  </data>
-  <data name="DefaultRetryStrategyNotFound" xml:space="preserve">
-    <value>Default retry strategy for technology {0} was not not defined, and there is no overall default strategy.</value>
-  </data>
-  <data name="ExceptionRetryHandlerMissing" xml:space="preserve">
-    <value>Retry handler is not present in the HttpClient handler stack.</value>
-  </data>
-  <data name="ExceptionRetryManagerAlreadySet" xml:space="preserve">
-    <value>The RetryManager is already set.</value>
-  </data>
-  <data name="ExceptionRetryManagerNotSet" xml:space="preserve">
-    <value>The default RetryManager has not been set. Set it by invoking the RetryManager.SetDefault static method, or if you are using declarative configuration, you can invoke the RetryPolicyFactory.CreateDefault() method to automatically create the retry manager from the configuration file.</value>
-  </data>
-  <data name="ITransientErrorDetectionStrategyNotImplemented" xml:space="preserve">
-    <value>The error detection strategy type must implement the ITransientErrorDetectionStrategy interface.</value>
-  </data>
-  <data name="ResponseStatusCodeError" xml:space="preserve">
-    <value>Response status code indicates server error: {0} ({1}).</value>
-  </data>
-  <data name="RetryStrategyNotFound" xml:space="preserve">
-    <value>The retry strategy with name '{0}' cannot be found.</value>
-  </data>
-  <data name="StringCannotBeEmpty" xml:space="preserve">
-    <value>The specified string argument {0} must not be empty.</value>
-  </data>
-  <data name="TaskCannotBeNull" xml:space="preserve">
-    <value>The specified argument '{0}' cannot return a null task when invoked.</value>
-  </data>
-  <data name="TaskMustBeScheduled" xml:space="preserve">
-    <value>The specified argument '{0}' must return a scheduled task (also known as "hot" task) when invoked.</value>
-  </data>
-  <data name="TokenProviderCannotBeNull" xml:space="preserve">
-    <value>You must specify a token provider or raw access token before using token credentials.</value>
-  </data>
   <data name="ValidationCannotBeNull" xml:space="preserve">
     <value>cannot be null</value>
   </data>
@@ -200,8 +155,5 @@
   </data>
   <data name="ValidationUniqueItems" xml:space="preserve">
     <value>collection contains duplicate items</value>
-  </data>
-  <data name="WebRequestHandlerNotFound" xml:space="preserve">
-    <value>The service client '{0}' did not contain an implementation of '{1}'.</value>
   </data>
 </root>
