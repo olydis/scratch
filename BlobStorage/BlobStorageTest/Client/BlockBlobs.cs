@@ -135,22 +135,9 @@ namespace BlobStorageTest.Client
             }
             string comp = "block";
             // Tracing
-            bool _shouldTrace = ServiceClientTracing.IsEnabled;
-            string _invocationId = null;
-            if (_shouldTrace)
-            {
-                _invocationId = ServiceClientTracing.NextInvocationId.ToString();
-                Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("container", container);
-                tracingParameters.Add("blob", blob);
-                tracingParameters.Add("blockId", blockId);
-                tracingParameters.Add("timeout", timeout);
-                tracingParameters.Add("leaseId", leaseId);
-                tracingParameters.Add("body", body);
-                tracingParameters.Add("comp", comp);
-                tracingParameters.Add("cancellationToken", cancellationToken);
-                ServiceClientTracing.Enter(_invocationId, this, "PutBlock", tracingParameters);
-            }
+            
+            
+            
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
@@ -230,16 +217,10 @@ namespace BlobStorageTest.Client
               _httpRequest.Content.Headers.ContentType =System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/xml; charset=utf-8");
             }
             // Send Request
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
-            }
+            
             cancellationToken.ThrowIfCancellationRequested();
             var result = await Client.SendAsync<HttpOperationHeaderResponse<BlockBlobsPutBlockHeaders>>(_httpRequest, async _httpResponse => {
-                if (_shouldTrace)
-                {
-                    ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
-                }
+                
                 HttpStatusCode _statusCode = _httpResponse.StatusCode;
                 cancellationToken.ThrowIfCancellationRequested();
                 string _responseContent = null;
@@ -261,10 +242,7 @@ namespace BlobStorageTest.Client
                     }
                     ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
                     ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
-                    if (_shouldTrace)
-                    {
-                        ServiceClientTracing.Error(_invocationId, ex);
-                    }
+                    
                     _httpRequest.Dispose();
                     if (_httpResponse != null)
                     {
@@ -289,10 +267,7 @@ namespace BlobStorageTest.Client
                     }
                     throw new SerializationException("Unable to deserialize the headers.", _httpResponse.GetHeadersAsJson().ToString(), ex);
                 }
-                if (_shouldTrace)
-                {
-                    ServiceClientTracing.Exit(_invocationId, _result);
-                }
+                
                 return _result;
             }, cancellationToken).ConfigureAwait(false);
             return (result.Content as ParsedHttpContent<HttpOperationHeaderResponse<BlockBlobsPutBlockHeaders>>).ParsedObject;
@@ -431,32 +406,9 @@ namespace BlobStorageTest.Client
             }
             string comp = "blocklist";
             // Tracing
-            bool _shouldTrace = ServiceClientTracing.IsEnabled;
-            string _invocationId = null;
-            if (_shouldTrace)
-            {
-                _invocationId = ServiceClientTracing.NextInvocationId.ToString();
-                Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("container", container);
-                tracingParameters.Add("blob", blob);
-                tracingParameters.Add("timeout", timeout);
-                tracingParameters.Add("xMsBlobCacheControl", xMsBlobCacheControl);
-                tracingParameters.Add("xMsBlobContentType", xMsBlobContentType);
-                tracingParameters.Add("xMsBlobContentEncoding", xMsBlobContentEncoding);
-                tracingParameters.Add("xMsBlobContentLanguage", xMsBlobContentLanguage);
-                tracingParameters.Add("xMsBlobContentMd5", xMsBlobContentMd5);
-                tracingParameters.Add("xMsMeta", xMsMeta);
-                tracingParameters.Add("leaseId", leaseId);
-                tracingParameters.Add("xMsBlobContentDisposition", xMsBlobContentDisposition);
-                tracingParameters.Add("ifModifiedSince", ifModifiedSince);
-                tracingParameters.Add("ifUnmodifiedSince", ifUnmodifiedSince);
-                tracingParameters.Add("ifMatches", ifMatches);
-                tracingParameters.Add("ifNoneMatch", ifNoneMatch);
-                tracingParameters.Add("blocks", blocks);
-                tracingParameters.Add("comp", comp);
-                tracingParameters.Add("cancellationToken", cancellationToken);
-                ServiceClientTracing.Enter(_invocationId, this, "PutBlockList", tracingParameters);
-            }
+            
+            
+            
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
@@ -621,16 +573,10 @@ namespace BlobStorageTest.Client
                 _httpRequest.Content.Headers.ContentType =System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/xml; charset=utf-8");
             }
             // Send Request
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
-            }
+            
             cancellationToken.ThrowIfCancellationRequested();
             var result = await Client.SendAsync<HttpOperationHeaderResponse<BlockBlobsPutBlockListHeaders>>(_httpRequest, async _httpResponse => {
-                if (_shouldTrace)
-                {
-                    ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
-                }
+                
                 HttpStatusCode _statusCode = _httpResponse.StatusCode;
                 cancellationToken.ThrowIfCancellationRequested();
                 string _responseContent = null;
@@ -652,10 +598,7 @@ namespace BlobStorageTest.Client
                     }
                     ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
                     ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
-                    if (_shouldTrace)
-                    {
-                        ServiceClientTracing.Error(_invocationId, ex);
-                    }
+                    
                     _httpRequest.Dispose();
                     if (_httpResponse != null)
                     {
@@ -680,10 +623,7 @@ namespace BlobStorageTest.Client
                     }
                     throw new SerializationException("Unable to deserialize the headers.", _httpResponse.GetHeadersAsJson().ToString(), ex);
                 }
-                if (_shouldTrace)
-                {
-                    ServiceClientTracing.Exit(_invocationId, _result);
-                }
+                
                 return _result;
             }, cancellationToken).ConfigureAwait(false);
             return (result.Content as ParsedHttpContent<HttpOperationHeaderResponse<BlockBlobsPutBlockListHeaders>>).ParsedObject;
@@ -769,22 +709,9 @@ namespace BlobStorageTest.Client
             }
             string comp = "blocklist";
             // Tracing
-            bool _shouldTrace = ServiceClientTracing.IsEnabled;
-            string _invocationId = null;
-            if (_shouldTrace)
-            {
-                _invocationId = ServiceClientTracing.NextInvocationId.ToString();
-                Dictionary<string, object> tracingParameters = new Dictionary<string, object>();
-                tracingParameters.Add("container", container);
-                tracingParameters.Add("blob", blob);
-                tracingParameters.Add("snapshot", snapshot);
-                tracingParameters.Add("listType", listType);
-                tracingParameters.Add("timeout", timeout);
-                tracingParameters.Add("leaseId", leaseId);
-                tracingParameters.Add("comp", comp);
-                tracingParameters.Add("cancellationToken", cancellationToken);
-                ServiceClientTracing.Enter(_invocationId, this, "GetBlockList", tracingParameters);
-            }
+            
+            
+            
             // Construct URL
             var _baseUrl = Client.BaseUri;
             var _url = _baseUrl + (_baseUrl.EndsWith("/") ? "" : "/") + "{container}/{blob}";
@@ -859,16 +786,10 @@ namespace BlobStorageTest.Client
             // Serialize Request
             string _requestContent = null;
             // Send Request
-            if (_shouldTrace)
-            {
-                ServiceClientTracing.SendRequest(_invocationId, _httpRequest);
-            }
+            
             cancellationToken.ThrowIfCancellationRequested();
             var result = await Client.SendAsync<HttpOperationResponse<BlockList,BlockBlobsGetBlockListHeaders>>(_httpRequest, async _httpResponse => {
-                if (_shouldTrace)
-                {
-                    ServiceClientTracing.ReceiveResponse(_invocationId, _httpResponse);
-                }
+                
                 HttpStatusCode _statusCode = _httpResponse.StatusCode;
                 cancellationToken.ThrowIfCancellationRequested();
                 string _responseContent = null;
@@ -890,10 +811,7 @@ namespace BlobStorageTest.Client
                     }
                     ex.Request = new HttpRequestMessageWrapper(_httpRequest, _requestContent);
                     ex.Response = new HttpResponseMessageWrapper(_httpResponse, _responseContent);
-                    if (_shouldTrace)
-                    {
-                        ServiceClientTracing.Error(_invocationId, ex);
-                    }
+                    
                     _httpRequest.Dispose();
                     if (_httpResponse != null)
                     {
@@ -945,10 +863,7 @@ namespace BlobStorageTest.Client
                     }
                     throw new SerializationException("Unable to deserialize the headers.", _httpResponse.GetHeadersAsJson().ToString(), ex);
                 }
-                if (_shouldTrace)
-                {
-                    ServiceClientTracing.Exit(_invocationId, _result);
-                }
+                
                 return _result;
             }, cancellationToken).ConfigureAwait(false);
             return (result.Content as ParsedHttpContent<HttpOperationResponse<BlockList,BlockBlobsGetBlockListHeaders>>).ParsedObject;
