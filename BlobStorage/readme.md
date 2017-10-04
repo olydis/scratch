@@ -16,6 +16,7 @@ csharp:
   output-folder: ./BlobStorageTest/Client
   clear-output-folder: true
   enable-xml: true
+  sync-methods: none
 ```
 
 ``` yaml
@@ -30,7 +31,7 @@ directive:
             // normalize SendAsync call (stream version specifies additional param)
             .replace(/System\.Net\.Http\.HttpCompletionOption\.ResponseHeadersRead, /g, "")
             // deserialization as continuation
-            .replace(/(public async Task<(.*?)> .*(\s.*?)*?)_httpResponse = await Client\.HttpClient\.SendAsync\(_httpRequest, cancellationToken\)\.ConfigureAwait\(false\);((\s.*)*?\s*return _result;)/g, (_, prefix, resultType, __, suffix) => `${prefix.replace("HttpResponseMessage _httpResponse = null;", "")}var result = await Client.SendAsync<${resultType}>(_httpRequest, async _httpResponse => {${suffix.replace(/\n/g, "\n    ")}\n            }, cancellationToken).ConfigureAwait(false);\n            return (result.Content as ParsedHttpContent<${resultType}>).ParsedObject;`)
+            .replace(/((public|internal) async Task<(.*?)> .*(\s.*?)*?)_httpResponse = await Client\.HttpClient\.SendAsync\(_httpRequest, cancellationToken\)\.ConfigureAwait\(false\);((\s.*)*?\s*return _result;)/g, (_, prefix, __, resultType, ___, suffix) => `${prefix.replace("HttpResponseMessage _httpResponse = null;", "")}var result = await Client.SendAsync<${resultType}>(_httpRequest, async _httpResponse => {${suffix.replace(/\n/g, "\n    ")}\n            }, cancellationToken).ConfigureAwait(false);\n            return (result.Content as ParsedHttpContent<${resultType}>).ParsedObject;`)
         if ($.includes(" : ServiceClient<"))
           $ = $
             // simplify ctor 1
