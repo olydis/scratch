@@ -35,7 +35,13 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
             public async Task<HttpResponseMessage> SendAsync(Context ctx, HttpRequestMessage request)
             {
                 await this.credentials.ProcessHttpRequestAsync(request, ctx.CancellationToken);
-                return await node.SendAsync(ctx, request); // Make the request
+                var response = await node.SendAsync(ctx, request); // Make the request
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    // Service failed to authenticate request, log it
+                    // TODO: fmt.Print("===== Below is the String-to-Sign =====\n" + stringToSign + "\n==========\n")
+                }
+                return response;
             }
         }
     }

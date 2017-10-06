@@ -26,13 +26,16 @@ namespace Microsoft.Rest.RequestPolicy
             return this.Next.SendAsync(ctx, request);
         }
 
+        // WouldLog returns true if the specified severity level would be logged.
+        public bool WouldLog(LogSeverity severity) => severity <= Pipeline.Options.Log.MaxSeverity;
+
         // Log logs a string to the Pipeline's Logger.
-        public void Log(LogSeverity severity, string format, params object[] v)
+        public void Log(LogSeverity severity, string msg)
         {
-            if (severity > Pipeline.Options.Log.MaxSeverity) {
+            if (!WouldLog(severity))
+            {
                 return; // Short circuit message formatting if we're not logging it
             }
-            string msg = string.Format(format, v);
             if (!msg.EndsWith("\n"))
             {
                 msg += "\n";

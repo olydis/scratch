@@ -17,9 +17,6 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
         // TryTimeout indicates the maximum time allowed for any single try of an HTTP request (0=default).
         public TimeSpan TryTimeout { get; private set; }
         
-	    // LogWarningIfTryOverThreshold logs a warning if a tried operation takes longer than the specified duration (0=no logging).
-        public TimeSpan LogWarningIfTryOverThreshold { get; private set; }
-        
         // RetryDelay specifies the amount of delay to use before retrying an operation (0=default).
         // The delay increases (exponentially or linearly) with each retry up to a maximum specified by
         // MaxRetryDelay. If you specify 0, then you must also specify 0 for MaxRetryDelay.
@@ -39,7 +36,6 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
             RetryPolicy policy,
             int maxTries,
             TimeSpan tryTimeout,
-            TimeSpan logWarningIfTryOverThreshold,
             TimeSpan retryDelay,
             TimeSpan maxRetryDelay,
             Uri retryReadsFromSecondaryURL)
@@ -52,7 +48,6 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
             this.Policy = policy;
             this.MaxTries = maxTries == 0 ? 3 : maxTries;
             this.TryTimeout = ifDefault(tryTimeout, TimeSpan.FromSeconds(30));
-            this.LogWarningIfTryOverThreshold = logWarningIfTryOverThreshold;
             this.RetryDelay = ifDefault(retryDelay, TimeSpan.FromSeconds(3));
             this.MaxRetryDelay = ifDefault(maxRetryDelay, TimeSpan.FromSeconds(30));
             this.RetryReadsFromSecondaryURL = retryReadsFromSecondaryURL;
@@ -82,18 +77,6 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
 
         private sealed class RetryPolicyImpl : IPolicy
         {
-            struct ActionSeverity
-            {
-                public ActionSeverity(string action, LogSeverity severity)
-                {
-                    this.Action = action;
-                    this.Severity = severity;
-                }
-
-                public readonly string Action;
-                public readonly LogSeverity Severity;
-            }
-
             PolicyNode node;
             RetryOptions o;
 
@@ -197,10 +180,6 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
                     //     panic(fmt.Sprintf("Failed to RewindBody: Err: %+v", err))
                     // }
 
-                    // Log the outgoing request as informational
-                    //p.node.Log(pipeline.LogInfo, pipeline.FormatRequest(request.Request, fmt.Sprintf("(Try=%d/%d)", try+1, p.o.MaxTries)))
-
-                    var tryStart = DateTime.UtcNow;
                     var tryCtx = ctx.WithTimeout(o.TryTimeout, out var isTimeout).WithCancel(out var cancel);
                     HttpResponseMessage response = null;
                     try
@@ -218,62 +197,27 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
                         //}
                     }
                     cancel();
-                    var tryEnd = DateTime.UtcNow;
-                    var tryDuration = tryEnd - tryStart;
 
-                    var action = new ActionSeverity("NoRetry: ok/final", LogSeverity.Info); // Assume no retry
+                    var action = "";
                     if (isTimeout())
-                        action = new ActionSeverity("NoRetry: Op timeout", LogSeverity.Error);
+                        action = "NoRetry: Op timeout";
                     else if (err != null)
                     {
-                        // if (nerr, /*ok := err.(net.Error); ok*/) {
-                        //     if nerr.Temporary() { // Returns true if HTTP response status code is 500 or 503
-                        //         action, severity = "Retry: Temporary", pipeline.LogWarning
-                        //     } else if nerr.Timeout() && tryCtx.Err() == context.DeadlineExceeded {
-                        //         action, severity = "Retry: Timeout", pipeline.LogWarning
-                        //     }
-                        // }
-                        // if action == "" && !tryingPrimary {
-                        //     // If attempt was against the secondary & it returned a StatusNotFound (404), then the
-                        //     // resource was not found. This may be due to replication delay. So, in this case,
-                        //     // we'll never try the secondary again for this operation.
-                        //     if resp := response.Response(); resp != nil && resp.StatusCode == http.StatusNotFound {
-                        //         considerSecondary = false
-                        //         action, severity = "Retry: Secondary URL 404", pipeline.LogError
-                        //     }
-                        // }
+                        // TODO
                     }
                     else if (!response.IsSuccessStatusCode)
                     {
                         if (response.StatusCode == HttpStatusCode.InternalServerError || 
                             response.StatusCode == HttpStatusCode.ServiceUnavailable)
                         {
-                            action = new ActionSeverity("Retry: Op timeout", LogSeverity.Error);
+                            action = "Retry: Op timeout";
                         }
                         // TODO
                     }
 
-                    // If we were going to log it as info, bump it up to warning if the duration exceeded the threshold
-                    if (action.Severity == LogSeverity.Info &&
-                        o.LogWarningIfTryOverThreshold != TimeSpan.Zero &&
-                        tryDuration > o.LogWarningIfTryOverThreshold) {
-                        action = new ActionSeverity(action.Action, LogSeverity.Warning);
-                    }
-                    action = new ActionSeverity(action.Action, LogSeverity.Error); // testing
-                    /* FIX:		p.node.Log(severity, pipeline.FormatResponse(
-                    response.Response(), err,
-                    fmt.Sprintf("(Try=%d/%d, TryDuration=%v, OpDuration=%v, Action=%s)",
-                        try+1, p.o.MaxTries, tryDuration, tryEnd.Sub(operationStart), action)))*/
-                    if (action.Action[0] == 'N') // If first letter of action is 'N' (as in NoRetry), return
-                    {
-                        if (err != null) throw err;
-                        return response;
-                    }
+                    // TODO
                 }
-                // If we get here, it's like a retry that we don't perform because we hit max tries
-                /* FIX: 	p.node.Log(pipeline.LogError,
-                pipeline.FormatRequest(request.Request, fmt.Sprintf("(Quitting after %d tries)", p.o.MaxTries)))*/
-                throw err; // Too many tries; return the last error
+                throw err; // Not retryable or too many retries; return the last response/error
             }
 
             private static long Pow(long number, int exponent)
