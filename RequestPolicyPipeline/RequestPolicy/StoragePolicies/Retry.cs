@@ -26,11 +26,11 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
         // If you specify 0, then you must also specify 0 for RetryDelay.
         public TimeSpan MaxRetryDelay { get; private set; }
 
-        // RetryReadsFromSecondaryURL specifies whether the retry policy should retry a read operation against another URL.
-        // If the URL's Host field is "" (the default) then operations are not retried against another URL.
+        // RetryReadsFromSecondaryHost specifies whether the retry policy should retry a read operation against another host.
+        // If RetryReadsFromSecondaryHost is "" (the default) then operations are not retried against another host.
         // NOTE: Before setting this field, make sure you understand the issues around reading stale & potentially-inconsistent
         // data at this webpage: https://docs.microsoft.com/en-us/azure/storage/common/storage-designing-ha-apps-with-ragrs
-        public Uri RetryReadsFromSecondaryURL { get; private set; }
+        public string RetryReadsFromSecondaryHost { get; private set; }
 
         public RetryOptions(
             RetryPolicy policy,
@@ -38,7 +38,7 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
             TimeSpan tryTimeout,
             TimeSpan retryDelay,
             TimeSpan maxRetryDelay,
-            Uri retryReadsFromSecondaryURL)
+            string retryReadsFromSecondaryHost)
         {
             if ((retryDelay == TimeSpan.Zero && maxRetryDelay != TimeSpan.Zero) || (retryDelay != TimeSpan.Zero && maxRetryDelay == TimeSpan.Zero))
                 throw new ArgumentException("both RetryDelay and MaxRetryDelay must be 0 or neither can be 0");
@@ -50,7 +50,40 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
             this.TryTimeout = ifDefault(tryTimeout, TimeSpan.FromSeconds(30));
             this.RetryDelay = ifDefault(retryDelay, TimeSpan.FromSeconds(3));
             this.MaxRetryDelay = ifDefault(maxRetryDelay, TimeSpan.FromSeconds(30));
-            this.RetryReadsFromSecondaryURL = retryReadsFromSecondaryURL;
+            this.RetryReadsFromSecondaryHost = retryReadsFromSecondaryHost;
+        }
+
+        public TimeSpan CalcDelay(int attempt)
+        {
+            var delay = TimeSpan.Zero;
+            switch (Policy)
+            {
+                case RetryPolicy.Exponential:
+                    delay = TimeSpan.FromTicks(RetryDelay.Ticks * (Pow(2, attempt - 1) - 1));
+                    break;
+                case RetryPolicy.Linear:
+                    delay = TimeSpan.FromTicks(RetryDelay.Ticks * (attempt - 1));
+                    break;
+            }
+
+            // .8 + [0, .1, .2, .3, or .4] = .8, .9, 1.0, 1.1, or 1.2
+            var jitter = (8 + new Random().Next(5)) / 10f; // NOTE: We want math/rand; not crypto/rand
+            delay = TimeSpan.FromTicks((int)(delay.Ticks * jitter));
+            if (delay > MaxRetryDelay)
+            {
+                delay = MaxRetryDelay;
+            }
+            return delay;
+        }
+
+        private static long Pow(long number, int exponent)
+        {
+            long result = 1;
+            for (int n = 0; n < exponent; n++)
+            {
+                result *= number;
+            }
+            return result;
         }
     }
 
@@ -88,24 +121,22 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
 
             public async Task<HttpResponseMessage> SendAsync(Context ctx, HttpRequestMessage request)
             {
-                // var operationEndTime = DateTime.UtcNow + o.MaxOperationTime;
-                var primaryUrl = request.RequestUri;
-                var secondaryUrl = primaryUrl;
-                var primaryTries = 0;
-
                 Exception err = null;
 
+                // Clone the original request and initialize the clone exactly how we want it.
+                // When retrying, we'll clone requestCopy to reset any changes made by other policy objects.
+                // masterRequest := request.Copy(); // TODO
+                var masterRequest = request; // TODO
+
+                // Before each try, we'll select either the primary or secondary URL.
+                var secondaryHost = "";
+                var primaryTry = 0;
+
                 // We only consider retring against a secondary if we have a read request (GET/HEAD) AND theis policy has a Secondary URL it can use
-                var considerSecondary = (request.Method == HttpMethod.Get || request.Method == HttpMethod.Head) && o.RetryReadsFromSecondaryURL.Host != "";
+                var considerSecondary = (request.Method == HttpMethod.Get || request.Method == HttpMethod.Head) && o.RetryReadsFromSecondaryHost != "";
                 if (considerSecondary)
                 {
-                    secondaryUrl = o.RetryReadsFromSecondaryURL;
-                    var primaryBuilder = new UriBuilder(primaryUrl);
-                    var secondaryBuilder = new UriBuilder(secondaryUrl);
-                    secondaryBuilder.Path = primaryBuilder.Path;
-                    // secondaryUrl.RawPath = primaryURL.RawPath
-                    secondaryBuilder.Query = primaryBuilder.Query;
-                    secondaryUrl = secondaryBuilder.Uri;
+                    secondaryHost = o.RetryReadsFromSecondaryHost;
                 }
 
                 // Exponential retry algorithm: ((2 ^ attempt) - 1) * delay * random(0.8, 1.2)
@@ -120,83 +151,60 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
                     // Determine which endpoint to try. It's primary if there is no secondary or if it is an even attempt.
                     var tryingPrimary = !considerSecondary || (attempt % 2 == 0);
 
-                    // Select the right URL endpoint
+                    // Select the correct host and delay
                     if (tryingPrimary)
                     {
-                        request.RequestUri = primaryUrl;
-                        primaryTries++;
+                        primaryTry++;
+                        await Task.Delay(o.CalcDelay(attempt), ctx.CancellationToken);
                     }
                     else
                     {
-                        request.RequestUri = secondaryUrl;
+                        await Task.Delay(TimeSpan.FromSeconds(1), ctx.CancellationToken);
                     }
 
-                    // Select the right URL endpoint & make the request
-                    // TODO: Fix the endpoint
-
-                    // Insert delay:
-                    var delay = TimeSpan.Zero;
-                    if (tryingPrimary)
+            		// Before an outgoing request (other than the 1st), revert to the master request
+            		// to ensures that each try starts with the original request.
+                    var requestCopy = masterRequest;
+                    if (attempt > 0)
                     {
-                        switch (o.Policy)
-                        {
-                            case RetryPolicy.Exponential:
-                                delay = TimeSpan.FromTicks(o.RetryDelay.Ticks * ((Pow(2, primaryTries - 1) - 1) / 2));
-                                break;
-                            case RetryPolicy.Linear:
-                                delay = TimeSpan.FromTicks(o.RetryDelay.Ticks * (primaryTries - 1));
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        delay = TimeSpan.FromSeconds(1);
+                        // requestCopy = masterRequest.Copy(); // TODO
+                        // For a retry, seek to the beginning of the Body stream.
+                        // TODO
+                        // if err = requestCopy.RewindBody(); err != nil {
+                        //     panic(fmt.Sprintf("Failed to RewindBody: Err: %+v", err))
+                        // }
                     }
 
-                    // .8 + [0, .1, .2, .3, or .4] = .8, .9, 1.0, 1.1, or 1.2
-                    var jitter = (8 + new Random().Next(5)) / 10f; // NOTE: We want math/rand; not crypto/rand
-                    delay = TimeSpan.FromTicks((int)(delay.Ticks * jitter));
-
-                    if (delay > o.MaxRetryDelay)
+                    if (!tryingPrimary)
                     {
-                        delay = o.MaxRetryDelay;
+                        var requestUri = new UriBuilder(requestCopy.RequestUri);
+                        requestUri.Host = secondaryHost;
+                        requestCopy.RequestUri = requestUri.Uri;
                     }
-                    await Task.Delay(delay, ctx.CancellationToken);
+
+                    var timeout = (int)o.TryTimeout.TotalSeconds;
+                    // TODO: deadline stuff
 
 		            // Set the server-side timeout query parameter
-                    // System.Console.WriteLine(request.RequestUri);
-                    var queryToAppend = $"timeout={(int)o.TryTimeout.TotalSeconds}";
-                    var q = new UriBuilder(request.RequestUri);
+                    var queryToAppend = $"timeout={timeout}";
+                    var q = new UriBuilder(requestCopy.RequestUri);
                     if (q.Query != null && q.Query.Length > 1)
                         q.Query = q.Query.Substring(1) + "&" + queryToAppend;
                     else
                         q.Query = queryToAppend;
-                    request.RequestUri = q.Uri;
-                    // System.Console.WriteLine(request.RequestUri);
-                    
-		            // Seek to the beginning of the Body stream in case this is a retry
-                    // TODO
-                    // if err = request.RewindBody(); err != nil {
-                    //     panic(fmt.Sprintf("Failed to RewindBody: Err: %+v", err))
-                    // }
+                    requestCopy.RequestUri = q.Uri;
 
                     var tryCtx = ctx.WithTimeout(o.TryTimeout, out var isTimeout).WithCancel(out var cancel);
                     HttpResponseMessage response = null;
                     try
                     {
-                        response = await node.SendAsync(ctx, request); // Make the request
+                        response = await node.SendAsync(ctx, requestCopy); // Make the request
                     }
                     catch (Exception e)
                     {
                         err = e;
-                        // If temporary or timeout; retry
-                        //TODO:
-                        //if (nerr, ok:= err.(net.Error); ok)
-                        //{
-                        //    retry = nerr.Temporary() || nerr.Timeout()
-                        //}
                     }
-                    cancel();
+                    //defer cancel();
 
                     var action = "";
                     if (isTimeout())
@@ -218,16 +226,6 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
                     // TODO
                 }
                 throw err; // Not retryable or too many retries; return the last response/error
-            }
-
-            private static long Pow(long number, int exponent)
-            {
-                long result = 1;
-                for (int n = 0; n < exponent; n++)
-                {
-                    result *= number;
-                }
-                return result;
             }
         }
     }

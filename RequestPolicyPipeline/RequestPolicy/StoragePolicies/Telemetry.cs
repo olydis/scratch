@@ -22,7 +22,7 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
         string serviceVersion;
         TelemetryOptions options;
 
-        public TelemetryPolicyFactory(string serviceVersion, TelemetryOptions options)
+        public TelemetryPolicyFactory(TelemetryOptions options)
         {
             this.serviceVersion = serviceVersion;
             this.options = options;
@@ -50,7 +50,7 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
                 {
                     v += " ";
                 }
-                v += $"Azure-Storage/{Version.CommonLibVersion}-{factory.serviceVersion} {System.Runtime.InteropServices.RuntimeInformation.OSDescription}";
+                v += $"Azure-Storage/{factory.serviceVersion} {System.Runtime.InteropServices.RuntimeInformation.OSDescription}";
                 request.Headers.Add("User-Agent", v);
                 return node.SendAsync(ctx, request);
             }

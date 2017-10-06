@@ -3,6 +3,6 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
 {
     public static class Version
     {
-        public static readonly string CommonLibVersion = "0.1";
+        public static readonly string ServiceLibVersion = "0.2";
     } 
 }

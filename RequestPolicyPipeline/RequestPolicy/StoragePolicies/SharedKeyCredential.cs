@@ -39,7 +39,8 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
                 if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
                     // Service failed to authenticate request, log it
-                    // TODO: fmt.Print("===== Below is the String-to-Sign =====\n" + stringToSign + "\n==========\n")
+                    var stringToSign = "TODO"; // TODO
+                    node.Log(LogSeverity.Error, $"===== HTTP Forbiddeen status, String-to-Sign:\n{stringToSign}\n===============================\n");
                 }
                 return response;
             }

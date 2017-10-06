@@ -71,14 +71,14 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
 
                 // Assume success and default to informational logging
                 var severity = LogSeverity.Info;
-                Func<string> logMsg = () => $"Success\n{response.Format()}";
+                Func<string> logMsg = () => $"SUCCESS:\n{response.Format()}";
 
                 // If the response took too long, we'll upgrade to warning.
                 if (o.LogWarningIfTryOverThreshold != TimeSpan.Zero && tryDuration > o.LogWarningIfTryOverThreshold)
                 {
                     // Log a warning if the try duration exceeded the specified threshold
                     severity = LogSeverity.Warning;
-                    logMsg = () => $"SLOW [tryDuration > {o.LogWarningIfTryOverThreshold}]\n{response.Format()}";
+                    logMsg = () => $"SLOW [tryDuration > {o.LogWarningIfTryOverThreshold}]:\n{response.Format()}";
                 }
 
                 // TODO: ResponseException
@@ -92,7 +92,7 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
 
                 if (node.WouldLog(severity))
                 {
-                    node.Log(severity, $"RESPONSE (Try={attempt}, TryDuration={tryDuration}, OpDuration={opDuration}): {logMsg()}");
+                    node.Log(severity, $"RESPONSE (Try={attempt}, TryDuration={tryDuration}, OpDuration={opDuration}) -- {logMsg()}");
                 }
 
                 if (err != null)
