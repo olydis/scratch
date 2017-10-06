@@ -122,6 +122,7 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
             public async Task<HttpResponseMessage> SendAsync(Context ctx, HttpRequestMessage request)
             {
                 Exception err = null;
+                HttpResponseMessage response = null;
 
                 // Clone the original request and initialize the clone exactly how we want it.
                 // When retrying, we'll clone requestCopy to reset any changes made by other policy objects.
@@ -155,7 +156,7 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
                     if (tryingPrimary)
                     {
                         primaryTry++;
-                        await Task.Delay(o.CalcDelay(attempt), ctx.CancellationToken);
+                        await Task.Delay(o.CalcDelay(primaryTry), ctx.CancellationToken);
                     }
                     else
                     {
@@ -195,7 +196,6 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
                     requestCopy.RequestUri = q.Uri;
 
                     var tryCtx = ctx.WithTimeout(o.TryTimeout, out var isTimeout).WithCancel(out var cancel);
-                    HttpResponseMessage response = null;
                     try
                     {
                         response = await node.SendAsync(ctx, requestCopy); // Make the request
@@ -220,12 +220,28 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
                         {
                             action = "Retry: Op timeout";
                         }
+                        else
+                        {
+                            action = "TODO";
+                        }
                         // TODO
                     }
+                    else
+                    {
+                        action = "NoRetry: no error";
+                    }
 
-                    // TODO
+                    // fmt.Println(action + "\n") // This is where we could log the retry operation; action is why we're retrying
+                    if (!action.StartsWith("!"))
+                    { // Don't retry if action starts with '!'
+                        break;
+                    }
                 }
-                throw err; // Not retryable or too many retries; return the last response/error
+                if (err != null)
+                {
+                    throw err; // Not retryable or too many retries; return the last response/error
+                }
+                return response;
             }
         }
     }

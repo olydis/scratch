@@ -24,7 +24,7 @@ namespace Microsoft.Rest.RequestPolicy.StoragePolicies
 
         public TelemetryPolicyFactory(TelemetryOptions options)
         {
-            this.serviceVersion = serviceVersion;
+            this.serviceVersion = Version.ServiceLibVersion;
             this.options = options;
         }
 

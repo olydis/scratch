@@ -27,15 +27,15 @@ namespace BlobStorageTest
             client.Pipeline = new IFactory[]
             {
                 new SharedKeyCredentialPolicyFactory(credentials),
-                new TelemetryPolicyFactory("0.0.1-test", new TelemetryOptions("prefex")),
+                new TelemetryPolicyFactory(new TelemetryOptions("prefix")),
+                new RequestLogPolicyFactory(new RequestLogOptions(TimeSpan.FromMilliseconds(100))),
                 new RetryPolicyFactory(new RetryOptions(
                     RetryPolicy.Linear,
                     3,
                     TimeSpan.Zero,
                     TimeSpan.Zero,
                     TimeSpan.Zero,
-                    TimeSpan.Zero,
-                    new Uri("https://bing.com/"))),
+                    "bing.com")),
                 MethodFactoryMarker.Instance
             };
             
