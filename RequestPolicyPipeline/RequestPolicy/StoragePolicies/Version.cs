@@ -1,4 +1,3 @@
-
 namespace Microsoft.Rest.RequestPolicy.StoragePolicies
 {
     public static class Version
